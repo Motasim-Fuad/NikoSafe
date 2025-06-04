@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/resource/compunents/coustomNumericButton.dart';
+import 'package:nikosafe/resource/compunents/elevatedbutton.dart';
+import 'package:nikosafe/view/User/UserSearch/widgets/CustomSectionButton.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/explore_card_carousel.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/search_bar.dart';
 
@@ -12,10 +18,13 @@ import 'explore_list_page.dart';
 class ExploreMainPage extends StatelessWidget {
   final controller = Get.put(ExploreController());
 
+
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(0),
       decoration: BoxDecoration(
         gradient: AppColor.backGroundColor,
       ),
@@ -29,38 +38,76 @@ class ExploreMainPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              SearchBarWidget(controller: controller),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: SearchBarWidget(controller: controller),
+              // ),
               SizedBox(height: 12),
-              Wrap(
-                spacing: 12,
+              Column(
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomSectionButton(
+                        title: "Find a Ride",
+                        icon:SvgPicture.asset(ImageAssets.car),
+                        onPress: () {},
+                        height: size.height * 0.07, // 7% of screen height
+                        width: size.width * 0.4,    // 40% of screen width
+                        loading: false,
+                        textColor: Colors.white,
 
-                  ElevatedButton(
-                    onPressed: () {
-                      // Your action here
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2BF8DF), // Button background color
-                      foregroundColor: Colors.white, // Text/icon color
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10), // Rounded corners
                       ),
-                      elevation: 5, // Shadow depth
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+
+                      SizedBox(width: 20),
+                      CustomSectionButton(
+                        title: "Therapy sessions",
+                        icon:SvgPicture.asset(ImageAssets.therapy),
+                        onPress: () {},
+                        height: size.height * 0.07, // 7% of screen height
+                        width: size.width * 0.5,    // 40% of screen width
+                        loading: false,
+                        textColor: Colors.white,
+
                       ),
-                    ),
-                    child: const Text('Find a Ride'),
+
+
+                    ],
                   ),
+                  SizedBox(height: 20), // Space after first two
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomSectionButton(
+                        title: "Service Provider",
+                        icon:SvgPicture.asset(ImageAssets.services),
+                        onPress: () {},
+                        height: size.height * 0.07, // 7% of screen height
+                        width: size.width * 0.5,    // 40% of screen width
+                        loading: false,
+                        textColor: Colors.white,
 
+                      ),
 
-                  Chip(label: Text("Therapy sessions")),
-                  Chip(label: Text("Service Provider")),
-                  Chip(label: Text("Trainer")),
+                      SizedBox(width: 20),
+                      CustomSectionButton(
+                        title: "Trainer",
+                        icon:SvgPicture.asset(ImageAssets.trainer),
+                        onPress: () {},
+                        height: size.height * 0.07, // 7% of screen height
+                        width: size.width * 0.4,    // 40% of screen width
+                        loading: false,
+                        textColor: Colors.white,
+
+                      ),
+
+                    ],
+                  ),
                 ],
               ),
+
+
+
               section("Restaurant", 'restaurant'),
               section("Bars", 'bar'),
               section("Club events", 'club_event'),

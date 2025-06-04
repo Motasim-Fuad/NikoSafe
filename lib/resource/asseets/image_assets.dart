@@ -2,6 +2,12 @@
 class ImageAssets{
   static const String splashScreen="assets/images/splash.png";
   static const String emailIcon="assets/icons/email.svg";
+
+
+
+  static const String userHome_location="assets/icons/location.svg";
+  static const String userHome_chat="assets/icons/chat.svg";
+  static const String userHome_notification="assets/icons/notification.svg";
   static const String userHome_userProfile="assets/images/userProfile.jpg";
   static const String userHome_peopleProfile1="assets/images/peopleProfile1.jpg";
   static const String userHome_peopleProfile2="assets/images/peopleProfile2.jpg";
@@ -29,6 +35,13 @@ class ImageAssets{
   static const String restaurant2="assets/images/restaurant2.jpg";
   static const String restaurant3="assets/images/restaurant3.jpg";
   static const String restaurant4="assets/images/restaurant4.jpg";
+
+
+
+  static const String car="assets/icons/car.svg";
+  static const String therapy="assets/icons/therepy.svg";
+  static const String services="assets/icons/service.svg";
+  static const String trainer="assets/icons/trainer.svg";
 
 
 

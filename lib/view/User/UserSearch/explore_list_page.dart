@@ -19,7 +19,7 @@ class ExploreListPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text("All Events",style: TextStyle(color: AppColor.primaryTextColor),),
+          title: Text("Explore",style: TextStyle(color: AppColor.primaryTextColor),),
           backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: CustomBackButton(),

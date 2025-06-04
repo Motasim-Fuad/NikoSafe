@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
@@ -78,7 +79,7 @@ Widget topBar() {
           child: CircleAvatar(
             backgroundColor: AppColor.iconColor,
             maxRadius: 20,
-            child:FaIcon(FontAwesomeIcons.comment, color: AppColor.primaryTextColor),
+            child:SvgPicture.asset(ImageAssets.userHome_chat),
           ),
         ),
         SizedBox(width: 16),
@@ -89,7 +90,7 @@ Widget topBar() {
           child: CircleAvatar(
             backgroundColor: AppColor.iconColor,
             maxRadius: 20,
-            child: FaIcon(FontAwesomeIcons.bell, color:  AppColor.primaryTextColor),
+            child: SvgPicture.asset(ImageAssets.userHome_notification),
           ),
         ),
       ],

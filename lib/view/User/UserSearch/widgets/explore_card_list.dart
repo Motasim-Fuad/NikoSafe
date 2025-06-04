@@ -15,6 +15,25 @@ class ExploreCard extends StatelessWidget {
     this.height = 240,
   });
 
+  // Helper method for displaying stars
+  Widget _buildStarRating(double rating, {double iconSize = 14}) {
+    List<Widget> stars = [];
+    int fullStars = rating.floor();
+    double halfStar = rating - fullStars;
+
+    for (int i = 0; i < fullStars; i++) {
+      stars.add(Icon(Icons.star, color: Colors.amber, size: iconSize));
+    }
+    if (halfStar > 0) {
+      stars.add(Icon(Icons.star_half, color: Colors.amber, size: iconSize));
+    }
+    while (stars.length < 5) {
+      stars.add(Icon(Icons.star_border, color: Colors.amber, size: iconSize));
+    }
+    return Row(children: stars);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -32,14 +51,14 @@ class ExploreCard extends StatelessWidget {
                   height: height,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16)),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16),topRight: Radius.circular(16)),
                     image: DecorationImage(
                       image: AssetImage(item.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                // Rating badge (top-left)
+                // Rating badge (top-left) - Using numerical rating as per original design
                 Positioned(
                   bottom: 8,
                   left: 8,
@@ -118,6 +137,9 @@ class ExploreCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(height: 4), // Add spacing for the star rating
+                  // New: Display visual star rating here
+                  _buildStarRating(item.rating),
                 ],
               ),
             )

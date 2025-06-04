@@ -4,8 +4,13 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 
 class CustomBackButton extends StatelessWidget {
   final VoidCallback? onTap;
+  final Color? backgroundColor;
 
-  const CustomBackButton({Key? key, this.onTap}) : super(key: key);
+  const CustomBackButton({
+    Key? key,
+    this.onTap,
+    this.backgroundColor,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +18,7 @@ class CustomBackButton extends StatelessWidget {
       onPressed: onTap ?? () => Get.back(),
       icon: CircleAvatar(
         radius: 20,
-        backgroundColor: AppColor.iconColor,
+        backgroundColor: backgroundColor ?? AppColor.iconColor,
         child: Icon(
           Icons.arrow_back_ios_new,
           color: AppColor.primaryTextColor,

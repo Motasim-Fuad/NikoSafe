@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/view/User/UserHome/widget/connectTapView.dart';
 import 'package:nikosafe/view/User/UserHome/widget/feedTapView.dart';
 import 'package:nikosafe/view/User/UserHome/widget/userhomewidgets.dart';
@@ -110,7 +112,7 @@ class UserHomeView extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 23,
                           backgroundColor: AppColor.iconColor,
-                          child:FaIcon(FontAwesomeIcons.mapLocationDot, color: Colors.white) ,
+                          child:SvgPicture.asset(ImageAssets.userHome_location) ,
                         ),
                       ),
 
