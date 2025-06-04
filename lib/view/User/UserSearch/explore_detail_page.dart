@@ -35,6 +35,7 @@ class ExploreDetailPage extends StatelessWidget {
               Text("${item.date} • ${item.time}", style: TextStyle(color: AppColor.primaryTextColor)),
               Text("⭐ ${item.rating}", style: TextStyle(color: AppColor.primaryTextColor)),
               Text(item.subtitle, style: TextStyle(color: AppColor.primaryTextColor)),
+              Text(item.subtitle, style: TextStyle(color: AppColor.primaryTextColor)),
             ],
           ),
         ),
