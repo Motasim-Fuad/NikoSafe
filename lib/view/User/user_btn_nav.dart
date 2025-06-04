@@ -9,7 +9,7 @@ import 'package:nikosafe/view/User/UserHome/user_home.dart';
 import 'package:nikosafe/view/User/UserProfile/user_profile_view.dart';
 import 'package:nikosafe/view/User/UserScanner/user_scanner_view.dart';
 import 'package:nikosafe/view/User/UserSearch/explore_main_page.dart';
-import 'package:nikosafe/view/User/UserSearch/user_search_view.dart';
+
 
 
 import '../../View_Model/Controller/provider/providerBtmNavController.dart';
@@ -21,7 +21,6 @@ class UserBtnNavView extends StatelessWidget {
 
   final List<Widget> _pages = [
     UserHomeView(),
-   // UserSearchView(),
     ExploreMainPage(),
     UserScannerView(),
     UserDataView(),

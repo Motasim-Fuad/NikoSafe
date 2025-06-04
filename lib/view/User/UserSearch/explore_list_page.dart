@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/explore_card_list.dart';
 
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
@@ -17,10 +18,20 @@ class ExploreListPage extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(title: Text("All Events"),    backgroundColor: Colors.transparent,),
+        appBar: AppBar(
+          title: Text("All Events",style: TextStyle(color: AppColor.primaryTextColor),),
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          leading: CustomBackButton(),
+          automaticallyImplyLeading: false,
+
+        ),
         body: Column(
           children: [
-            SearchBarWidget(controller: controller),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SearchBarWidget(controller: controller),
+            ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 8),
