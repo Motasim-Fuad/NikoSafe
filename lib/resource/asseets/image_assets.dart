@@ -15,4 +15,21 @@ class ImageAssets{
 
 
 
+  static const String bar1="assets/images/bar1.jpg";
+  static const String bar2="assets/images/bar2.jpg";
+  static const String bar3="assets/images/bar3.jpg";
+  static const String bar4="assets/images/bar4.jpg";
+  static const String bar5="assets/images/bar5.jpg";
+  static const String club_even1="assets/images/club_even1.jpg";
+  static const String club_even2="assets/images/club_even2.jpg";
+  static const String club_even3="assets/images/club_even3.jpg";
+  static const String club_even4="assets/images/club_even4.jpg";
+
+  static const String restaurant1="assets/images/restaurant1.jpg";
+  static const String restaurant2="assets/images/restaurant2.jpg";
+  static const String restaurant3="assets/images/restaurant3.jpg";
+  static const String restaurant4="assets/images/restaurant4.jpg";
+
+
+
 }

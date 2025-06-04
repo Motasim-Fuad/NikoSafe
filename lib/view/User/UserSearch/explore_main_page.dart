@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/explore_card_carousel.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/search_bar.dart';
 
@@ -33,7 +34,28 @@ class ExploreMainPage extends StatelessWidget {
               Wrap(
                 spacing: 12,
                 children: [
-                  Chip(label: Text("Find a Ride")),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      // Your action here
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2BF8DF), // Button background color
+                      foregroundColor: Colors.white, // Text/icon color
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // Rounded corners
+                      ),
+                      elevation: 5, // Shadow depth
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: const Text('Find a Ride'),
+                  ),
+
+
                   Chip(label: Text("Therapy sessions")),
                   Chip(label: Text("Service Provider")),
                   Chip(label: Text("Trainer")),
