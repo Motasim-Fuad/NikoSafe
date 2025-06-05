@@ -10,6 +10,13 @@ import 'widgets/search_bar.dart';
 class ExploreListPage extends StatelessWidget {
   final controller = Get.find<ExploreController>();
 
+  final Map<String, String> categoryLabels = {
+    'all': 'All',
+    'restaurant': 'Restaurant',
+    'bar': 'Bars',
+    'club_event': 'Club events',
+  };
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,12 +26,14 @@ class ExploreListPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text("Explore",style: TextStyle(color: AppColor.primaryTextColor),),
+          title: Text(
+            "Explore",
+            style: TextStyle(color: AppColor.primaryTextColor),
+          ),
           backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: CustomBackButton(),
           automaticallyImplyLeading: false,
-
         ),
         body: Column(
           children: [
@@ -32,30 +41,52 @@ class ExploreListPage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: SearchBarWidget(controller: controller),
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 8),
+
+            // Rounded tab container
+            Obx(() => Container(
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Color(0xFF1C2F34),
+                borderRadius: BorderRadius.circular(30),
+              ),
               child: Row(
-                children: ['all', 'restaurant', 'bar', 'club_event'].map((cat) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Obx(() => ChoiceChip(
-                      label: Text(cat.toUpperCase()),
-                      selected: controller.selectedCategory.value == cat,
-                      onSelected: (_) => controller.filterByCategory(cat),
-                    )),
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: categoryLabels.entries.map((entry) {
+                  final key = entry.key;
+                  final label = entry.value;
+                  final isSelected = controller.selectedCategory.value == key;
+
+                  return GestureDetector(
+                    onTap: () => controller.filterByCategory(key),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 200),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Color(0xFF2D6A7B) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        label,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.white70,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   );
                 }).toList(),
               ),
-            ),
+            )),
 
+            // List of filtered items
             Expanded(
               child: Obx(() => ListView.builder(
                 padding: EdgeInsets.all(12),
                 itemCount: controller.filteredItems.length,
                 itemBuilder: (context, index) {
                   final item = controller.filteredItems[index];
-                  return ExploreCard(item: item); // uses single card
+                  return ExploreCard(item: item);
                 },
               )),
             ),
