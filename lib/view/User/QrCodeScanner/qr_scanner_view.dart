@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QrScannerView extends StatelessWidget {
@@ -29,18 +30,24 @@ class QrScannerView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Scan QR Code")),
-      body: MobileScanner(
-        onDetect: (BarcodeCapture capture) {
-          final List<Barcode> barcodes = capture.barcodes;
-          if (barcodes.isNotEmpty) {
-            final String? code = barcodes.first.rawValue;
-            if (code != null) {
-              _launchURL(code); // 👈 directly launch the scanned URL
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColor.backGroundColor
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(title:  Text("Scan QR Code",style: TextStyle(color: AppColor.primaryTextColor,fontWeight: FontWeight.bold),),backgroundColor: Colors.transparent,centerTitle: true,),
+        body: MobileScanner(
+          onDetect: (BarcodeCapture capture) {
+            final List<Barcode> barcodes = capture.barcodes;
+            if (barcodes.isNotEmpty) {
+              final String? code = barcodes.first.rawValue;
+              if (code != null) {
+                _launchURL(code); // 👈 directly launch the scanned URL
+              }
             }
-          }
-        },
+          },
+        ),
       ),
     );
   }

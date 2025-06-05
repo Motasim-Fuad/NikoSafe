@@ -13,58 +13,63 @@ class SignupView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1D2C35),
-      body: SafeArea(
-        child: Obx(() {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView(
-              children: [
-                const SizedBox(height: 20),
-                const Center(
-                  child: Text("Get Started Now", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                ),
-                const SizedBox(height: 8),
-                const Center(
-                  child: Text("Create an account or log in to explore about our app", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
-                ),
-                const SizedBox(height: 20),
-
-                Center(child: buildLoginSignUpToggle(controller)),
-
-                const SizedBox(height: 20),
-
-                // Toggle Role
-                if (!controller.isLogin.value)
-                  Column(
-                    children: [
-                      const Text("Choose Your Role",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 20,fontWeight: FontWeight.bold),),
-                      SizedBox(height: 20,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-
-                          buildTab("User", controller.isUser.value, () => controller.isUser.value = true),
-                          const SizedBox(width: 10),
-                          buildTab("Service Provider", !controller.isUser.value, () => controller.isUser.value = false),
-                        ],
-                      ),
-                    ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColor.backGroundColor
+      ),
+      child: Scaffold(
+        backgroundColor:Colors.transparent,
+        body: SafeArea(
+          child: Obx(() {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ListView(
+                children: [
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text("Get Started Now", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
+                  const SizedBox(height: 8),
+                  const Center(
+                    child: Text("Create an account or log in to explore about our app", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                  ),
+                  const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+                  Center(child: buildLoginSignUpToggle(controller)),
+
+                  const SizedBox(height: 20),
+
+                  // Toggle Role
+                  if (!controller.isLogin.value)
+                    Column(
+                      children: [
+                        const Text("Choose Your Role",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 20,fontWeight: FontWeight.bold),),
+                        SizedBox(height: 20,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            buildTab("User", controller.isUser.value, () => controller.isUser.value = true),
+                            const SizedBox(width: 10),
+                            buildTab("Service Provider", !controller.isUser.value, () => controller.isUser.value = false),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                  const SizedBox(height: 20),
 
 
-                controller.isLogin.value
-                    ? buildLoginForm(controller)
-                    : controller.isUser.value
-                    ? SignupUserView(controller: controller)
-                    : SignupProviderView(controller: controller),
-              ],
-            ),
-          );
-        }),
+                  controller.isLogin.value
+                      ? buildLoginForm(controller)
+                      : controller.isUser.value
+                      ? SignupUserView(controller: controller)
+                      : SignupProviderView(controller: controller),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
