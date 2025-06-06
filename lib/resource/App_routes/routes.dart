@@ -9,6 +9,7 @@ import 'package:nikosafe/view/Authentication/verification/otp_view.dart';
 import 'package:nikosafe/view/User/ProfileDetails/ProfileDetails.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePoll/create_poll_view.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/userCreatePostView.dart';
+import 'package:nikosafe/view/User/UserProfile/Screen/user_about_us.dart';
 import 'package:nikosafe/view/User/userNotification/user_notification_view.dart';
 import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view.dart';
 import 'package:nikosafe/view/User/user_btn_nav.dart';
@@ -18,6 +19,12 @@ import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
 import '../../view/Splash_view.dart';
 
+import '../../view/User/UserProfile/Screen/user_edit_profile.dart';
+import '../../view/User/UserProfile/Screen/user_emergency_contacts.dart';
+import '../../view/User/UserProfile/Screen/user_history.dart';
+import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
+import '../../view/User/UserProfile/Screen/user_support.dart';
+import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
 import '../../view/home/home_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
@@ -126,6 +133,49 @@ class AppRouts {
     GetPage(
       name: RouteName.profileDetailsPage,
       page: () => ProfileDetailsPage(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.userAboutUs,
+      page: () => UserAboutUs(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userEmergencyContactsView,
+      page: () => UserEmergencyContactsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userPrivacyPolicy,
+      page: () => UserPrivacyPolicy(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userSupport,
+      page: () => UserSupport(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userTearmsConditions,
+      page: () => UserTearmsConditions(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userHistory,
+      page: () => UserHistory(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userEditProfile,
+      page: () => UserEditProfile(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
