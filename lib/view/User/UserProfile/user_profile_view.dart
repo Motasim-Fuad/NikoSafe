@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import '../../../View_Model/Controller/user/MyProfile/my_profileController.dart';
-
 
 class UserProfileView extends StatelessWidget {
   final controller = Get.put(ProfileController());
@@ -10,12 +10,13 @@ class UserProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1B2B34),
-
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text("Profile", style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        automaticallyImplyLeading: false,
+        leading: CustomBackButton(),
         actions: const [
           Padding(
             padding: EdgeInsets.all(8.0),
@@ -55,13 +56,15 @@ class UserProfileView extends StatelessWidget {
                 child: const Text("View Profile", style: TextStyle(color: Colors.cyan)),
               ),
               const SizedBox(height: 20),
-              _buildTile(Icons.edit, "Edit Profile Details"),
-              _buildTile(Icons.history, "History"),
-              _buildTile(Icons.contacts, "Emergency contacts"),
-              _buildTile(Icons.support_agent, "Support"),
-              _buildTile(Icons.privacy_tip, "Privacy Policy"),
-              _buildTile(Icons.description, "Terms & Conditions"),
-              _buildTile(Icons.info_outline, "About Us"),
+
+              _buildTile(Icons.edit, "Edit Profile Details", () {}),
+              _buildTile(Icons.history, "History", () {}),
+              _buildTile(Icons.contacts, "Emergency contacts", () {}),
+              _buildTile(Icons.support_agent, "Support", () {}),
+              _buildTile(Icons.privacy_tip, "Privacy Policy", () {}),
+              _buildTile(Icons.description, "Terms & Conditions", () {}),
+              _buildTile(Icons.info_outline, "About Us", () {}),
+
               const SizedBox(height: 16),
               TextButton.icon(
                 onPressed: () {
@@ -82,23 +85,23 @@ class UserProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(IconData icon, String title) {
+  Widget _buildTile(IconData icon, String title, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF2C3E50),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: ListTile(
-          leading: Icon(icon, color: Colors.cyan),
-          title: Text(title, style: const TextStyle(color: Colors.white)),
-          trailing: const Icon(Icons.chevron_right, color: Colors.white),
-          onTap: () {},
+      child: GestureDetector(
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF2C3E50),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: ListTile(
+            leading: Icon(icon, color: Colors.cyan),
+            title: Text(title, style: const TextStyle(color: Colors.white)),
+            trailing: const Icon(Icons.chevron_right, color: Colors.white),
+            onTap: onTap,
+          ),
         ),
       ),
     );
   }
-
-
 }
