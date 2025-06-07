@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/resource/compunents/coustomNumericButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import '../../../../View_Model/Controller/userEmargencyContuctContrller/emergency_contact_controller.dart';
 
@@ -20,34 +21,38 @@ class UserEmergencyContactsView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Edit Contact"),
+        backgroundColor: AppColor.topLinear,
+        title:  Text("Edit Contact",style: TextStyle(color: AppColor.primaryTextColor),),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
+              style: TextStyle(color: Colors.white),
               controller: nameController,
-              decoration: const InputDecoration(hintText: "Enter name"),
+              decoration:  InputDecoration(hintText: "Enter name",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
               onChanged: (val) => name = val,
             ),
+
             TextField(
+              style: TextStyle(color: Colors.white),
               controller: numberController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(hintText: "Enter phone number"),
+              decoration:  InputDecoration(hintText: "Enter phone number",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
               onChanged: (val) => number = val,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              if (name.isNotEmpty && number.isNotEmpty) {
-                controller.editContact(index, name, number);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Update"),
-          ),
+          CustomNeumorphicButton(backgroundColor:Colors.red,Depth: 1,labelDepth: 0,label: "Cancel", onPressed: (){
+            Navigator.pop(context);
+          }),
+          CustomNeumorphicButton(backgroundColor: Colors.green,Depth: 20,labelDepth: 1,label: "Update", onPressed: (){
+            if (name.isNotEmpty && number.isNotEmpty) {
+              controller.editContact(index, name, number);
+              Navigator.pop(context);
+            }
+          }),
+
         ],
       ),
     );
@@ -60,32 +65,37 @@ class UserEmergencyContactsView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Add Emergency Contact"),
+        backgroundColor: AppColor.topLinear,
+        title:  Text("Add Emergency Contact",style: TextStyle(color: AppColor.primaryTextColor),),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              decoration: const InputDecoration(hintText: "Enter name"),
+              style: TextStyle(color: Colors.white),
+              decoration:  InputDecoration(hintText: "Enter name",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
               onChanged: (val) => name = val,
             ),
+            SizedBox(height: 10,),
             TextField(
+              style: TextStyle(color: Colors.white),
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(hintText: "Enter phone number"),
+              decoration:  InputDecoration(hintText: "Enter phone number",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
               onChanged: (val) => phoneNumber = val,
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-          ElevatedButton(
-            onPressed: () {
-              if (name.isNotEmpty && phoneNumber.isNotEmpty) {
-                controller.addContact(name, phoneNumber);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text("Add"),
-          ),
+          //TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          CustomNeumorphicButton(backgroundColor:Colors.red,Depth: 1,labelDepth: 0,label: "Cancel", onPressed: (){
+            Navigator.pop(context);
+          }),
+
+          CustomNeumorphicButton(backgroundColor: Colors.green,Depth: 20,labelDepth: 1,label: "Save", onPressed: (){
+            if (name.isNotEmpty && phoneNumber.isNotEmpty) {
+              controller.addContact(name, phoneNumber);
+              Navigator.pop(context);
+            }
+          }),
         ],
       ),
     );
@@ -115,7 +125,7 @@ class UserEmergencyContactsView extends StatelessWidget {
               Expanded(
                 child: Obx(() {
                   return controller.contactList.isEmpty
-                      ? const Center(child: Text("No emergency contacts added yet."))
+                      ?  Center(child: Text("No emergency contacts added yet.",style: TextStyle(color: AppColor.primaryTextColor),))
                       : ListView.builder(
                     itemCount: controller.contactList.length,
                     itemBuilder: (_, index) {

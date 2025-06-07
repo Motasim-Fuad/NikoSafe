@@ -24,7 +24,7 @@ class RouteName{
   static const String userSupport="/User_Support";
   static const String userTearmsConditions="/User_Tearms_Conditions";
   static const String userHistory="/User_History";
-  static const String userEditProfile="/User_EditProfile";
+  static const String userEditProfileView="/User_Edit_ProfileView";
 
 
 

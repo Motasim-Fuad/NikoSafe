@@ -38,12 +38,12 @@ class _UserSupportState extends State<UserSupport> {
           
             CustomTextField(
             label: "Issue Title",
-          
+          fillColor: AppColor.topLinear,
             controller: _titleText,
           
           ),
             CustomTextField(
-
+              fillColor: AppColor.topLinear,
             label: "User Description",
           
             controller: _descriptionText,

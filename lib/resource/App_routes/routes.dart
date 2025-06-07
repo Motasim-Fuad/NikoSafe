@@ -174,8 +174,8 @@ class AppRouts {
       transitionDuration: Duration(microseconds: 250),
     ),
     GetPage(
-      name: RouteName.userEditProfile,
-      page: () => UserEditProfile(),
+      name: RouteName.userEditProfileView,
+      page: () => UserEditProfileView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

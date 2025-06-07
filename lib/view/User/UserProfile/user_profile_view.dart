@@ -23,10 +23,12 @@ class UserProfileView extends StatelessWidget {
           centerTitle: true,
           automaticallyImplyLeading: false,
           leading: CustomBackButton(),
-          actions: const [
+          actions:  [
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.settings, color: Colors.white),
+              child: IconButton(onPressed: (){
+
+              }, icon:Icon(Icons.settings,color: Colors.white,) ),
             ),
           ],
         ),
@@ -64,7 +66,7 @@ class UserProfileView extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 _buildTile(Icons.edit, "Edit Profile Details", () {
-                  Get.toNamed(RouteName.profileDetailsPage);
+                  Get.toNamed(RouteName.userEditProfileView);
                 }),
                 _buildTile(Icons.history, "History", () {
                   Get.toNamed(RouteName.userHistory);

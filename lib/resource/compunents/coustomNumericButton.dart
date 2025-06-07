@@ -8,6 +8,7 @@ class CustomNeumorphicButton extends StatelessWidget {
   final Color? textColor;
   final Color? backgroundColor;
   final double? labelDepth; // ✅ New field for text depth
+  final double? Depth; // ✅ New field for text depth
 
   const CustomNeumorphicButton({
     super.key,
@@ -18,6 +19,7 @@ class CustomNeumorphicButton extends StatelessWidget {
     this.textColor,
     this.backgroundColor,
     this.labelDepth, // ✅ Allow optional custom depth
+    this.Depth, // ✅ Allow optional custom depth
   });
 
   @override
@@ -28,7 +30,7 @@ class CustomNeumorphicButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: NeumorphicStyle(
           color: backgroundColor ?? Color(0x427a6a6a),
-          depth: -5,
+          depth: labelDepth ?? -5,
           intensity: 1,
           shape: NeumorphicShape.convex,
           surfaceIntensity: 0.2,
@@ -45,7 +47,7 @@ class CustomNeumorphicButton extends StatelessWidget {
           label,
           style: NeumorphicStyle(
             color: textColor ?? Colors.white,
-            depth: labelDepth ?? 50, // ✅ Use custom or default depth
+            depth: labelDepth ?? 10, // ✅ Use custom or default depth
           ),
           textStyle: NeumorphicTextStyle(
             fontSize: 16,
