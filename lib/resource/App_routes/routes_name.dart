@@ -30,6 +30,7 @@ class RouteName{
   static const String userSettingsView="/User_SettingsView";
   static const String userChangePasswordView="/User_ChangePasswordView";
   static const String userDeleteAccauuntview="/UserDelete_Accauuntview";
+  static const String userCheckInView="/User_CheckInView";
 
 
 

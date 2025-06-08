@@ -31,7 +31,7 @@ Widget topBar() {
 
             } else if (value == 'Check_In') {
               // Navigate to check-in screen
-
+              Get.toNamed(RouteName.userCheckInView);
             }
           },
           itemBuilder: (context) => [

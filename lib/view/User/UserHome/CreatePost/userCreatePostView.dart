@@ -148,15 +148,25 @@ class UserCreatePostView extends GetView<UserCreatePostController> {
 
 
               // Add Location Button
-              Obx(() => RoundButton(
-                width: double.infinity,
-                title: controller.selectedLocation.value != null
-                    ? ' Location: ${controller.selectedLocation.value!.name}'
-                    : 'Add Location',
-                onPress: controller.navigateToAddLocation,
-              )),
-              const SizedBox(height: 30),
-
+              Obx((){
+                return GestureDetector(
+                  onTap: (){
+                    controller.navigateToAddLocation();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1,color: Colors.white),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(controller.selectedLocation.value != null
+                        ? ' Location: ${controller.selectedLocation.value!.name}'
+                        : 'Add Location',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                  ),
+                );
+              }),
+SizedBox(height: 20,),
               // Post Button
 
               Obx((){

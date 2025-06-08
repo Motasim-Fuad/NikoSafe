@@ -50,6 +50,8 @@ dependencies:
   printing: ^5.14.2 # To print or share the PDF
   path_provider: ^2.1.5 # To get temporary directory for saving PDF
   open_filex: ^4.7.0 # To open the generated PDF file
+  geolocator: ^14.0.1
+  geocoding: ^4.0.0
 
 dev_dependencies:
   flutter_test:

@@ -20,6 +20,7 @@ import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
 import '../../view/Splash_view.dart';
 
+import '../../view/User/UserHome/checkIn/user_checkin.dart';
 import '../../view/User/UserHome/user_home.dart';
 import '../../view/User/UserProfile/Screen/user_Settings/change_password/change_password_view.dart';
 import '../../view/User/UserProfile/Screen/user_Settings/userDeleteAccount/userDeleteAccountView.dart';
@@ -216,6 +217,12 @@ class AppRouts {
     GetPage(
       name: RouteName.userDeleteAccauuntview,
       page: () => UserDeleteAccauuntview(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userCheckInView,
+      page: () => UserCheckInView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
