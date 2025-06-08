@@ -3,7 +3,7 @@ class RouteName{
   static const String splashScreen= "/";
   static const String authView= "/Auth_view";
   static const String loginView="/Login_view";
-  static const String homeView="/Home_view";
+  static const String userHomeView="/User_HomeView";
   static const String emailView="/Email_View";
   static const String oTPView="/OTP_View";
   static const String forgotPasswordView="/Forgot_PasswordView";
@@ -25,6 +25,12 @@ class RouteName{
   static const String userTearmsConditions="/User_Tearms_Conditions";
   static const String userHistory="/User_History";
   static const String userEditProfileView="/User_Edit_ProfileView";
+  static const String userReviewPageView="/User_Review_PageView";
+  static const String userParchaseReceiptDetailsPage="/User_Parchase_ReceiptDetailsPage";
+  static const String userSettingsView="/User_SettingsView";
+  static const String userChangePasswordView="/User_ChangePasswordView";
+  static const String userDeleteAccauuntview="/UserDelete_Accauuntview";
+
 
 
 

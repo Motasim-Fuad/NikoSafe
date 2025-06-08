@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 
 import '../../../../../../../models/myProfileModel/user_history_booking_model.dart';
 
@@ -118,6 +120,8 @@ class UserHistoryBookingCard extends StatelessWidget {
             Colors.green,
             Colors.green.withOpacity(0.2),
                 () {
+
+              Get.toNamed(RouteName.userReviewPageView);
               // TODO: Handle review
               print('Leave a review tapped');
             },

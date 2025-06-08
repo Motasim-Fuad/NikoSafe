@@ -33,7 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   get: ^4.6.6
   shared_preferences: ^2.5.3
-  http:
+  http: ^1.4.0
   fluttertoast: ^8.2.12
   flutter_svg: ^2.0.7
   image_picker: ^1.1.2
@@ -46,6 +46,10 @@ dependencies:
   url_launcher: ^6.3.1
   syncfusion_flutter_charts: ^29.2.9
   intl: ^0.20.2
+  pdf: ^3.11.3 # For PDF generation
+  printing: ^5.14.2 # To print or share the PDF
+  path_provider: ^2.1.5 # To get temporary directory for saving PDF
+  open_filex: ^4.7.0 # To open the generated PDF file
 
 dev_dependencies:
   flutter_test:

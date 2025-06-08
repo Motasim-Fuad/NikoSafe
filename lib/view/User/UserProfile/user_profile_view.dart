@@ -27,7 +27,7 @@ class UserProfileView extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(8.0),
               child: IconButton(onPressed: (){
-
+                  Get.toNamed(RouteName.userSettingsView);
               }, icon:Icon(Icons.settings,color: Colors.white,) ),
             ),
           ],

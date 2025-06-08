@@ -10,6 +10,7 @@ import 'package:nikosafe/view/User/ProfileDetails/ProfileDetails.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePoll/create_poll_view.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/userCreatePostView.dart';
 import 'package:nikosafe/view/User/UserProfile/Screen/user_about_us.dart';
+
 import 'package:nikosafe/view/User/userNotification/user_notification_view.dart';
 import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view.dart';
 import 'package:nikosafe/view/User/user_btn_nav.dart';
@@ -19,9 +20,15 @@ import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
 import '../../view/Splash_view.dart';
 
+import '../../view/User/UserHome/user_home.dart';
+import '../../view/User/UserProfile/Screen/user_Settings/change_password/change_password_view.dart';
+import '../../view/User/UserProfile/Screen/user_Settings/userDeleteAccount/userDeleteAccountView.dart';
+import '../../view/User/UserProfile/Screen/user_Settings/user_Settings.dart';
 import '../../view/User/UserProfile/Screen/user_edit_profile.dart';
 import '../../view/User/UserProfile/Screen/user_emergency_contacts.dart';
 import '../../view/User/UserProfile/Screen/user_history/user_history.dart';
+import '../../view/User/UserProfile/Screen/user_history/user_parchase_details_view/user_parchase_details_view.dart';
+import '../../view/User/UserProfile/Screen/user_history/user_review_view/user_review_view.dart';
 import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
 import '../../view/User/UserProfile/Screen/user_support.dart';
 import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
@@ -55,8 +62,8 @@ class AppRouts {
       transitionDuration: Duration(microseconds: 250),
     ),
     GetPage(
-      name: RouteName.homeView,
-      page: () => HomeView(),
+      name: RouteName.userHomeView,
+      page: () => UserHomeView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
@@ -179,18 +186,39 @@ class AppRouts {
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
+
+    GetPage(
+      name: RouteName.userReviewPageView,
+      page: () => UserReviewPageView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userParchaseReceiptDetailsPage,
+      page: () => UserParchaseReceiptDetailsPage(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.userSettingsView,
+      page: () => UserSettingsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userChangePasswordView,
+      page: () => UserChangePasswordView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.userDeleteAccauuntview,
+      page: () => UserDeleteAccauuntview(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
   ];
 }
 
-// GetPage(
-//     name: RouteName.userHomeView,
-//     page: ()=> UserHomeView(),
-//     transition: Transition.leftToRightWithFade,
-//     transitionDuration: Duration(microseconds: 250),
-// ),
-// GetPage(
-//     name: RouteName.prviderHomeView,
-//     page: ()=> ProviderHomeView(),
-//     transition: Transition.leftToRightWithFade,
-//     transitionDuration: Duration(microseconds: 250),
-// ),

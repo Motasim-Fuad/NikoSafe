@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nikosafe/models/myProfileModel/user_history_purchase_model.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 
 
 class UserhistoryParchaseCardWidgets extends StatelessWidget {
@@ -99,6 +101,7 @@ class UserhistoryParchaseCardWidgets extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   // TODO: Handle view action
+                  Get.toNamed(RouteName.userParchaseReceiptDetailsPage);
                   print('View tapped for ${purchase.itemName}');
                 },
                 child: Container(

@@ -38,7 +38,7 @@ void loginApi(){
         Get.delete<LoginViewModel>(); // a ti loginiewmodel class ar data golo clear korba ,,
         // fola ram kom conjume hoba ,, and oi faka space ono kaja lakba
 
-        Get.offNamed(RouteName.homeView)!.then((value) {});
+        Get.offNamed(RouteName.userHomeView)!.then((value) {});
         Utils.snackBar("login", " login successfully");
       }).onError((error, stackTrace) {
 
