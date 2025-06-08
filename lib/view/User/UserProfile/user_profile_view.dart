@@ -22,7 +22,7 @@ class UserProfileView extends StatelessWidget {
           title: const Text("Profile", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           automaticallyImplyLeading: false,
-          leading: CustomBackButton(),
+
           actions:  [
             Padding(
               padding: EdgeInsets.all(8.0),
@@ -60,7 +60,9 @@ class UserProfileView extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+
+                  },
                   child: const Text("View Profile", style: TextStyle(color: Colors.cyan)),
                 ),
                 const SizedBox(height: 20),

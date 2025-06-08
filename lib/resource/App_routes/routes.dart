@@ -21,7 +21,7 @@ import '../../view/Splash_view.dart';
 
 import '../../view/User/UserProfile/Screen/user_edit_profile.dart';
 import '../../view/User/UserProfile/Screen/user_emergency_contacts.dart';
-import '../../view/User/UserProfile/Screen/user_history.dart';
+import '../../view/User/UserProfile/Screen/user_history/user_history.dart';
 import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
 import '../../view/User/UserProfile/Screen/user_support.dart';
 import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
@@ -169,7 +169,7 @@ class AppRouts {
     ),
     GetPage(
       name: RouteName.userHistory,
-      page: () => UserHistory(),
+      page: () => UserHistoryScreen(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
