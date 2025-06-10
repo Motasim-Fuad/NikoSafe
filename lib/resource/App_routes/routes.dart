@@ -33,6 +33,9 @@ import '../../view/User/UserProfile/Screen/user_history/user_review_view/user_re
 import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
 import '../../view/User/UserProfile/Screen/user_support.dart';
 import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
+import '../../view/User/UserSearch/TheraphySessions/theraphy_sessions_view.dart';
+import '../../view/User/UserSearch/trainer/Trainer_profile/trainer_profile.dart';
+import '../../view/User/UserSearch/trainer/tainer_list_view.dart';
 import '../../view/home/home_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
@@ -223,6 +226,24 @@ class AppRouts {
     GetPage(
       name: RouteName.userCheckInView,
       page: () => UserCheckInView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.trainerView,
+      page: () => TrainerView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.trainerProfile,
+      page: () => TrainerProfile(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.theraphySessionsView,
+      page: () => TheraphySessionsView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

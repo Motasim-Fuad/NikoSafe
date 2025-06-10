@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
@@ -63,7 +64,9 @@ class ExploreMainPage extends StatelessWidget {
                       CustomSectionButton(
                         title: "Therapy sessions",
                         icon:SvgPicture.asset(ImageAssets.therapy),
-                        onPress: () {},
+                        onPress: () {
+                          Get.toNamed(RouteName.theraphySessionsView);
+                        },
                         height: size.height * 0.07, // 7% of screen height
                         width: size.width * 0.5,    // 40% of screen width
                         loading: false,
@@ -93,7 +96,9 @@ class ExploreMainPage extends StatelessWidget {
                       CustomSectionButton(
                         title: "Trainer",
                         icon:SvgPicture.asset(ImageAssets.trainer),
-                        onPress: () {},
+                        onPress: () {
+                          Get.toNamed(RouteName.trainerView);
+                        },
                         height: size.height * 0.07, // 7% of screen height
                         width: size.width * 0.4,    // 40% of screen width
                         loading: false,

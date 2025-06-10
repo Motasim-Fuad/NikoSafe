@@ -44,5 +44,8 @@ class ImageAssets{
   static const String trainer="assets/icons/trainer.svg";
 
 
+  static const String location="assets/images/location.png";
+
+
 
 }
