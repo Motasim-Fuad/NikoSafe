@@ -47,5 +47,12 @@ class ImageAssets{
   static const String location="assets/images/location.png";
 
 
+  static const String spa1="assets/images/spa1.jpg";
+  static const String spa2="assets/images/spa2.jpg";
+  static const String spa3="assets/images/spa3.jpg";
+  static const String spa4="assets/images/spa4.png";
+
+
+
 
 }

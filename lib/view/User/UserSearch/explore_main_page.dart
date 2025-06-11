@@ -65,7 +65,7 @@ class ExploreMainPage extends StatelessWidget {
                         title: "Therapy sessions",
                         icon:SvgPicture.asset(ImageAssets.therapy),
                         onPress: () {
-                          Get.toNamed(RouteName.theraphySessionsView);
+                          Get.toNamed(RouteName.theraphySessionListView);
                         },
                         height: size.height * 0.07, // 7% of screen height
                         width: size.width * 0.5,    // 40% of screen width

@@ -3,7 +3,7 @@ import '../../../models/userSearch/trainer/trainer_model.dart';
 
 class TrainerRepository {
   Future<List<TrainerModel>> fetchTrainers() async {
-    await Future.delayed(const Duration(seconds: 1)); // simulate network delay
+    await Future.delayed(const Duration(seconds: 1));
 
     return [
       TrainerModel(
@@ -19,6 +19,7 @@ class TrainerRepository {
         experience: '8+ Years',
         rate: '\$45/hour',
         imageUrl: ImageAssets.bar2,
+
       ),
       TrainerModel(
         name: 'Mike Tyson',

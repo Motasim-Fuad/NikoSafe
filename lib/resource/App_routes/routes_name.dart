@@ -33,7 +33,8 @@ class RouteName{
   static const String userCheckInView="/User_CheckInView";
   static const String trainerView="/Trainer_View";
   static const String trainerProfile="/Trainer_Profile";
-  static const String theraphySessionsView="/Theraphy_SessionsView";
+  static const String theraphySessionListView="/Theraphy_Session_ListView";
+  static const String theraphySessionsDetailsView="/Theraphy_SessionsDetails_View";
 
 
 

@@ -33,6 +33,7 @@ import '../../view/User/UserProfile/Screen/user_history/user_review_view/user_re
 import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
 import '../../view/User/UserProfile/Screen/user_support.dart';
 import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
+import '../../view/User/UserSearch/TheraphySessions/Theraphy_Sessions_Details.dart' show TheraphySessionsDetailsView;
 import '../../view/User/UserSearch/TheraphySessions/theraphy_sessions_view.dart';
 import '../../view/User/UserSearch/trainer/Trainer_profile/trainer_profile.dart';
 import '../../view/User/UserSearch/trainer/tainer_list_view.dart';
@@ -242,8 +243,15 @@ class AppRouts {
       transitionDuration: Duration(microseconds: 250),
     ),
     GetPage(
-      name: RouteName.theraphySessionsView,
-      page: () => TheraphySessionsView(),
+      name: RouteName.theraphySessionListView,
+      page: () => TheraphySessionListView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.theraphySessionsDetailsView,
+      page: () => TheraphySessionsDetailsView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
