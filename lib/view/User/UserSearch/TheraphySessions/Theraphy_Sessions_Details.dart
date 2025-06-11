@@ -39,15 +39,19 @@ class  TheraphySessionsDetailsView extends StatelessWidget {
                   height: 200,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     image:  DecorationImage(image: AssetImage(theraphy.imageUrl),fit: BoxFit.cover),
                   ),
 
                 ),
+
+                 SizedBox(height: 20,),
                  Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                    children: [
-                     Text(theraphy.name),
-                     Text("\$${theraphy.price} per session"),
+                     Text(theraphy.name,style: TextStyle(color: AppColor.primaryTextColor),),
+
+                     Text("${theraphy.price} per session",style: TextStyle(color: AppColor.primaryTextColor),),
                    ],
                  ),
 
@@ -55,12 +59,29 @@ class  TheraphySessionsDetailsView extends StatelessWidget {
                   children: [
                     Column(
                       children: [
-                            Text(theraphy.weekend),
-                        Text(theraphy.time),
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today_outlined,color: Colors.white,size: 16,),
+                            SizedBox(width: 8,),
+                            Text(theraphy.weekend,style: TextStyle(color: AppColor.primaryTextColor),),
+                          ],
+                        ),
+                      Row(
+                          children: [
+                            SizedBox(width: 5,),
+                            Icon(Icons.access_time,color: Colors.white,size: 16,),
+                            SizedBox(width: 8,),
+                            Text(theraphy.time,style: TextStyle(color: AppColor.primaryTextColor),),
+                          ],
+                        ),
+
+
+
                       ],
                     ),
+                    Spacer(),
 
-                    Text(theraphy.isAvailable ? "Available" : "Not Available",),
+                    Text(theraphy.isAvailable ? "Available" : "Not Available",style: TextStyle(color: AppColor.primaryTextColor),),
                   ],
                 ),
 
