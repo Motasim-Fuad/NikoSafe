@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/view/provider/ProviderData/provider_data.dart';
 import 'package:nikosafe/view/provider/ProviderHome/provider_home.dart';
 
@@ -28,7 +29,7 @@ class ProviderBtmNavView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0E1C24), // App-wide background color
+      backgroundColor: Colors.transparent, // App-wide background color
       body: PageView(
         controller: controller.pageController,
         physics: const NeverScrollableScrollPhysics(),
@@ -36,7 +37,7 @@ class ProviderBtmNavView extends StatelessWidget {
       ),
       bottomNavigationBar: Obx(() => ConvexAppBar(
         style: TabStyle.flip,
-        backgroundColor: const Color(0xFF1C2A33),
+        backgroundColor: AppColor.navbarColor,
         activeColor: Colors.cyanAccent,
         color: Colors.grey,
         initialActiveIndex: controller.selectedIndex.value,

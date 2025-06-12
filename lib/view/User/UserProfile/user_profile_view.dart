@@ -116,7 +116,7 @@ class UserProfileView extends StatelessWidget {
       child: GestureDetector(
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF2C3E50),
+            color: AppColor.iconColor,
             borderRadius: BorderRadius.circular(14),
           ),
           child: ListTile(

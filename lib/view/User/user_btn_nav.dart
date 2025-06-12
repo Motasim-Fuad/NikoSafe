@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:nikosafe/View_Model/Controller/user/user_btm_navController.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/view/User/QrCodeScanner/qr_scanner_view.dart';
 import 'package:nikosafe/view/User/UserData/demo/view.dart';
 import 'package:nikosafe/view/User/UserData/user_data_view.dart';
@@ -33,15 +34,16 @@ class UserBtnNavView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0E1C24), // App-wide background color
+      backgroundColor: Colors.transparent, // App-wide background color
       body: PageView(
         controller: controller.pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: _pages,
       ),
       bottomNavigationBar: Obx(() => ConvexAppBar(
+
         style: TabStyle.flip,
-        backgroundColor: const Color(0xFF1C2A33),
+        backgroundColor:AppColor.navbarColor,
         activeColor: Colors.cyanAccent,
         color: Colors.grey,
         initialActiveIndex: controller.selectedIndex.value,

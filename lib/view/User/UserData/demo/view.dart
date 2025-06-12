@@ -4,10 +4,14 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/coustomTextField.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../../../View_Model/toggle_tab_controller.dart';
+import '../../../../resource/compunents/toggle_tab_button.dart';
 import 'controller.dart';
 
 class BacChartView extends StatelessWidget {
   final BacChartController controller = Get.put(BacChartController());
+  final ToggleTabController toggleTabController = Get.put(ToggleTabController());
+
 
   final TextEditingController volumeController = TextEditingController(); // ml
   final TextEditingController abvController = TextEditingController();    // %
@@ -38,26 +42,17 @@ class BacChartView extends StatelessWidget {
             children: [
 
               const SizedBox(height: 20),
-              Center(
-                child: Obx(() => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: BacViewMode.values.map((mode) {
-                    final isSelected = controller.selectedMode.value == mode;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: ElevatedButton(
 
-                        onPressed: () => controller.selectedMode.value = mode,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isSelected ? Colors.teal : Colors.grey,
-                          foregroundColor: Colors.white,
 
-                        ),
-                        child: Text(mode.name.toUpperCase()),
-                      ),
-                    );
-                  }).toList(),
-                )),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: RoundedToggleTab(
+                  tabs: ['HOURLY', 'WEEKLY', 'MONTHLY'], // Replace with your BacViewMode names
+                  controller: toggleTabController,       // You’ll define this below
+                  onTap: (index) {
+                    controller.selectedMode.value = BacViewMode.values[index];
+                  },
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -141,24 +136,28 @@ class BacChartView extends StatelessWidget {
                 controller: volumeController,
                 hintText: "Volume of alcohol consumed (ml)",
                 keyboardType: TextInputType.number,
+                fillColor: AppColor.iconColor,
               ),
               SizedBox(height: 10,),
               CustomTextField(
                 controller: abvController,
                 hintText: "Alcohol percentage (ABV)",
                 keyboardType: TextInputType.number,
+                fillColor: AppColor.iconColor,
               ),
               SizedBox(height: 10,),
               CustomTextField(
                 controller: weightController,
                 hintText: "Your weight (kg)",
                 keyboardType: TextInputType.number,
+                fillColor: AppColor.iconColor,
               ),
               SizedBox(height: 10,),
               CustomTextField(
                 controller: hoursController,
                 hintText: "Hours since drinking",
                 keyboardType: TextInputType.number,
+                fillColor: AppColor.iconColor,
               ),
 
               const SizedBox(height: 10),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/ChatModel/chat_model.dart';
+import '../../../resource/Colors/app_colors.dart';
 
 class ChatBubble extends StatelessWidget {
   final ChatModel message;
@@ -18,7 +19,7 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
-          color: isMe ? Colors.green : const Color(0xFF2A2A2A),
+          color: isMe ? Colors.green : AppColor.iconColor,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(

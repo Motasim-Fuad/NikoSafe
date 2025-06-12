@@ -127,7 +127,7 @@ Widget healthCard(FeedController controller) {
     margin: EdgeInsets.all(12),
     padding: EdgeInsets.all(12),
     decoration: BoxDecoration(
-      color: Color(0xFF23343F),
+      color: AppColor.iconColor,
       borderRadius: BorderRadius.circular(12),
     ),
     child: Row(
@@ -155,7 +155,7 @@ Widget healthCard(FeedController controller) {
 Widget buildPostCard(PostModel post) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    color: Color(0xFF1B2A33),
+    color: AppColor.iconColor,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

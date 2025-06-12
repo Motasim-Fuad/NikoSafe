@@ -33,7 +33,7 @@ class ChatListView extends StatelessWidget {
                 hintStyle: const TextStyle(color: Colors.white54),
                 prefixIcon: const Icon(Icons.search, color: Colors.white54),
                 filled: true,
-                fillColor: const Color(0xFF2A2A2A),
+                fillColor:AppColor.iconColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,

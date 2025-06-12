@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nikosafe/models/Notification/userNotification_model.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 class UserNotificationCard extends StatelessWidget {
@@ -10,7 +11,7 @@ class UserNotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFF2A2F3A),
+      color: AppColor.iconColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Padding(
