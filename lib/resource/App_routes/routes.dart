@@ -37,6 +37,8 @@ import '../../view/User/UserSearch/TheraphySessions/Theraphy_Sessions_Details.da
 import '../../view/User/UserSearch/TheraphySessions/theraphy_sessions_view.dart';
 import '../../view/User/UserSearch/trainer/Trainer_profile/trainer_profile.dart';
 import '../../view/User/UserSearch/trainer/tainer_list_view.dart';
+import '../../view/User/UserSearch/userServiceProvider/UserServiceProviderList/userServiceProviderListView.dart';
+import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsView.dart';
 import '../../view/home/home_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
@@ -252,6 +254,18 @@ class AppRouts {
     GetPage(
       name: RouteName.theraphySessionsDetailsView,
       page: () => TheraphySessionsDetailsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userserviceproviderlistview,
+      page: () => Userserviceproviderlistview(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.userServiceProviderDetailView,
+      page: () => UserServiceProviderDetailView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

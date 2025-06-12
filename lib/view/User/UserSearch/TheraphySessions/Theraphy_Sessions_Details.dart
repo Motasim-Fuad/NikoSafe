@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:nikosafe/models/userSearch/theraphy_session/theraphy_session_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/view/User/UserSearch/TheraphySessions/theraphy_About/therephy_about_view.dart';
+import 'package:nikosafe/view/User/UserSearch/TheraphySessions/therapy_receptions/theraphy_recptions_view.dart';
 
 import '../../../../View_Model/toggle_tab_controller.dart';
 import '../../../../resource/compunents/toggle_tab_button.dart';
@@ -94,13 +96,11 @@ class  TheraphySessionsDetailsView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Expanded(
-                //   child: Obx(() {
-                //     return toggleController.selectedIndex.value == 0
-                //         ? TrainerReceptionView()
-                //         : TrainerAboutView();
-                //   }),
-                // ),
+                Obx(() {
+                  return toggleController.selectedIndex.value == 0
+                      ? TheraphyRecptionsView()
+                      : TherephyAboutView();
+                }),
               ],
             ),
           ),

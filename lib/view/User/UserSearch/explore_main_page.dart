@@ -84,7 +84,9 @@ class ExploreMainPage extends StatelessWidget {
                       CustomSectionButton(
                         title: "Service Provider",
                         icon:SvgPicture.asset(ImageAssets.services),
-                        onPress: () {},
+                        onPress: () {
+                          Get.toNamed(RouteName.userserviceproviderlistview);
+                        },
                         height: size.height * 0.07, // 7% of screen height
                         width: size.width * 0.5,    // 40% of screen width
                         loading: false,

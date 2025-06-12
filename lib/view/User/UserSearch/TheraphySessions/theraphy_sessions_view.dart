@@ -133,11 +133,6 @@ class TheraphySessionListView extends StatelessWidget {
                                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Colors.white),
                                     ),
                                     const SizedBox(height: 6),
-                                    // if (session.description != null)
-                                    //   Text(
-                                    //     session.description!,
-                                    //     style: const TextStyle(color: Colors.grey),
-                                    //   ),
                                   ],
                                 ),
                               ),

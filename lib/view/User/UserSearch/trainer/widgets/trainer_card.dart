@@ -51,7 +51,6 @@ class TrainerCard extends StatelessWidget {
               Text("View Details",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),),
               SizedBox(width: 8,),
 
-              // RoundButton(width: 40,height: 40,title: "", onPress: (){})
 
               CircleAvatar(
                 backgroundColor: AppColor.iconColor,
