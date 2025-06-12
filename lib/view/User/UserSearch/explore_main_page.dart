@@ -34,6 +34,7 @@ class ExploreMainPage extends StatelessWidget {
         appBar: AppBar(
           title: Text("Explore",style: TextStyle(color: AppColor.primaryTextColor,),),
           backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         centerTitle: true,
         ),
         body: SingleChildScrollView(

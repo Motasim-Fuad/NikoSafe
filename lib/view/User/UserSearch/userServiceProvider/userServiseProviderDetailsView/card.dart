@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../resource/Colors/app_colors.dart';
+
 class BuildInfoCard extends StatelessWidget {
   final String title;
   final Widget content;
@@ -17,7 +19,7 @@ class BuildInfoCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0x99254A4A),
+        color:  AppColor.iconColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(width: 1,color: Colors.grey)
       ),

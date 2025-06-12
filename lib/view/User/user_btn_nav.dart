@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:nikosafe/View_Model/Controller/user/user_btm_navController.dart';
 import 'package:nikosafe/view/User/QrCodeScanner/qr_scanner_view.dart';
+import 'package:nikosafe/view/User/UserData/demo/view.dart';
 import 'package:nikosafe/view/User/UserData/user_data_view.dart';
 import 'package:nikosafe/view/User/UserHome/user_home.dart';
 import 'package:nikosafe/view/User/UserProfile/user_profile_view.dart';
@@ -23,7 +24,8 @@ class UserBtnNavView extends StatelessWidget {
     ExploreMainPage(),
     // UserScannerView(),
     QrScannerView(),
-    UserDataView(),
+    // UserDataView(),
+    BacChartView(),
     UserProfileView(),
 
   ];

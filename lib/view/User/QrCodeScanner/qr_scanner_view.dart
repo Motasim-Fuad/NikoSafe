@@ -36,7 +36,16 @@ class QrScannerView extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(title:  Text("Scan QR Code",style: TextStyle(color: AppColor.primaryTextColor,fontWeight: FontWeight.bold),),backgroundColor: Colors.transparent,centerTitle: true,),
+        appBar: AppBar(title:  Text("Scan QR Code",
+          style: TextStyle(
+              color: AppColor.primaryTextColor,
+              fontWeight: FontWeight.bold
+          ),
+        ),
+          backgroundColor: Colors.transparent,
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+        ),
         body: MobileScanner(
           onDetect: (BarcodeCapture capture) {
             final List<Barcode> barcodes = capture.barcodes;
