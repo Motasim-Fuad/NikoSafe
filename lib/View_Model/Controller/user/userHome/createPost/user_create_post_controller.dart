@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:nikosafe/models/userCreatePost/user_create_post_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
+import 'package:nikosafe/utils/utils.dart';
 
 
 import '../../../../../Repositry/userHome_repo/user_create_post_repo.dart';
@@ -41,23 +42,15 @@ class UserCreatePostController extends GetxController {
     // For now, just add a placeholder URL.
     final newPhotoUrl = 'https://placehold.co/100x100/png?text=Photo${photoUrls.length + 1}';
     photoUrls.add(newPhotoUrl);
-    Get.snackbar(
-      'Photo Added',
-      'A placeholder photo has been added.',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
+   Utils.snackBar('Photo Added',
+       'A placeholder photo has been added.');
   }
 
   Future<void> createPost() async {
     if (descriptionController.text.trim().isEmpty) {
-      Get.snackbar(
+      Utils.snackBar(
         'Error',
         'Description cannot be empty.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
       return;
     }
@@ -75,12 +68,10 @@ class UserCreatePostController extends GetxController {
       final success = await userPostRepository.createPost(post);
 
       if (success) {
-        Get.snackbar(
+        Utils.snackBar(
           'Success',
           'Post created successfully!',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+
         );
         // Clear fields after successful post
         descriptionController.clear();
@@ -88,22 +79,17 @@ class UserCreatePostController extends GetxController {
         selectedLocation.value = null;
         photoUrls.clear();
       } else {
-        Get.snackbar(
+        Utils.snackBar(
           'Error',
           'Failed to create post. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+
         );
       }
     } catch (e) {
       print('Error creating post: $e');
-      Get.snackbar(
+      Utils.snackBar(
         'Error',
         'An unexpected error occurred.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
       );
     } finally {
       isPosting.value = false;

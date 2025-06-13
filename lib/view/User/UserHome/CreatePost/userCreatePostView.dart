@@ -44,12 +44,16 @@ class UserCreatePostView extends GetView<UserCreatePostController> {
               ),
               const SizedBox(height: 8),
               TextField(
+
                 controller: controller.descriptionController,
                 maxLines: 5,
-                decoration: const InputDecoration(
+                decoration:  InputDecoration(
+                  filled: true,
+                  fillColor: AppColor.iconColor,
                   hintText: "What's on your mind?",
+                  hintStyle: TextStyle(color: Colors.white70),
                   alignLabelWithHint: true,
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder( borderSide: BorderSide(width: 1,color: Colors.white)),
                 ),
                 style: const TextStyle(color: Colors.white),
               ),
@@ -63,9 +67,12 @@ class UserCreatePostView extends GetView<UserCreatePostController> {
               const SizedBox(height: 8),
               TextField(
                 controller: controller.tagsController,
-                decoration: const InputDecoration(
+                decoration:  InputDecoration(
+                  filled: true,
+                  fillColor: AppColor.iconColor,
                   border: OutlineInputBorder(),
                   hintText: "e.g., food, travel, nature (comma separated)",
+                  hintStyle: TextStyle(color: Colors.white70)
                 ),
                 style: const TextStyle(color: Colors.white),
               ),
@@ -83,7 +90,7 @@ class UserCreatePostView extends GetView<UserCreatePostController> {
                   height: 150,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2A2A2A),
+                    color: AppColor.iconColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade700, style: BorderStyle.solid),
                   ),
@@ -131,7 +138,7 @@ class UserCreatePostView extends GetView<UserCreatePostController> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A),
+                            color:AppColor.iconColor,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.grey.shade700, style: BorderStyle.solid),
                           ),
