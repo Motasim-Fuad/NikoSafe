@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? label;
@@ -54,7 +55,7 @@ class CustomTextField extends StatelessWidget {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: fillColor ?? const Color(0xFF2C2F38),
+            fillColor: fillColor ?? AppColor.iconColor,
             hintText: hintText,
             hintStyle: const TextStyle(color: Colors.grey),
             prefixIcon: prefixIcon != null

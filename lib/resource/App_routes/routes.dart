@@ -40,6 +40,7 @@ import '../../view/User/UserSearch/trainer/tainer_list_view.dart';
 import '../../view/User/UserSearch/userServiceProvider/UserServiceProviderList/userServiceProviderListView.dart';
 import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsView.dart';
 import '../../view/home/home_view.dart';
+import '../../view/provider/ProviderHome/provider_notification_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
 class AppRouts {
@@ -266,6 +267,13 @@ class AppRouts {
     GetPage(
       name: RouteName.userServiceProviderDetailView,
       page: () => UserServiceProviderDetailView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.providerNotificationBottomSheet,
+      page: () => ProviderNotificationBottomSheet(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

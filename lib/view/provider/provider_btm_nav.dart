@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/view/provider/ProviderData/provider_data.dart';
-import 'package:nikosafe/view/provider/ProviderHome/provider_home.dart';
-
+import 'package:nikosafe/view/provider/ProviderHome/provider_home_view.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/provider_profile_view.dart';
-import 'package:nikosafe/view/provider/ProviderScanner/provider_scanner_view.dart';
-import 'package:nikosafe/view/provider/ProviderSearch/provider_search_view.dart';
+
 
 
 import '../../View_Model/Controller/provider/providerBtmNavController.dart';
+import 'ProviderTaskManagement/providerTaskManagement.dart';
 
 class ProviderBtmNavView extends StatelessWidget {
   ProviderBtmNavView({super.key});
@@ -20,8 +19,8 @@ class ProviderBtmNavView extends StatelessWidget {
 
   final List<Widget> _pages = [
     ProviderHomeView(),
-    ProviderSearchView(),
-    ProviderScannerView(),
+
+    ProvidertaskmanagementView(),
     ProviderDataView(),
     ProviderProfileView(),
   ];
@@ -44,8 +43,7 @@ class ProviderBtmNavView extends StatelessWidget {
         onTap: controller.changePage,
         items:  [
           TabItem(icon: Icons.home, title: "Home"),
-          TabItem(icon: Icons.search, title: "Search"),
-          TabItem(icon: Icons.qr_code_scanner, title: "Scan"),
+          TabItem(icon: FontAwesomeIcons.fileLines, title: "Task"),
           TabItem(icon: FontAwesomeIcons.chartColumn, title: "Chart"),
           TabItem(icon: Icons.person, title: "Profile"),
         ],

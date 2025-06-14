@@ -19,6 +19,8 @@ class AppColor{
 
   static const Color iconColor= Color(0x1affffff);
 
+  static const Color cardColor= Color(0x33ffffff);
+
 
   static const Color navbarColor= Color(0xFF2C4349);
 

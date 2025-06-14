@@ -37,6 +37,7 @@ class RouteName{
   static const String theraphySessionsDetailsView="/Theraphy_SessionsDetails_View";
   static const String userserviceproviderlistview="/User_service_providerlistview";
   static const String userServiceProviderDetailView="/UserService_Provider_DetailView";
+  static const String providerNotificationBottomSheet="/Provider_Notification_BottomSheet";
 
 
 
