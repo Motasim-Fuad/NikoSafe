@@ -25,7 +25,7 @@ class ProviderEarningDataDetailsView extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(earning.avatarUrl ?? ''),
+              backgroundImage: AssetImage(earning.avatarUrl ?? ''),
             ),
             const SizedBox(height: 20),
             _infoRow('Name', earning.name),
