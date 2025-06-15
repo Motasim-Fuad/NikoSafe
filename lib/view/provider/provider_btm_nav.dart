@@ -21,7 +21,7 @@ class ProviderBtmNavView extends StatelessWidget {
     ProviderHomeView(),
 
     ProvidertaskmanagementView(),
-    ProviderDataView(),
+    ProviderEarningDataView(),
     ProviderProfileView(),
   ];
 
