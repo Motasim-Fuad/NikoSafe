@@ -13,6 +13,14 @@ class ProviderEarningDataView extends StatelessWidget {
       appBar: AppBar(title: const Text('Earnings')),
       body: Column(
         children: [
+
+          Text("hvsdhbvjhcbjhsdbcvjhbjhdsbcjhbjhcvbjhsdgujhbdfbuhbjhbuihgjhvcbujvhiuhfbjhbv dfsvhkjdfbdfjhfvgb"),
+
+          Stack(
+            children: [
+
+            ],
+          ),
           _buildBalanceCard(),
           const SizedBox(height: 16),
           _buildEarningsTable(),
@@ -23,7 +31,7 @@ class ProviderEarningDataView extends StatelessWidget {
 
   Widget _buildBalanceCard() {
     return Container(
-      margin: const EdgeInsets.all(16),
+
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.teal.shade800,
