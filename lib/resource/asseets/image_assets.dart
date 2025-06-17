@@ -53,6 +53,9 @@ class ImageAssets{
   static const String spa4="assets/images/spa4.png";
 
 
+  static const String withdrowimg="assets/images/widrow_img.svg";
+
+
 
 
 }

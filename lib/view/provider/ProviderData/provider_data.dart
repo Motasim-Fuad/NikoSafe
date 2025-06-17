@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
@@ -51,10 +52,12 @@ class ProviderEarningDataView extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Image.asset(
-              ImageAssets.bar1,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            Container(
+              decoration: BoxDecoration(
+                color: AppColor.topLinear,
+
+              ),
+             child:SvgPicture.asset(ImageAssets.withdrowimg,fit: BoxFit.cover,) ,
             ),
             Positioned(
 
@@ -72,7 +75,7 @@ class ProviderEarningDataView extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
-                      backgroundColor: Colors.black54,
+
                     ),
                   ),
                   SizedBox(height: 40),
