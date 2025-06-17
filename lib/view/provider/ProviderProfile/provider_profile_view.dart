@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
@@ -75,27 +76,27 @@ class ProviderProfileView extends StatelessWidget {
 
 
 
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTile(Icons.edit, "Edit Profile Details", () {
-                    // Get.toNamed(RouteName.userEditProfileView);
-                    Get.to(ProviderEditProfileView());
-                  }),
-                  Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Text("Support",style: TextStyle(color: AppColor.primaryTextColor,fontWeight: FontWeight.bold),)),
-                ],
-              ),
-
-              _buildTile(Icons.privacy_tip, "Privacy Policy", () {
+              _buildTile(ImageAssets.profile_edit, "Edit Profile Details", () {
+                // Get.toNamed(RouteName.userEditProfileView);
+                Get.to(ProviderEditProfileView());
+              }),
+              _buildTile(ImageAssets.profile_withdrow, "Withdraws", () {
                 Get.toNamed(RouteName.userPrivacyPolicy);
               }),
-              _buildTile(Icons.description, "Terms & Conditions", () {
+
+              _buildTile(ImageAssets.profile_bank, "Bank Details", () {
+                Get.toNamed(RouteName.providerBankDetailsView);
+              }),
+              _buildTile(ImageAssets.profile_suport, "Support", () {
+                Get.toNamed(RouteName.userPrivacyPolicy);
+              }),
+              _buildTile(ImageAssets.profile_privacy, "Privacy Policy", () {
+                Get.toNamed(RouteName.userPrivacyPolicy);
+              }),
+              _buildTile(ImageAssets.profile_tarms, "Terms & Conditions", () {
                 Get.toNamed(RouteName.userTearmsConditions);
               }),
-              _buildTile(Icons.info_outline, "About Us", () {
+              _buildTile(ImageAssets.profile_about, "About Us", () {
                 Get.toNamed(RouteName.userAboutUs);
               }),
 
@@ -119,23 +120,29 @@ class ProviderProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildTile(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildTile(dynamic icon, String title, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: GestureDetector(
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             color: AppColor.iconColor,
             borderRadius: BorderRadius.circular(14),
           ),
           child: ListTile(
-            leading: Icon(icon, color: Colors.cyan),
+            leading: CircleAvatar(
+              backgroundColor: AppColor.iconColor,
+              child: icon is String
+                  ? SvgPicture.asset(icon, height: 30, width: 30, color: Color(0xff0191bd))
+                  : Icon(icon, color: Color(0xff0191bd)),
+            ),
             title: Text(title, style: const TextStyle(color: Colors.white)),
             trailing: const Icon(Icons.chevron_right, color: Colors.white),
-            onTap: onTap,
           ),
         ),
       ),
     );
   }
+
 }

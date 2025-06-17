@@ -57,5 +57,12 @@ class ImageAssets{
 
 
 
+  static const String profile_edit="assets/icons/profile/Edit_duotone_line.svg";
+  static const String profile_suport="assets/icons/profile/co-present.svg";
+  static const String profile_bank="assets/icons/profile/bank.svg";
+  static const String profile_withdrow="assets/icons/profile/Server_light.svg";
+  static const String profile_tarms="assets/icons/profile/Paper_light.svg";
+  static const String profile_privacy="assets/icons/profile/Chield.svg";
+  static const String profile_about="assets/icons/profile/Info_alt_light.svg";
 
 }

@@ -41,6 +41,8 @@ import '../../view/User/UserSearch/userServiceProvider/UserServiceProviderList/u
 import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsView.dart';
 import '../../view/home/home_view.dart';
 import '../../view/provider/ProviderHome/provider_notification_view.dart';
+import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_edit_view.dart';
+import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
 class AppRouts {
@@ -274,6 +276,17 @@ class AppRouts {
     GetPage(
       name: RouteName.providerNotificationBottomSheet,
       page: () => ProviderNotificationBottomSheet(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.providerBankDetailsEditView,
+      page: () => ProviderBankDetailsEditView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ), GetPage(
+      name: RouteName.providerBankDetailsView,
+      page: () => ProviderBankDetailsView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

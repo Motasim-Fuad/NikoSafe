@@ -38,6 +38,8 @@ class RouteName{
   static const String userserviceproviderlistview="/User_service_providerlistview";
   static const String userServiceProviderDetailView="/UserService_Provider_DetailView";
   static const String providerNotificationBottomSheet="/Provider_Notification_BottomSheet";
+  static const String providerBankDetailsEditView="/Provider_BankDetails_EditView";
+  static const String providerBankDetailsView="/Provider_BankDetailsView";
 
 
 
