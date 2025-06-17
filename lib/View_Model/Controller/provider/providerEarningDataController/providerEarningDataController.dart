@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:nikosafe/view/provider/ProviderData/ProviderEarningDetails/provider_erning_details_view.dart';
 import '../../../../Repositry/Provider/providerEarningDataRepo/provider_earning_data_repo.dart';
 import '../../../../models/Provider/providerEarningData/providerEarningData.dart';
@@ -27,11 +28,8 @@ class ProviderEarningDataController extends GetxController {
   }
 
   void withdraw() {
-    Get.snackbar(
-      'Withdraw',
-      'Withdrawal functionality coming soon!',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+   Utils.snackBar('Withdraw',
+     'Withdrawal functionality coming soon!',);
   }
 
   void showEarningDetails(ProviderEarningDataModel earning) {

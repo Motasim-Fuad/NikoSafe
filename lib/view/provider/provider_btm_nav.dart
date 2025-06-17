@@ -6,9 +6,6 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/view/provider/ProviderData/provider_data.dart';
 import 'package:nikosafe/view/provider/ProviderHome/provider_home_view.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/provider_profile_view.dart';
-
-
-
 import '../../View_Model/Controller/provider/providerBtmNavController.dart';
 import 'ProviderTaskManagement/providerTaskManagement.dart';
 
@@ -20,7 +17,7 @@ class ProviderBtmNavView extends StatelessWidget {
   final List<Widget> _pages = [
     ProviderHomeView(),
 
-    ProvidertaskmanagementView(),
+    ProviderTaskManagementView(),
     ProviderEarningDataView(),
     ProviderProfileView(),
   ];
@@ -44,7 +41,7 @@ class ProviderBtmNavView extends StatelessWidget {
         items:  [
           TabItem(icon: Icons.home, title: "Home"),
           TabItem(icon: FontAwesomeIcons.fileLines, title: "Task"),
-          TabItem(icon: FontAwesomeIcons.chartColumn, title: "Chart"),
+          TabItem(icon: FontAwesomeIcons.chartColumn, title: "Earning"),
           TabItem(icon: Icons.person, title: "Profile"),
         ],
       )),

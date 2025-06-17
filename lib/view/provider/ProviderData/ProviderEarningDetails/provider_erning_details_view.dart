@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import '../../../../models/Provider/providerEarningData/providerEarningData.dart';
 
 
@@ -17,23 +19,48 @@ class ProviderEarningDataDetailsView extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Earning Details')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage(earning.avatarUrl ?? ''),
-            ),
-            const SizedBox(height: 20),
-            _infoRow('Name', earning.name),
-            _infoRow('Serial', earning.serial),
-            _infoRow('Account No.', earning.accNumber),
-            _infoRow('Date', earning.date),
-            _infoRow('Amount', earning.amount),
-          ],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColor.backGroundColor
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            title:  Text('Earning Details',style: TextStyle(color: AppColor.primaryTextColor),),
+          centerTitle: true,
+          leading: CustomBackButton(),
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(
+                height: 200,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20), // Rounded corners
+                  image: DecorationImage(
+                    image: earning.avatarUrl != null && earning.avatarUrl!.isNotEmpty
+                        ? AssetImage(earning.avatarUrl!) as ImageProvider
+                        : AssetImage('assets/images/default_avatar.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+
+
+              const SizedBox(height: 20),
+              _infoRow('Name', earning.name),
+              _infoRow('Serial', earning.serial),
+              _infoRow('Account No.', earning.accNumber),
+              _infoRow('Date', earning.date),
+              _infoRow('Amount', earning.amount),
+            ],
+          ),
         ),
       ),
     );
@@ -45,8 +72,8 @@ class ProviderEarningDataDetailsView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Get.textTheme.bodyMedium),
-          Text(value, style: Get.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color: AppColor.primaryTextColor)),
+          Text(value, style: TextStyle(color: AppColor.primaryTextColor)),
         ],
       ),
     );

@@ -15,7 +15,7 @@ class SignupView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
+          gradient: AppColor.backGroundColor
       ),
       child: Scaffold(
         backgroundColor:Colors.transparent,
@@ -48,17 +48,21 @@ class SignupView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-
-                            buildTab("User", controller.isUser.value, () => controller.isUser.value = true),
+                            buildTab("User", controller.isUser.value, () {
+                              controller.isUser.value = true;
+                              controller.clearProviderSignupFields(); // Clear provider fields when switching to user
+                            }),
                             const SizedBox(width: 10),
-                            buildTab("Service Provider", !controller.isUser.value, () => controller.isUser.value = false),
+                            buildTab("Service Provider", !controller.isUser.value, () {
+                              controller.isUser.value = false;
+                              controller.clearUserSignupFields(); // Clear user fields when switching to provider
+                            }),
                           ],
                         ),
                       ],
                     ),
 
                   const SizedBox(height: 20),
-
 
                   controller.isLogin.value
                       ? buildLoginForm(controller)
@@ -94,21 +98,26 @@ class SignupView extends StatelessWidget {
   Widget buildLoginForm(AuthViewModel controller) {
     return Column(
       children: [
-        buildInput(controller.emailController, "Email"),
         buildInput(
-          controller.passwordController,
+          controller.loginEmailController, // Use login-specific controller
+          "Email",
+          keyboardType: TextInputType.emailAddress,
+          errorText: controller.loginEmailError, // Use login-specific error
+        ),
+        buildInput(
+          controller.loginPasswordController, // Use login-specific controller
           "Password",
           isPassword: true,
           isPasswordVisible: controller.isPasswordVisible,
+          errorText: controller.loginPasswordError, // Use login-specific error
         ),
-
 
         SizedBox(
           width: double.infinity,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildRemember(controller),
+              buildRemember(controller), // Assuming remember me is common
 
               GestureDetector(
                 onTap: (){
@@ -120,18 +129,24 @@ class SignupView extends StatelessWidget {
           ),
         ),
 
-
-
         const SizedBox(height: 20),
         Obx(() => controller.loading.value
             ? const CircularProgressIndicator()
-            : RoundButton(title: "Login", onPress: (){controller.login();},width: double.infinity,),),
+            : RoundButton(
+          title: "Login",
+          onPress: (){
+            controller.login();
+
+            }, // Calls the central login method
+          width: double.infinity,
+        ),
+        ),
       ],
     );
   }
 }
 
-
+// buildLoginSignUpToggle remains unchanged from your original code
 Widget buildLoginSignUpToggle(AuthViewModel controller) {
   return Container(
     height: 40,
@@ -144,11 +159,15 @@ Widget buildLoginSignUpToggle(AuthViewModel controller) {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () => controller.isLogin.value = true,
+            onTap: () {
+              controller.isLogin.value = true;
+              controller.clearUserSignupFields();    // Clear signup fields when switching to login
+              controller.clearProviderSignupFields();
+            },
             child: Container(
               height: double.infinity,
               decoration: BoxDecoration(
-                color: controller.isLogin.value ? Color(0x9900E6E0) : Colors.transparent,
+                color: controller.isLogin.value ? const Color(0x9900E6E0) : Colors.transparent,
                 borderRadius: BorderRadius.circular(24),
               ),
               alignment: Alignment.center,
@@ -164,19 +183,21 @@ Widget buildLoginSignUpToggle(AuthViewModel controller) {
         ),
         Expanded(
           child: GestureDetector(
-            onTap: () => controller.isLogin.value = false,
+            onTap: () {
+              controller.isLogin.value = false;
+              controller.clearLoginFields(); // Clear login fields when switching to signup
+            },
             child: Container(
               height: double.infinity,
               decoration: BoxDecoration(
-                color: controller.isLogin.value ? Colors.transparent : Color(0x9900E6E0),
+                color: controller.isLogin.value ? Colors.transparent : const Color(0x9900E6E0),
                 borderRadius: BorderRadius.circular(24),
               ),
               alignment: Alignment.center,
               child: Text(
                 "Sign Up",
                 style: TextStyle(
-                  color: controller.isLogin.value ? Colors.white : const Color(
-                      0xFFFFFFFF),
+                  color: controller.isLogin.value ? Colors.white : const Color(0xFFFFFFFF),
                   fontWeight: FontWeight.bold,
                 ),
               ),
