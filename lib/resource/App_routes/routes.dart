@@ -43,6 +43,7 @@ import '../../view/home/home_view.dart';
 import '../../view/provider/ProviderHome/provider_notification_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_edit_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_view.dart';
+import '../../view/provider/ProviderProfile/Screen/porvider_support_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
 class AppRouts {
@@ -287,6 +288,12 @@ class AppRouts {
     ), GetPage(
       name: RouteName.providerBankDetailsView,
       page: () => ProviderBankDetailsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.porviderSupportView,
+      page: () => PorviderSupportView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

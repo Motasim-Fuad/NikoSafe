@@ -40,6 +40,7 @@ class RouteName{
   static const String providerNotificationBottomSheet="/Provider_Notification_BottomSheet";
   static const String providerBankDetailsEditView="/Provider_BankDetails_EditView";
   static const String providerBankDetailsView="/Provider_BankDetailsView";
+  static const String porviderSupportView="/Porvider_SupportView";
 
 
 

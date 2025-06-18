@@ -88,7 +88,7 @@ class ProviderProfileView extends StatelessWidget {
                 Get.toNamed(RouteName.providerBankDetailsView);
               }),
               _buildTile(ImageAssets.profile_suport, "Support", () {
-                Get.toNamed(RouteName.userPrivacyPolicy);
+                Get.toNamed(RouteName.porviderSupportView);
               }),
               _buildTile(ImageAssets.profile_privacy, "Privacy Policy", () {
                 Get.toNamed(RouteName.userPrivacyPolicy);
