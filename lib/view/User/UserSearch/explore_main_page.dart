@@ -39,6 +39,7 @@ class ExploreMainPage extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Column(
+
             children: [
               // Padding(
               //   padding: const EdgeInsets.all(8.0),
@@ -85,12 +86,21 @@ class ExploreMainPage extends StatelessWidget {
 
                 ],
               ),
+SizedBox(height: 20,),
+Row(
+  mainAxisAlignment: MainAxisAlignment.start,
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    SizedBox(width: 20,),
+    Text("Trending This Week",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 25,fontWeight: FontWeight.bold),),
+  ],
+),
 
 
 
-              section("Restaurant", 'restaurant'),
-              section("Bars", 'bar'),
-              section("Club events", 'club_event'),
+              section("Nearby Restaurant", 'restaurant'),
+              section("Nearby Bars", 'bar'),
+              section("Nearby Club events", 'club_event'),
 
 
             ],
