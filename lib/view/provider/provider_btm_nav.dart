@@ -3,10 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
-import 'package:nikosafe/view/provider/ProviderData/provider_data.dart';
+
 import 'package:nikosafe/view/provider/ProviderHome/provider_home_view.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/provider_profile_view.dart';
 import '../../View_Model/Controller/provider/providerBtmNavController.dart';
+import 'ProviderEarning/provider_earning.dart';
 import 'ProviderTaskManagement/providerTaskManagement.dart';
 
 class ProviderBtmNavView extends StatelessWidget {

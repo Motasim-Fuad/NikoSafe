@@ -40,10 +40,12 @@ import '../../view/User/UserSearch/trainer/tainer_list_view.dart';
 import '../../view/User/UserSearch/userServiceProvider/UserServiceProviderList/userServiceProviderListView.dart';
 import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsView.dart';
 import '../../view/home/home_view.dart';
+import '../../view/provider/ProviderEarning/provider_Withdraw/provider_withdraw_requestView.dart';
 import '../../view/provider/ProviderHome/provider_notification_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_edit_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_view.dart';
 import '../../view/provider/ProviderProfile/Screen/porvider_support_view.dart';
+import '../../view/provider/ProviderProfile/Screen/provderWithdrawCompleteView/provider_with_draw_complete_view.dart';
 import '../../view/provider/provider_btm_nav.dart';
 
 class AppRouts {
@@ -294,6 +296,20 @@ class AppRouts {
     GetPage(
       name: RouteName.porviderSupportView,
       page: () => PorviderSupportView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.providerWithDrawCompleteView,
+      page: () => ProviderWithDrawCompleteView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.providerWithdrawRequestView,
+      page: () => ProviderWithdrawRequestView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

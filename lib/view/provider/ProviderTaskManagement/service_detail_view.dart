@@ -14,14 +14,17 @@ class ServiceDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
+        gradient: AppColor.backGroundColor,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title:  Text("Service Details",style: TextStyle(color: AppColor.primaryTextColor),),
-          leading:  CustomBackButton(),
+          title: Text(
+            "Service Details",
+            style: TextStyle(color: AppColor.primaryTextColor),
+          ),
+          leading: CustomBackButton(),
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
@@ -31,25 +34,32 @@ class ServiceDetailView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: task.status == "Completed" ? Colors.green : Colors.amber,
+                color: task.status == "Completed" ? Colors.green : task.status == "Cancelled" ?Colors.red :Colors.amber,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(task.status, style: const TextStyle(color: Colors.black)),
+              child: Text(task.status, style:  TextStyle(color: AppColor.primaryTextColor)),
             ),
             const SizedBox(height: 16),
-            Row(children: [
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/1.jpg"),
-              ),
-              const SizedBox(width: 16),
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("Client: ${task.customerName}", style: const TextStyle(color: Colors.white)),
-                const Text("Email: abc@example.com", style: TextStyle(color: Colors.white)),
-                const Text("Phone: (319) 555-0115", style: TextStyle(color: Colors.white)),
-                const Text("Location: Downtown Los Angeles, CA", style: TextStyle(color: Colors.white)),
-              ]),
-            ]),
+            Row(
+              children: [
+                const CircleAvatar(
+                  radius: 40,
+                  backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/1.jpg"),
+                ),
+                const SizedBox(width: 16),
+                Expanded( // <-- Added Expanded here to fix overflow
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Client: ${task.customerName}", style: const TextStyle(color: Colors.white)),
+                      const Text("Email: abc@example.com", style: TextStyle(color: Colors.white)),
+                      const Text("Phone: (319) 555-0115", style: TextStyle(color: Colors.white)),
+                      const Text("Location: Downtown Los Angeles, CA", style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 24),
             const Text("Transaction details:", style: TextStyle(color: Colors.white, fontSize: 18)),
             const SizedBox(height: 12),
@@ -58,12 +68,14 @@ class ServiceDetailView extends StatelessWidget {
             const Spacer(),
             SizedBox(
               width: double.infinity,
-              child:
-
-           RoundButton(width: double.infinity,title: "Make as Complete", onPress: (){
-             Utils.snackBar("Task", "Task Complete Successful");
-           })
-            )
+              child:task.status == "Completed" ? SizedBox():task.status == "Cancelled" ? SizedBox():RoundButton(
+                width: double.infinity,
+                title: "Make as Complete",
+                onPress: () {
+                  Utils.snackBar("Task", "Task Complete Successful");
+                },
+              ),
+            ),
           ]),
         ),
       ),

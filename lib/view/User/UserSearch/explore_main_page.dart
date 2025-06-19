@@ -53,7 +53,9 @@ class ExploreMainPage extends StatelessWidget {
                       CustomSectionButton(
                         title: "Find a Ride",
                         icon:SvgPicture.asset(ImageAssets.car),
-                        onPress: () {},
+                        onPress: () {
+
+                        },
                         height: size.height * 0.07, // 7% of screen height
                         width: size.width * 0.4,    // 40% of screen width
                         loading: false,
@@ -62,26 +64,6 @@ class ExploreMainPage extends StatelessWidget {
                       ),
 
                       SizedBox(width: 20),
-                      CustomSectionButton(
-                        title: "Therapy sessions",
-                        icon:SvgPicture.asset(ImageAssets.therapy),
-                        onPress: () {
-                          Get.toNamed(RouteName.theraphySessionListView);
-                        },
-                        height: size.height * 0.07, // 7% of screen height
-                        width: size.width * 0.5,    // 40% of screen width
-                        loading: false,
-                        textColor: Colors.white,
-
-                      ),
-
-
-                    ],
-                  ),
-                  SizedBox(height: 20), // Space after first two
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
                       CustomSectionButton(
                         title: "Service Provider",
                         icon:SvgPicture.asset(ImageAssets.services),
@@ -95,22 +77,12 @@ class ExploreMainPage extends StatelessWidget {
 
                       ),
 
-                      SizedBox(width: 20),
-                      CustomSectionButton(
-                        title: "Trainer",
-                        icon:SvgPicture.asset(ImageAssets.trainer),
-                        onPress: () {
-                          Get.toNamed(RouteName.trainerView);
-                        },
-                        height: size.height * 0.07, // 7% of screen height
-                        width: size.width * 0.4,    // 40% of screen width
-                        loading: false,
-                        textColor: Colors.white,
 
-                      ),
+
 
                     ],
                   ),
+
                 ],
               ),
 

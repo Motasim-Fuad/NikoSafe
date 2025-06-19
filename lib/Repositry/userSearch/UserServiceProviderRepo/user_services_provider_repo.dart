@@ -12,7 +12,7 @@ class UserServiceProviderRepository {
         service: 'Plumber',
         experience: '10+ Years',
         rate: '\$50/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=11',
+        imageUrl: 'https://i.pravatar.cc/150?img=10',
         skills: ['Pipe repair', 'Leak detection', 'Water heater installation'],
       ),
       UserServiceProvider(
@@ -20,7 +20,7 @@ class UserServiceProviderRepository {
         service: 'Electrician',
         experience: '8 Years',
         rate: '\$45/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=12',
+        imageUrl: 'https://i.pravatar.cc/150?img=11',
         skills: ['Wiring', 'Lighting', 'Panel upgrade'],
       ),
       UserServiceProvider(
@@ -28,7 +28,7 @@ class UserServiceProviderRepository {
         service: 'Painter',
         experience: '12 Years',
         rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=13',
+        imageUrl: 'https://i.pravatar.cc/150?img=20',
         skills: ['Wiring', 'Lighting', 'Panel upgrade'],
       ),
       UserServiceProvider(
@@ -44,7 +44,7 @@ class UserServiceProviderRepository {
         service: 'Electrician',
         experience: '6 Years',
         rate: '\$40/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=15',
+        imageUrl: 'https://i.pravatar.cc/150?img=19',
         skills: ['Wiring', 'Lighting', 'Panel upgrade'],
       ),
       UserServiceProvider(

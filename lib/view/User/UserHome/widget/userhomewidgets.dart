@@ -20,7 +20,7 @@ Widget topBar() {
 
         SizedBox(width: 10,),
         PopupMenuButton<String>(
-          color: const Color(0xFF1E2A33), // Your desired background color
+          color: AppColor.topLinear, // Your desired background color
           onSelected: (value) {
             if (value == 'create_post') {
               // Navigate to create post screen
@@ -164,7 +164,9 @@ Widget buildPostCard(PostModel post) {
           leading: CircleAvatar(backgroundImage: AssetImage(post.userImage)),
           title: Text(post.username, style: TextStyle(color: Colors.white)),
           subtitle: Text('${post.date.month}/${post.date.day}', style: TextStyle(color: Colors.grey)),
-          trailing: Icon(Icons.more_vert, color: Colors.white),
+          trailing: IconButton(onPressed: (){
+
+          }, icon: Icon(Icons.more_vert, color: Colors.white)),
         ),
         if (post.isMap)
           Image.asset(post.imageUrl)

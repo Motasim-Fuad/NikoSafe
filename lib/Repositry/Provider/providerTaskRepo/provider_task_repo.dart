@@ -10,7 +10,25 @@ class ProviderTaskRepo {
         task: "Moving Service",
         date: "25 January 2025",
         time: "2:00 PM",
-        status: "In Progress",
+        status: "Pending",
+        amount: "\$200",
+      ),
+
+      ProviderTaskModel(
+        customerName: "Jane Cooper",
+        task: "Moving Service",
+        date: "25 January 2025",
+        time: "2:00 PM",
+        status: "Pending",
+        amount: "\$200",
+      ),
+
+      ProviderTaskModel(
+        customerName: "Jane Cooper",
+        task: "Moving Service",
+        date: "25 January 2025",
+        time: "2:00 PM",
+        status: "Pending",
         amount: "\$200",
       ),
       ProviderTaskModel(
@@ -18,7 +36,7 @@ class ProviderTaskRepo {
         task: "Moving Service",
         date: "1 February 2025",
         time: "2:00 PM",
-        status: "Completed",
+        status: "Cancelled",
         amount: "\$200",
       ),
       ProviderTaskModel(
@@ -36,7 +54,33 @@ class ProviderTaskRepo {
         time: "2:00 PM",
         status: "Completed",
         amount: "\$200",
+      ),  ProviderTaskModel(
+        customerName: "Jane Cooper",
+        task: "Moving Service",
+        date: "30 December 2025",
+        time: "2:00 PM",
+        status: "Completed",
+        amount: "\$200",
       ),
+
+      ProviderTaskModel(
+        customerName: "Jane Cooper",
+        task: "Moving Service",
+        date: "1 February 2025",
+        time: "2:00 PM",
+        status: "Cancelled",
+        amount: "\$200",
+      ),
+
+      ProviderTaskModel(
+        customerName: "Jane Cooper",
+        task: "Moving Service",
+        date: "30 December 2025",
+        time: "2:00 PM",
+        status: "Completed",
+        amount: "\$200",
+      ),
+
     ];
   }
 }

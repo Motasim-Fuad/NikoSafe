@@ -41,6 +41,8 @@ class RouteName{
   static const String providerBankDetailsEditView="/Provider_BankDetails_EditView";
   static const String providerBankDetailsView="/Provider_BankDetailsView";
   static const String porviderSupportView="/Porvider_SupportView";
+  static const String providerWithDrawCompleteView="/Provider_WithDraw_CompleteView";
+  static const String providerWithdrawRequestView="/Provider_Withdraw_RequestView";
 
 
 

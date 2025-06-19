@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/utils/utils.dart';
-import 'package:nikosafe/view/provider/ProviderData/ProviderEarningDetails/provider_erning_details_view.dart';
+
 import '../../../../Repositry/Provider/providerEarningDataRepo/provider_earning_data_repo.dart';
 import '../../../../models/Provider/providerEarningData/providerEarningData.dart';
+import '../../../../view/provider/ProviderEarning/ProviderEarningDetails/provider_erning_details_view.dart';
 
 class ProviderEarningDataController extends GetxController {
   final ProviderEarningDataRepo _repo = ProviderEarningDataRepo();
@@ -28,8 +30,7 @@ class ProviderEarningDataController extends GetxController {
   }
 
   void withdraw() {
-   Utils.snackBar('Withdraw',
-     'Withdrawal functionality coming soon!',);
+Get.toNamed(RouteName.providerWithdrawRequestView);
   }
 
   void showEarningDetails(ProviderEarningDataModel earning) {

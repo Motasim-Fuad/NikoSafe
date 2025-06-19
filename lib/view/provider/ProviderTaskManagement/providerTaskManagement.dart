@@ -3,37 +3,38 @@ import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/provider/providerTaskController/provider_task_controlller.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/coustomTextField.dart';
-import 'package:nikosafe/resource/compunents/customBackButton.dart';
-import 'package:nikosafe/view/Authentication/widgets/common_widget.dart';
 import 'package:nikosafe/view/provider/ProviderTaskManagement/service_detail_view.dart';
-
 import '../../../models/Provider/providerTaskModel/provider_task_model.dart';
-
 
 class ProviderTaskManagementView extends StatelessWidget {
   final ProviderTaskControlller controller = Get.put(ProviderTaskControlller());
-final TextEditingController taskSearch=TextEditingController();
+  final TextEditingController taskSearch = TextEditingController();
+
+  final ScrollController horizontalHeaderController = ScrollController();
+  final ScrollController horizontalBodyController = ScrollController();
+
   ProviderTaskManagementView({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
+    // Filter by search text
     taskSearch.addListener(() {
       controller.filterTasksByDate(taskSearch.text);
     });
+
+    // Sync horizontal scroll between header and body
+    horizontalBodyController.addListener(() {
+      horizontalHeaderController.jumpTo(horizontalBodyController.offset);
+    });
+
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title:  Text("Task Management",style: TextStyle(color: AppColor.primaryTextColor),),
+          title: Text("Task Management", style: TextStyle(color: AppColor.primaryTextColor)),
           automaticallyImplyLeading: false,
-
           centerTitle: false,
         ),
         body: Padding(
@@ -45,11 +46,7 @@ final TextEditingController taskSearch=TextEditingController();
                 prefixIcon: Icons.search,
                 hintText: "Search by Date (e.g. 25 January 2025)",
               ),
-              SizedBox(
-                height: 20,
-              ),
-
-              //shorting with status
+              const SizedBox(height: 20),
               Obx(() {
                 return DropdownButtonFormField<String>(
                   value: controller.selectedStatus.value,
@@ -59,7 +56,7 @@ final TextEditingController taskSearch=TextEditingController();
                     fillColor: Colors.white12,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     labelText: 'Filter by Status',
-                    labelStyle: TextStyle(color: Colors.white),
+                    labelStyle: const TextStyle(color: Colors.white),
                   ),
                   style: const TextStyle(color: Colors.white),
                   iconEnabledColor: Colors.white,
@@ -74,48 +71,85 @@ final TextEditingController taskSearch=TextEditingController();
                   },
                 );
               }),
-              SizedBox(
-                height: 20,
-              ),
-
-              Obx(() => Table(
-                border: TableBorder.all(color: Colors.white24),
-                children: [
-                  TableRow(
-                    decoration: const BoxDecoration(color: Color(0xFF304E37)),
-                    children: const [
-                      Padding(padding: EdgeInsets.all(8), child: Text("Customer", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("Task", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("Date", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("Time", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("Status", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("Amount", style: TextStyle(color: Colors.white))),
-                      Padding(padding: EdgeInsets.all(8), child: Text("delete", style: TextStyle(color: Colors.white))),
-                    ],
-                  ),
-                  ...controller.filteredList.map((task) {
-                    return TableRow(children: [
-                      taskCell(task.customerName, task),
-                      taskCell(task.task, task),
-                      taskCell(task.date, task),
-                      taskCell(task.time, task),
-                      taskCell(task.status, task, color: task.status == "Completed" ? Colors.green : Colors.amber),
-                      taskCell(task.amount, task),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            controller.deleteTask(task);
-                          },
+              const SizedBox(height: 20),
+              Expanded(
+                child: Obx(() {
+                  return Column(
+                    children: [
+                      // ✅ Header (fixed vertically, scroll horizontally)
+                      Container(
+                        color: const Color(0xFF304E37),
+                        height: 40,
+                        child: SingleChildScrollView(
+                          controller: horizontalHeaderController,
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              tableHeaderCell("Customer", 120),
+                              tableHeaderCell("Task", 120),
+                              tableHeaderCell("Date", 100),
+                              tableHeaderCell("Time", 100),
+                              tableHeaderCell("Status", 100),
+                              tableHeaderCell("Amount", 80),
+                              tableHeaderCell("Delete", 80),
+                            ],
+                          ),
                         ),
                       ),
-
-                    ]);
-                  }).toList(),
-
-                ],
-              )),
+                      const SizedBox(height: 4),
+                      // ✅ Body scrolls vertically and horizontally
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: horizontalBodyController,
+                          scrollDirection: Axis.horizontal,
+                          child: SizedBox(
+                            width: 700,
+                            child: ListView.builder(
+                              itemCount: controller.filteredList.length,
+                              itemBuilder: (context, index) {
+                                final task = controller.filteredList[index];
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(bottom: BorderSide(color: Colors.white24)),
+                                  ),
+                                  height: 50,
+                                  child: Row(
+                                    children: [
+                                      tableBodyCell(task.customerName, task, width: 120),
+                                      tableBodyCell(task.task, task, width: 120),
+                                      tableBodyCell(task.date, task, width: 100),
+                                      tableBodyCell(task.time, task, width: 100),
+                                      tableBodyCell(
+                                        task.status,
+                                        task,
+                                        width: 100,
+                                        color: task.status == "Completed"
+                                            ? Colors.green
+                                            : task.status == "Cancelled" ? Colors.red :Colors.amber,
+                                      ),
+                                      tableBodyCell(task.amount, task, width: 80),
+                                      Container(
+                                        width: 80,
+                                        alignment: Alignment.center,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () {
+                                            controller.deleteTask(task);
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
             ],
           ),
         ),
@@ -123,16 +157,33 @@ final TextEditingController taskSearch=TextEditingController();
     );
   }
 
-  Widget taskCell(String text, ProviderTaskModel task, {Color color = Colors.white}) {
-    return InkWell(
-      onTap: () {
-        Get.to(() => ServiceDetailView(task: task));
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(text, style: TextStyle(color: color)),
+  Widget tableHeaderCell(String text, double width) {
+    return Container(
+      width: width,
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
 
+  Widget tableBodyCell(String text, ProviderTaskModel task,
+      {double width = 100, Color color = Colors.white}) {
+    return InkWell(
+      onTap: () {
+        Get.to(() => ServiceDetailView(task: task));
+      },
+      child: Container(
+        width: width,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: TextStyle(color: color),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
 }

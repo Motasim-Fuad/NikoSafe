@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userSearch/userServiceProviderController/user_service_provider_controller.dart';
@@ -6,12 +7,17 @@ import 'package:nikosafe/resource/compunents/customBackButton.dart';
 
 import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/Colors/app_colors.dart';
+import '../../../../../resource/asseets/image_assets.dart';
+import '../../widgets/CustomSectionButton.dart';
 
 class Userserviceproviderlistview extends StatelessWidget {
   final controller = Get.put(UserServiceProviderController());
 
   @override
   Widget build(BuildContext context) {
+
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Container(
       decoration: BoxDecoration(
         gradient: AppColor.backGroundColor
@@ -51,17 +57,55 @@ class Userserviceproviderlistview extends StatelessWidget {
                     const SizedBox(width: 12),
                     PopupMenuButton<String>(
                       icon: const Icon(Icons.filter_list, color: Colors.white),
-                      color: Colors.white,
+                      color: AppColor.topLinear,
                       onSelected: controller.updateService,
                       itemBuilder: (context) => [
-                        const PopupMenuItem(value: '', child: Text('All')),
-                        const PopupMenuItem(value: 'Plumber', child: Text('Plumber')),
-                        const PopupMenuItem(value: 'Electrician', child: Text('Electrician')),
-                        const PopupMenuItem(value: 'Carpenter', child: Text('Carpenter')),
+                         PopupMenuItem(value: '', child: Text('All',style: TextStyle(color: AppColor.primaryTextColor),)),
+                         PopupMenuItem(value: 'Plumber', child: Text('Plumber',style: TextStyle(color: AppColor.primaryTextColor),)),
+                         PopupMenuItem(value: 'Electrician', child: Text('Electrician',style: TextStyle(color: AppColor.primaryTextColor),)),
+                         PopupMenuItem(value: 'Carpenter', child: Text('Carpenter',style: TextStyle(color: AppColor.primaryTextColor),)),
                       ],
                     )
                   ],
                 ),
+                const SizedBox(height: 16),
+                // therephy and taineer
+
+
+                Row(
+                  children: [
+                    CustomSectionButton(
+                      title: "Therapy sessions",
+                      icon:SvgPicture.asset(ImageAssets.therapy),
+                      onPress: () {
+                        Get.toNamed(RouteName.theraphySessionListView);
+                      },
+                      height: 40, // 7% of screen height
+                      width: width * 0.48,  // 40% of screen width
+                      loading: false,
+                      textColor: Colors.white,
+
+                    ),
+
+              SizedBox(width: width *0.02,),
+                    CustomSectionButton(
+                      title: "Trainer",
+                      icon:SvgPicture.asset(ImageAssets.trainer),
+                      onPress: () {
+                        Get.toNamed(RouteName.trainerView);
+                      },
+                      height: 40,
+                      width: width * 0.4,  // 40% of screen width
+
+                      loading: false,
+                      textColor: Colors.white,
+
+                    ),
+                  ],
+                ),
+
+
+
                 const SizedBox(height: 16),
                 const Align(
                   alignment: Alignment.centerLeft,
@@ -109,7 +153,8 @@ class Userserviceproviderlistview extends StatelessWidget {
                               const Spacer(),
                               Row(
                                 children: [
-                                  Text("View Details",style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),),
+                                  Text("View Details",style: TextStyle(color: Colors.white,fontSize: 14,fontWeight: FontWeight.bold),),
+                                  SizedBox(width: 4,),
                                   CircleAvatar(
                                     backgroundColor: AppColor.iconColor,
                                     child: IconButton(onPressed: (){
