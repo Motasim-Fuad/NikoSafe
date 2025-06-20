@@ -53,7 +53,7 @@ class PollController extends GetxController {
       print("Poll created successfully");
     }
 
-    Utils.snackBar("Success", "Poll created successfully");
+    Utils.successSnackBar("Success", "Poll created successfully");
     Utils.tostMassage("success");
 
     Future.delayed(Duration(milliseconds: 1500), () {

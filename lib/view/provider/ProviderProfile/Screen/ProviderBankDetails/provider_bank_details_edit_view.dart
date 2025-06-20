@@ -42,7 +42,7 @@ class ProviderBankDetailsEditView extends StatelessWidget {
               const SizedBox(height: 32),
              RoundButton(title: "Save", onPress: (){
                controller.updateData();
-               Utils.snackBar("Bank Details", "Your Bank Details Data Edit Successfully Completed");
+               Utils.successSnackBar("Bank Details", "Your Bank Details Data Edit Successfully Completed");
              },width: double.infinity,)
             ],
           ),

@@ -1,3 +1,6 @@
+// controller/chat_controller.dart
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import '../../../models/ChatModel/chat_model.dart';
 import '../../../resource/asseets/image_assets.dart';
@@ -5,7 +8,6 @@ import '../../../resource/asseets/image_assets.dart';
 class ChatController extends GetxController {
   var chatList = <ChatModel>[].obs;
   var filteredChatList = <ChatModel>[].obs;
-
   var selectedChat = Rxn<ChatModel>();
   var messages = <ChatModel>[].obs;
 
@@ -16,36 +18,39 @@ class ChatController extends GetxController {
   }
 
   void fetchChats() {
-    final dummyData = [
+    final dummy = [
       ChatModel(
-        name: 'Hande Earcel',
-        message: 'Good morning! Thank you for reaching...',
-        title:"Electrician",
-        time: '9:30',
-        imageUrl: ImageAssets.userHome_peopleProfile2,
+        message: "Hello! Need an electrician",
+        name: "John Doe",
+        title: "Electrician",
+        time: "10:20 AM",
+        imageUrl: ImageAssets.userHome_peopleProfile1,
+        isSentByMe: true,
         isOnline: true,
-
       ),
       ChatModel(
-        name: 'Emily Carter',
-        message: 'Can we reschedule the service?',
-        title: "User",
-        time: '10:15',
-        imageUrl: ImageAssets.userHome_userProfile,
+        message: "Thank you! Task done.",
+        name: "Sarah Lee",
+        title: "Plumber",
+        time: "9:00 AM",
+        imageUrl: ImageAssets.userHome_peopleProfile2,
+        isSentByMe: false,
         isOnline: false,
       ),
+
       ChatModel(
-        name: 'Alex Smith',
-        message: 'Job completed successfully!',
-        title: "Plumber",
-        time: 'Yesterday',
-        imageUrl: ImageAssets.userHome_peopleProfile1,
+        message: "Thank you! Task done.",
+        name: "Luke",
+        title: "Painter",
+        time: "9:00 AM",
+        imageUrl: ImageAssets.userHome_peopleProfile2,
+        isSentByMe: true,
         isOnline: true,
       ),
     ];
 
-    chatList.value = dummyData;
-    filteredChatList.value = dummyData;
+    chatList.value = dummy;
+    filteredChatList.value = dummy;
   }
 
   void searchChats(String query) {
@@ -53,7 +58,7 @@ class ChatController extends GetxController {
       filteredChatList.value = chatList;
     } else {
       filteredChatList.value = chatList
-          .where((chat) => chat.name.toLowerCase().contains(query.toLowerCase()))
+          .where((c) => c.name.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
   }
@@ -62,53 +67,60 @@ class ChatController extends GetxController {
     selectedChat.value = chat;
     messages.value = [
       ChatModel(
-        message: "Hi there, thanks for reaching out...",
-        name: chat.name,
-        title: chat.title,
-        time: "11:30 AM",
-        imageUrl: chat.imageUrl,
-        isSentByMe: true,
-
-      ),
-      ChatModel(
-        message: "Looking forward to the service!",
+        message: "Hi ${chat.name}, how can I help you?",
         name: "You",
-
-        time: "11:45 AM",
+        title: "User",
+        time: "11:00 AM",
         imageUrl: ImageAssets.userHome_userProfile,
         isSentByMe: true,
-        title: "user",
+        isOnline: true,
+      ),
+      ChatModel(
+        message: chat.message,
+        name: chat.name,
+        title: chat.title,
+        time: chat.time,
+        imageUrl: chat.imageUrl,
+        isSentByMe: false,
+        isOnline: chat.isOnline,
       ),
     ];
   }
 
-  void sendMessage(String text) {
-    if (text.trim().isEmpty) return;
+  void sendMessage(String text, {File? imageFile, String? location}) {
+    final chat = selectedChat.value;
+    if (chat == null) return;
 
-    // Add user message
+    final messageText = text.trim().isEmpty ? (location ?? "") : text;
+    if (messageText.isEmpty && imageFile == null) return;
+
+    // This part is YOU sending message, always allowed
     messages.add(ChatModel(
-      message: text,
+      message: messageText,
       name: "You",
+      title: "User",
       time: "Now",
       imageUrl: ImageAssets.userHome_userProfile,
       isSentByMe: true,
-      title: 'User',
+      isOnline: true,
+      localImageFile: imageFile,
     ));
 
-    final otherUser = selectedChat.value!;
-
-    // Only reply if other user is online
-    if (otherUser.isOnline == true) {
+    // Simulate a reply ONLY if other user is online
+    if (chat.isOnline) {
       Future.delayed(const Duration(seconds: 1), () {
         messages.add(ChatModel(
-          message: "Thanks for your message! I'll get back to you shortly.",
-          name: otherUser.name,
+          message: "Got it, thanks!",
+          name: chat.name,
+          title: chat.title,
           time: "Now",
-          imageUrl: otherUser.imageUrl,
+          imageUrl: chat.imageUrl,
           isSentByMe: false,
-          title: otherUser.title,
+          isOnline: chat.isOnline,
         ));
       });
+    } else {
+      debugPrint("${chat.name} is offline. They can't reply now.");
     }
   }
 

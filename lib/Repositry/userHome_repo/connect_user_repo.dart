@@ -4,7 +4,7 @@ import '../../resource/asseets/image_assets.dart';
 class ConnectUserRepo {
   static Map<String, dynamic> userJson = {
     "1": {
-      "name": "User One",
+      "name": "Danny",
       "imageUrl": ImageAssets.userHome_peopleProfile4,
       "type": "User",
       "postedImage": [
@@ -16,7 +16,74 @@ class ConnectUserRepo {
       "connectCount": 45
     },
     "2": {
-      "name": "User Two",
+      "name": "Luise",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+    "3": {
+      "name": "Michal",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+
+    "4": {
+      "name": "Murad",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+    "5": {
+      "name": "Kashif Ali",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+    "6": {
+      "name": "Disha",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+    "7": {
+      "name": "saba",
+      "imageUrl": ImageAssets.userHome_peopleProfile2,
+      "type": "User",
+      "postedImage": [
+        ImageAssets.userHome_peopleProfile4,
+        ImageAssets.userHome_userProfile,
+      ],
+      "postCount": 7,
+      "connectCount": 60
+    },
+    "8": {
+      "name": "Rakib",
       "imageUrl": ImageAssets.userHome_peopleProfile2,
       "type": "User",
       "postedImage": [

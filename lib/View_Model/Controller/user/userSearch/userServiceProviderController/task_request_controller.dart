@@ -23,7 +23,7 @@ class TaskRequestController extends GetxController {
 
   void submitTask() {
     // You can add your API logic here
- Utils.snackBar("Booking Services", "Data Sent Successfully");
+ Utils.successSnackBar("Booking Services", "Data Sent Successfully");
   }
 
   @override

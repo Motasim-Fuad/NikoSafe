@@ -17,21 +17,39 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        style: TextStyle(color: Colors.white),
-        controller: controller,
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: AppColor.primaryTextColor),
-          prefixIcon: Icon(Icons.search,color: AppColor.primaryTextColor,),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.all(12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1), // soft background
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          style: const TextStyle(
+            color: Colors.white, // visible text color
+            fontSize: 16,
+          ),
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: AppColor.primaryTextColor),
+            prefixIcon: Icon(Icons.search, color: AppColor.primaryTextColor),
+            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white24),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.cyan),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         ),
       ),
     );
   }
 }
+
 
 
 

@@ -42,7 +42,7 @@ class ProviderWithdrawRequestView extends StatelessWidget {
                 width: double.infinity,
                 title: "Withdraw Request",
                 onPress: () {
-                  Utils.snackBar("Withdraw Request", "Your withdraw request sent successfully");
+                  Utils.successSnackBar("Withdraw Request", "Your withdraw request sent successfully");
 
                   amountText.clear();
                   regionText.clear();

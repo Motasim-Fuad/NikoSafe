@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/view/User/UserHome/widget/userhomewidgets.dart';
 
-import '../../../../View_Model/Controller/user/userHome/feedController.dart';
+import '../../../View_Model/Controller/user/userHome/feedController.dart';
 
 class FeedTabView extends StatelessWidget {
   final FeedController controller;

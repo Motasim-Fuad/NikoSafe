@@ -1,104 +1,91 @@
+// view/chat/chat_detail_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/chat/widgets/chat_bubble.dart';
 import 'package:nikosafe/view/chat/widgets/chat_input_field.dart';
 import '../../View_Model/Controller/ChatController/chat_controller.dart';
-import '../../resource/compunents/customBackButton.dart';
+import '../../resource/Colors/app_colors.dart';
 
 class ChatDetailView extends StatelessWidget {
-  final controller = Get.find<ChatController>();
+  final controller = Get.put(ChatController());
   final TextEditingController messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final chat = controller.selectedChat.value!;
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-
-          automaticallyImplyLeading: false,
-          leading: CustomBackButton(),
-
-          iconTheme: const IconThemeData(color: Colors.white), // <-- White back button
-          title: Row(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight + 1), // +1 for the line
+          child: Column(
             children: [
-              CircleAvatar(
-                backgroundImage: AssetImage(chat.imageUrl), // <-- Use AssetImage for local asset
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chat.name,
-                    style: const TextStyle(fontSize: 16, color: AppColor.primaryTextColor),
-                  ),
-                  Text(
-                    chat.title,
-                    style: const TextStyle(fontSize: 12, color: AppColor.secondaryTextColor),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        margin: const EdgeInsets.only(right: 4, top: 2),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: chat.isOnline ? Colors.green : Colors.grey,
+              AppBar(
+                backgroundColor: Colors.transparent,
+                automaticallyImplyLeading: false,
+                leading: CustomBackButton(),
+                title: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(chat.imageUrl),
+                    ),
+                    const SizedBox(width: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(chat.name, style: const TextStyle(color: Colors.white70)),
+                        Row(
+                          children: [
+                            const SizedBox(width: 2),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: chat.isOnline ? Colors.green : Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              chat.isOnline ? "Online" : "Offline",
+                              style: const TextStyle(fontSize: 12, color: Colors.white70),
+                            ),
+                          ],
                         ),
-                      ),
-                      Text(
-                        chat.isOnline ? 'Online' : 'Offline',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: chat.isOnline ? Colors.greenAccent : Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-
+              // ✅ This is your white line
+              const Divider(
+                color: Colors.white24,
+                thickness: 0.8,
+                height: 0,
+              ),
             ],
           ),
-          actions: const [
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              child: Icon(Icons.call, color: Colors.tealAccent),
-            ),
-            SizedBox(width: 10),
-          ],
         ),
+
         body: Column(
           children: [
-            const SizedBox(height: 10),
-            const Text(
-              'Wednesday, July 26th',
-              style: TextStyle(color: AppColor.secondaryTextColor, fontSize: 12),
-            ),
-            const SizedBox(height: 10),
             Expanded(
               child: Obx(() => ListView.builder(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 itemCount: controller.messages.length,
-                itemBuilder: (context, index) =>
-                    ChatBubble(message: controller.messages[index]),
+                itemBuilder: (_, index) => ChatBubble(
+                  message: controller.messages[index],
+                ),
               )),
             ),
             ChatInputField(
               controller: messageController,
-              onSend: () {
-                controller.sendMessage(messageController.text);
-                messageController.clear();
-              },
+              onSend: (text, image, location) =>
+                  controller.sendMessage(text, imageFile: image, location: location),
+
             ),
           ],
         ),

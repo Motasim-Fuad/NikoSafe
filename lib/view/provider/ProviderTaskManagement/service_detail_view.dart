@@ -72,7 +72,7 @@ class ServiceDetailView extends StatelessWidget {
                 width: double.infinity,
                 title: "Make as Complete",
                 onPress: () {
-                  Utils.snackBar("Task", "Task Complete Successful");
+                  Utils.successSnackBar("Task", "Task Complete Successful");
                 },
               ),
             ),

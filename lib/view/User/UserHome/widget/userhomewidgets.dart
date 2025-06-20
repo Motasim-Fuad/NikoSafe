@@ -6,6 +6,7 @@ import 'package:nikosafe/View_Model/Controller/userEmargencyContuctContrller/eme
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
+import 'package:nikosafe/utils/utils.dart';
 
 import '../../../../View_Model/Controller/user/userHome/feedController.dart';
 import '../../../../models/userHome/post_model.dart';
@@ -69,8 +70,8 @@ Widget topBar() {
           },
           child: CircleAvatar(
             backgroundColor: Colors.red,
-            maxRadius: 20,
-            child: Text("SOS",style: TextStyle(color: AppColor.primaryTextColor),),
+            maxRadius: 23,
+            child: Text("Alert",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 13),),
           ),
         ),
         SizedBox(width: 16),
@@ -164,10 +165,24 @@ Widget buildPostCard(PostModel post) {
           leading: CircleAvatar(backgroundImage: AssetImage(post.userImage)),
           title: Text(post.username, style: TextStyle(color: Colors.white)),
           subtitle: Text('${post.date.month}/${post.date.day}', style: TextStyle(color: Colors.grey)),
-          trailing: IconButton(onPressed: (){
-
-          }, icon: Icon(Icons.more_vert, color: Colors.white)),
+          trailing: PopupMenuButton<String>(
+            color: AppColor.topLinear,
+            onSelected: (value) {
+              if (value == 'block') {
+              Utils.successSnackBar("Blocked",
+                "You have blocked this user.",);
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'block',
+                child: Text('Block', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+            icon: Icon(Icons.more_vert, color: Colors.white),
+          ),
         ),
+
         if (post.isMap)
           Image.asset(post.imageUrl)
         else

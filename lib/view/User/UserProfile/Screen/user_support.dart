@@ -52,7 +52,7 @@ class _UserSupportState extends State<UserSupport> {
               SizedBox(height: 50,),
           
               RoundButton(title: "Submit",width: double.infinity, onPress: (){
-                  Utils.snackBar("Support", "Submit You Issue Successfully");
+                  Utils.successSnackBar("Support", "Submit You Issue Successfully");
                   _titleText.clear();
                   _descriptionText.clear();
               }),

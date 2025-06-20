@@ -1,41 +1,44 @@
 import 'package:get/get.dart';
 
-import '../../../../Repositry/userHome_repo/connect_provider_repo.dart';
 import '../../../../Repositry/userHome_repo/connect_user_repo.dart';
-import '../../../../resource/App_routes/routes_name.dart';
+import '../../../../resource/App_routes/routes_name.dart' show RouteName;
 import '../../../../utils/utils.dart';
 
-
 class ConnectController extends GetxController {
-  var selectedType = 'User'.obs;
-
   final userRepo = ConnectUserRepo();
-  final providerRepo = ConnectProviderRepo();
 
+  RxList<dynamic> allConnections = <dynamic>[].obs;
   RxList<dynamic> filteredConnections = <dynamic>[].obs;
+  RxString searchText = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadConnections();
-    selectedType.listen((_) => loadConnections());
+    searchText.listen((_) => applySearchFilter());
   }
 
   void loadConnections() {
-    if (selectedType.value == 'User') {
-      filteredConnections.value = userRepo.getUsers();
-    } else {
-      filteredConnections.value = providerRepo.getProviders();
-    }
+    allConnections.value = userRepo.getUsers();
+    applySearchFilter();
+  }
+
+  void updateSearch(String text) {
+    searchText.value = text;
+  }
+
+  void applySearchFilter() {
+    final query = searchText.value.toLowerCase();
+    filteredConnections.value = allConnections.where((conn) {
+      return conn.name.toLowerCase().contains(query);
+    }).toList();
   }
 
   void sendFriendRequest(String name) {
-    Utils.snackBar('Thank You', 'We send friend request $name');
+    Utils.infoSnackBar('Thank You', 'We sent a friend request to $name');
   }
 
-  void goToProfile( connection) {
-    print("Going to profile of ${connection.name}");
+  void goToProfile(connection) {
     Get.toNamed(RouteName.profileDetailsPage, arguments: connection);
   }
-
 }

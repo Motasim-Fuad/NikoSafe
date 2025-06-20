@@ -60,6 +60,6 @@ class ProviderEditProfileController extends GetxController {
 
   void saveProfile() {
     // Your save logic here
-Utils.snackBar('Success', 'Profile Saved');
+Utils.successSnackBar('Success', 'Profile Saved');
   }
 }

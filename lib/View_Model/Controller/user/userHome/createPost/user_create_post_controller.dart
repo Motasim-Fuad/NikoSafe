@@ -42,13 +42,13 @@ class UserCreatePostController extends GetxController {
     // For now, just add a placeholder URL.
     final newPhotoUrl = 'https://placehold.co/100x100/png?text=Photo${photoUrls.length + 1}';
     photoUrls.add(newPhotoUrl);
-   Utils.snackBar('Photo Added',
+   Utils.infoSnackBar('Photo Added',
        'A placeholder photo has been added.');
   }
 
   Future<void> createPost() async {
     if (descriptionController.text.trim().isEmpty) {
-      Utils.snackBar(
+      Utils.errorSnackBar(
         'Error',
         'Description cannot be empty.',
       );
@@ -68,7 +68,7 @@ class UserCreatePostController extends GetxController {
       final success = await userPostRepository.createPost(post);
 
       if (success) {
-        Utils.snackBar(
+        Utils.successSnackBar(
           'Success',
           'Post created successfully!',
 
@@ -79,7 +79,7 @@ class UserCreatePostController extends GetxController {
         selectedLocation.value = null;
         photoUrls.clear();
       } else {
-        Utils.snackBar(
+        Utils.errorSnackBar(
           'Error',
           'Failed to create post. Please try again.',
 
@@ -87,7 +87,7 @@ class UserCreatePostController extends GetxController {
       }
     } catch (e) {
       print('Error creating post: $e');
-      Utils.snackBar(
+      Utils.errorSnackBar(
         'Error',
         'An unexpected error occurred.',
       );

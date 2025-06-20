@@ -32,14 +32,14 @@ void loginApi(){
     loading.value=false;
 
     if(value['error'] == "user not found"){
-      Utils.snackBar("login", value['error']);
+      Utils.successSnackBar("login", value['error']);
     }else{
       userPreferences.saveUser(UserModel.fromJson(value)).then((value) {
         Get.delete<LoginViewModel>(); // a ti loginiewmodel class ar data golo clear korba ,,
         // fola ram kom conjume hoba ,, and oi faka space ono kaja lakba
 
         Get.offNamed(RouteName.userHomeView)!.then((value) {});
-        Utils.snackBar("login", " login successfully");
+        Utils.successSnackBar("login", " login successfully");
       }).onError((error, stackTrace) {
 
       });
@@ -53,7 +53,7 @@ void loginApi(){
     }
 
     loading.value=false;
-    Utils.snackBar("Error", error.toString());
+    Utils.successSnackBar("Error", error.toString());
   });
 }
 }

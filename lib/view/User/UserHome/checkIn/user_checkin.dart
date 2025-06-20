@@ -99,7 +99,7 @@ class UserCheckInView extends StatelessWidget {
                 RoundButton(
                   title: "Post",
                   onPress: () {
-                    Utils.snackBar("Check In", "Post successfully");
+                    Utils.successSnackBar("Check In", "Post successfully");
                   },
                 ),
               ],

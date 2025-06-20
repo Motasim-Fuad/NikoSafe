@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
-import 'package:nikosafe/resource/asseets/image_assets.dart';
-import 'package:nikosafe/view/User/UserHome/widget/connectTapView.dart';
-import 'package:nikosafe/view/User/UserHome/widget/feedTapView.dart';
+import 'package:nikosafe/view/User/UserHome/connectTapView.dart';
+import 'package:nikosafe/view/User/UserHome/feedTapView.dart';
 import 'package:nikosafe/view/User/UserHome/widget/userhomewidgets.dart';
 import '../../../View_Model/Controller/user/userHome/feedController.dart';
 import '../../../View_Model/Controller/user/userHome/userHomeTapController.dart';
@@ -29,15 +26,11 @@ class UserHomeView extends StatelessWidget {
           child: Column(
             children: [
                topBar(),
-
               Obx(() =>
               feedController.showHealthCard.value && tabController.currentTab.value == 0
                   ? healthCard(feedController)
                   : const SizedBox.shrink()
               ),
-
-
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -46,7 +39,7 @@ class UserHomeView extends StatelessWidget {
                       padding: const EdgeInsets.all(3),
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF294045),
+                        color: AppColor.iconColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                       child: Row(
@@ -103,37 +96,22 @@ class UserHomeView extends StatelessWidget {
                       ),
                     )),
                   ),
-
-                  // Right-aligned icon
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-
-                          },
-                          child: CircleAvatar(
-                            radius: 23,
-                            backgroundColor: AppColor.iconColor,
-                            child:SvgPicture.asset(ImageAssets.userHome_location) ,
-                          ),
-                        ),
-
-                        Text("Share Location",style: TextStyle(color: AppColor.primaryTextColor),),
-                      ],
-                    ),
-                  ),
                 ],
               ),
 
-
-
               Expanded(
-                child: Obx(() => tabController.currentTab.value == 0
-                    ? FeedTabView(controller: feedController)
-                    : ConnectTabView()),
+                child: PageView(
+                  controller: tabController.pageController,
+                  onPageChanged: (index) {
+                    tabController.currentTab.value = index;
+                  },
+                  children: [
+                    FeedTabView(controller: feedController),
+                    ConnectTabView(),
+                  ],
+                ),
               ),
+
             ],
           ),
         ),

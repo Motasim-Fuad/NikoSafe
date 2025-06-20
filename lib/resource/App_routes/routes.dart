@@ -6,7 +6,7 @@ import 'package:nikosafe/view/Authentication/authentication.dart';
 import 'package:nikosafe/view/Authentication/forgetpassword/forgetpassword_view.dart';
 import 'package:nikosafe/view/Authentication/verification/email_view.dart';
 import 'package:nikosafe/view/Authentication/verification/otp_view.dart';
-import 'package:nikosafe/view/User/ProfileDetails/ProfileDetails.dart';
+import 'package:nikosafe/view/User/UserHome/ProfileDetails.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePoll/create_poll_view.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/userCreatePostView.dart';
 import 'package:nikosafe/view/User/UserProfile/Screen/user_about_us.dart';
