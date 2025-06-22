@@ -80,7 +80,7 @@ class ProviderProfileView extends StatelessWidget {
                 // Get.toNamed(RouteName.userEditProfileView);
                 Get.to(ProviderEditProfileView());
               }),
-              _buildTile(ImageAssets.profile_withdrow, "Withdraws", () {
+              _buildTile(ImageAssets.profile_withdrow, "Withdraws History", () {
                 Get.toNamed(RouteName.providerWithDrawCompleteView);
               }),
 

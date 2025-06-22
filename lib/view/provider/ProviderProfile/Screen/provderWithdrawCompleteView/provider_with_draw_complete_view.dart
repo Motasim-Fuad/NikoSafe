@@ -18,14 +18,9 @@ class ProviderWithDrawCompleteView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text(
-            "Withdraws",
-            style: TextStyle(color: AppColor.primaryTextColor),
-          ),
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: CustomBackButton(),
-          centerTitle: true,
+          leading:        CustomBackButton(),
         ),
         body: Obx(() {
           if (controller.isLoading.value) {
@@ -72,6 +67,11 @@ class ProviderWithDrawCompleteView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+
+
+
+
                     Text(
                       "Your Withdraw History",
                       style: TextStyle(color: AppColor.primaryTextColor,fontWeight: FontWeight.bold,fontSize: 20),

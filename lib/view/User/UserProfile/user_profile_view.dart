@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/view/User/UserProfile/ViewProfileDetails/my_profile_details_view.dart';
 import '../../../View_Model/Controller/user/MyProfile/my_profileController.dart';
 
 class UserProfileView extends StatelessWidget {
@@ -61,7 +62,7 @@ class UserProfileView extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-
+                    Get.to(ProfileDetailsView());
                   },
                   child: const Text("View Profile", style: TextStyle(color: Colors.cyan)),
                 ),
@@ -72,6 +73,13 @@ class UserProfileView extends StatelessWidget {
                 }),
                 _buildTile(Icons.history, "History", () {
                   Get.toNamed(RouteName.userHistory);
+                }),
+
+                _buildTile(Icons.star_border_purple500_sharp, "Favorites", () {
+                  Get.toNamed(RouteName.favoritesScreenView);
+                }),
+                _buildTile(Icons.add, "Following", () {
+                  Get.toNamed(RouteName.followingView);
                 }),
                 _buildTile(Icons.contacts, "Emergency contacts", () {
                   Get.toNamed(RouteName.userEmergencyContactsView);

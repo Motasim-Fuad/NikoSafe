@@ -13,7 +13,7 @@ class ExploreItemModel {
   final String happyHour; // New
   final String happyHourTime; // New
   final String safeEntryInfo; // New
-  final String healthDeptCertified; // New
+  final String healthDeptCertified; // Ne
   final String cateringInfo; // New
   final int totalRatings; // New
   final int totalReviews; // New

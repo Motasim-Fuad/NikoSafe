@@ -30,8 +30,9 @@ class SignupProviderView extends StatelessWidget {
             errorText: controller.providerEmailError, // Use provider-specific error
             keyboardType: TextInputType.emailAddress,
           ),
+
           buildDropdown(
-            "Job Title",
+            "Your Designation",
             controller.providerSelectedJob, // Use provider-specific RxString
             controller.jobList,
             errorText: controller.providerJobError, // Use provider-specific error
@@ -53,15 +54,7 @@ class SignupProviderView extends StatelessWidget {
             isPasswordVisible: controller.isPasswordVisible,
             errorText: controller.providerPasswordError, // Use provider-specific error
           ),
-          buildInput(
-            controller.providerBirthController, // Use provider-specific controller
-            "Birth Date (DD/MM/YYYY)",
-            errorText: controller.providerBirthDateError, // Use provider-specific error
-            keyboardType: TextInputType.datetime,
-            inputFormatters: [
-              // Optionally add a date input formatter if needed for strict format
-            ],
-          ),
+
           buildInput(
             controller.providerLocationController, // Use provider-specific controller
             "Location",

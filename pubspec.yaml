@@ -55,6 +55,7 @@ dependencies:
   geocoding: ^4.0.0
   table_calendar: ^3.0.9
   emoji_picker_flutter: ^4.3.0
+  smooth_page_indicator: ^1.1.0
 
 
 dev_dependencies:

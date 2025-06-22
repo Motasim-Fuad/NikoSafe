@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../Repositry/auth_repo/auth_repositry.dart';
 class AuthViewModel extends GetxController {
   final isLogin = true.obs;
   final isUser = true.obs; // true for User, false for Service Provider
+  final isVendor = false.obs; // NEW: Track vendor role
   final loading = false.obs;
 
   // --- Login Form Controllers and Validation ---
@@ -41,19 +43,22 @@ class AuthViewModel extends GetxController {
   final providerEmailController = TextEditingController();
   final providerPhoneController = TextEditingController();
   final providerPasswordController = TextEditingController();
-  final providerBirthController = TextEditingController();
+
   final providerLocationController = TextEditingController();
-  final providerSelectedJob = ''.obs; // For Service Provider Job Dropdown
+  final providerSelectedJob = RxString('');
 
   final providerNameError = Rxn<String>();
   final providerEmailError = Rxn<String>();
   final providerPhoneError = Rxn<String>();
   final providerPasswordError = Rxn<String>();
-  final providerBirthDateError = Rxn<String>();
+
   final providerLocationError = Rxn<String>();
   final providerJobError = Rxn<String>();
 
   // --- Common properties ---
+
+
+
   RxBool isPasswordVisible = false.obs; // For both login and signup passwords
   final List<String> jobList = ["Plumber", "Electrician", "Cleaner"];
   final List<String> sexOptions = ["Male", "Female", "Other"];
@@ -61,6 +66,7 @@ class AuthViewModel extends GetxController {
 
   late final String role; // Determined from arguments on Init
 
+  // Update role detection from args
   @override
   void onInit() {
     super.onInit();
@@ -69,11 +75,12 @@ class AuthViewModel extends GetxController {
     if (args != null && args is Map && args.containsKey('role')) {
       role = args['role'];
     } else {
-      role = 'user'; // fallback
+      role = 'user';
       debugPrint("⚠️ Warning: 'role' argument not passed to AuthViewModel.");
     }
+
     isUser.value = role == 'user';
-    debugPrint("✅ Role set to: $role");
+    isVendor.value = role == 'vendor';
   }
 
   // --- Login Validation Methods ---
@@ -262,19 +269,7 @@ class AuthViewModel extends GetxController {
     return true;
   }
 
-  bool validateProviderBirthDate(String? value) {
-    if (value == null || value.isEmpty) {
-      providerBirthDateError.value = "Birth Date cannot be empty";
-      return false;
-    }
-    // Simple date format check (DD/MM/YYYY)
-    if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
-      providerBirthDateError.value = "Date format must be DD/MM/YYYY";
-      return false;
-    }
-    providerBirthDateError.value = null;
-    return true;
-  }
+
 
   bool validateProviderLocation(String? value) {
     if (value == null || value.isEmpty) {
@@ -292,7 +287,7 @@ class AuthViewModel extends GetxController {
     isValid = validateProviderPhone(providerPhoneController.text) && isValid;
     isValid = validateProviderPassword(providerPasswordController.text) && isValid;
     isValid = validateProviderJobTitle(providerSelectedJob.value) && isValid;
-    isValid = validateProviderBirthDate(providerBirthController.text) && isValid;
+
     isValid = validateProviderLocation(providerLocationController.text) && isValid;
     return isValid;
   }
@@ -329,7 +324,6 @@ class AuthViewModel extends GetxController {
       Get.snackbar("Error", "Invalid credentials");
     }
   }
-
   Future<void> signup() async {
     if (!agreeTerms.value) {
       Get.snackbar("Terms Required", "Please agree to the Terms & Conditions");
@@ -337,10 +331,11 @@ class AuthViewModel extends GetxController {
     }
 
     bool formIsValid = false;
+
     if (isUser.value) {
       formIsValid = validateUserSignupForm();
     } else {
-      formIsValid = validateProviderSignupForm();
+      formIsValid = validateProviderSignupForm(); // Vendor & Provider share fields for now
     }
 
     if (!formIsValid) {
@@ -350,62 +345,71 @@ class AuthViewModel extends GetxController {
 
     loading.value = true;
 
+    // Prepare dummy data (no API call for now)
     Map<String, String> data = {};
+    String selectedRole = '';
+
     if (isUser.value) {
+      selectedRole = 'user';
       data = {
         'email': userEmailController.text.trim(),
         'name': userNameController.text.trim(),
         'phoneNumber': userPhoneController.text.trim(),
         'password': userPasswordController.text,
-        'role': 'user',
+        'role': selectedRole,
         'age': userAgeController.text.trim(),
         'weight': userWeightController.text.trim(),
         'sex': userSelectedSex.value,
       };
-    } else { // For sub_admin (service provider)
+    } else if (isVendor.value) {
+      selectedRole = 'vendor';
       data = {
         'email': providerEmailController.text.trim(),
         'name': providerNameController.text.trim(),
         'phoneNumber': providerPhoneController.text.trim(),
         'password': providerPasswordController.text,
-        'role': 'sub_admin',
+        'role': selectedRole,
+        'location': providerLocationController.text.trim(),
+      };
+    } else {
+      selectedRole = 'sub_admin';
+      data = {
+        'email': providerEmailController.text.trim(),
+        'name': providerNameController.text.trim(),
+        'phoneNumber': providerPhoneController.text.trim(),
+        'password': providerPasswordController.text,
+        'role': selectedRole,
         'job': providerSelectedJob.value,
-        'birthDate': providerBirthController.text,
         'location': providerLocationController.text,
       };
     }
 
+    await Future.delayed(const Duration(seconds: 2)); // Simulate API delay
+    loading.value = false;
+
     try {
-      final res = await AuthRepository().signupWithImage(
-        data: data,
-        imageFile: pickedImage.value,
-      );
+      // Simulate successful signup and save data locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', 'dummy_token_${DateTime.now().millisecondsSinceEpoch}');
+      await prefs.setString('role', selectedRole);
 
-      loading.value = false;
+      Get.snackbar("Success", "Signed up successfully as $selectedRole");
 
-      if (res['success'] == true) {
-        final prefs = await SharedPreferences.getInstance();
-        final token = res['data']['otpToken']['token'];
-        await prefs.setString('token', token);
-        await prefs.setString('role', isUser.value ? 'user' : 'sub_admin');
-        Get.snackbar("Success", "Signed up successfully");
+      // Navigate to email verification screen or home
+      Get.toNamed(RouteName.emailView, arguments: {"role": selectedRole});
 
-        final resolvedRole = isUser.value ? 'user' : 'sub_admin';
-        Get.toNamed(RouteName.emailView, arguments: {"role": resolvedRole});
-
-        if (isUser.value) {
-          clearUserSignupFields();
-        } else {
-          clearProviderSignupFields();
-        }
+      // Clear fields
+      if (isUser.value) {
+        clearUserSignupFields();
       } else {
-        Get.snackbar("Error", res['message'] ?? "Signup failed");
+        clearProviderSignupFields();
       }
     } catch (e) {
       loading.value = false;
       Get.snackbar("Error", "Something went wrong: $e");
     }
   }
+
 
   // --- Clear Form Fields Methods ---
   void clearLoginFields() {
@@ -440,15 +444,12 @@ class AuthViewModel extends GetxController {
     providerEmailController.clear();
     providerPhoneController.clear();
     providerPasswordController.clear();
-    providerBirthController.clear();
     providerLocationController.clear();
     providerSelectedJob.value = '';
-
     providerNameError.value = null;
     providerEmailError.value = null;
     providerPhoneError.value = null;
     providerPasswordError.value = null;
-    providerBirthDateError.value = null;
     providerLocationError.value = null;
     providerJobError.value = null;
     agreeTerms.value = false;
@@ -457,7 +458,6 @@ class AuthViewModel extends GetxController {
 
   // --- Image Picker ---
   Rx<File?> pickedImage = Rx<File?>(null);
-
   Future<void> pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);

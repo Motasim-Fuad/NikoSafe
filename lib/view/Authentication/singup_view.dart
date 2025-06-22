@@ -5,6 +5,7 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/Authentication/singup_provider_view.dart';
 import 'package:nikosafe/view/Authentication/singup_user_view.dart';
+import 'package:nikosafe/view/Authentication/singup_vendor_view.dart';
 import '../../View_Model/Controller/authentication/authentication_view_model.dart';
 import 'widgets/common_widget.dart';
 
@@ -12,88 +13,114 @@ class SignupView extends StatelessWidget {
   final AuthViewModel controller = Get.put(AuthViewModel());
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
-        backgroundColor:Colors.transparent,
+        backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: Obx(() {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListView(
-                children: [
-                  const SizedBox(height: 20),
-                  const Center(
-                    child: Text("Get Started Now", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListView(
+              children: [
+                const SizedBox(height: 20),
+                const Center(
+                  child: Text(
+                    "Get Started Now",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  const SizedBox(height: 8),
-                  const Center(
-                    child: Text("Create an account or log in to explore about our app", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(height: 8),
+                const Center(
+                  child: Text(
+                    "Create an account or log in to explore about our app",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
                   ),
-                  const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
+                Obx(() => Center(child: buildLoginSignUpToggle(controller))),
 
-                  Center(child: buildLoginSignUpToggle(controller)),
+                const SizedBox(height: 20),
 
-                  const SizedBox(height: 20),
+                // Role toggle section
+                Obx(() => !controller.isLogin.value
+                    ?
 
-                  // Toggle Role
-                  if (!controller.isLogin.value)
-                    Column(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
                       children: [
-                        const Text("Choose Your Role",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 20,fontWeight: FontWeight.bold),),
-                        SizedBox(height: 20,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildTab("User", controller.isUser.value, () {
-                              controller.isUser.value = true;
-                              controller.clearProviderSignupFields(); // Clear provider fields when switching to user
-                            }),
-                            const SizedBox(width: 10),
-                            buildTab("Service Provider", !controller.isUser.value, () {
-                              controller.isUser.value = false;
-                              controller.clearUserSignupFields(); // Clear user fields when switching to provider
-                            }),
-                          ],
+                        Expanded(
+                          child: buildTab("User", controller.isUser.value && !controller.isVendor.value, () {
+                            controller.isUser.value = true;
+                            controller.isVendor.value = false;
+                            controller.clearProviderSignupFields();
+                          }),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: buildTab("Service Provider", !controller.isUser.value && !controller.isVendor.value, () {
+                            controller.isUser.value = false;
+                            controller.isVendor.value = false;
+                            controller.clearUserSignupFields();
+                          }),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    buildTab("Hospitality Venue", controller.isVendor.value, () {
+                      controller.isUser.value = false;
+                      controller.isVendor.value = true;
+                      controller.clearUserSignupFields();
+                      controller.clearProviderSignupFields();
+                    }),
+                  ],
+                )
 
-                  const SizedBox(height: 20),
+                    : const SizedBox()),
 
-                  controller.isLogin.value
-                      ? buildLoginForm(controller)
-                      : controller.isUser.value
-                      ? SignupUserView(controller: controller)
-                      : SignupProviderView(controller: controller),
-                ],
-              ),
-            );
-          }),
+                const SizedBox(height: 20),
+
+                // Dynamic Form
+                Obx(() {
+                  if (controller.isLogin.value) {
+                    return buildLoginForm(controller);
+                  } else if (controller.isUser.value) {
+                    return SignupUserView(controller: controller);
+                  } else if (controller.isVendor.value) {
+                    return SignupVendorView();
+                  } else {
+                    return SignupProviderView(controller: controller);
+                  }
+                }),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+
 
   Widget buildTab(String label, bool selected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 40,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? const Color(0xFF00D1B7) : const Color(0xFF2B3A42),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Text(label, style: const TextStyle(color: Colors.white)),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 40,
+        width: double.infinity, // Ensures full width inside Column or Padding
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF00D1B7) : const Color(0xFF2B3A42),
+          borderRadius: BorderRadius.circular(24),
         ),
+        child: Text(label, style: const TextStyle(color: Colors.white)),
       ),
     );
   }
+
 
   Widget buildLoginForm(AuthViewModel controller) {
     return Column(

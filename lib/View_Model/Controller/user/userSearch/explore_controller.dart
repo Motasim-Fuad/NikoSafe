@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 import '../../../../Repositry/userSearch/explore_repository.dart';
 import '../../../../models/userSearch/explore_item_model.dart';
 
@@ -8,6 +7,9 @@ class ExploreController extends GetxController {
 
   var allItems = <ExploreItemModel>[].obs;
   var filteredItems = <ExploreItemModel>[].obs;
+  var favoriteItems = <ExploreItemModel>[].obs;
+  var followedItems = <ExploreItemModel>[].obs;
+
   var selectedCategory = 'all'.obs;
   var searchQuery = ''.obs;
 
@@ -39,4 +41,30 @@ class ExploreController extends GetxController {
             item.category == selectedCategory.value))
         .toList();
   }
+
+  // Follow / Unfollow logic
+  void toggleFollow(ExploreItemModel item) {
+    if (followedItems.contains(item)) {
+      followedItems.remove(item);
+    } else {
+      followedItems.add(item);
+    }
+  }
+
+  bool isFollowing(String id) {
+    return followedItems.any((item) => item.id == id);
+  }
+
+  void toggleFavorite(ExploreItemModel item) {
+    if (favoriteItems.contains(item)) {
+      favoriteItems.remove(item);
+    } else {
+      favoriteItems.add(item);
+    }
+  }
+
+  bool isFavorite(String id) {
+    return favoriteItems.any((item) => item.id == id);
+  }
 }
+

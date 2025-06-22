@@ -1,8 +1,8 @@
 
-import 'package:nikosafe/models/userSearch/theraphy_session/theraphy_booking_model.dart';
+import '../../../models/userSearch/userServiceProviderModel/bookingmodel.dart';
 
-class TheraphyBookingRepo {
-  Future<void> bookTrainer(TheraphyBookingModel booking) async {
+class BookingRepository {
+  Future<void> book(BookingModel booking) async {
     // Simulate API call
     await Future.delayed(Duration(seconds: 1));
     print("Booking sent: ${booking.toJson()}");

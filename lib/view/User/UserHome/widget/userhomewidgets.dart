@@ -57,12 +57,6 @@ Widget topBar() {
             child: Icon(Icons.add, color: Colors.white),
           ),
         ),
-
-
-
-
-
-
         Spacer(),
         GestureDetector(
           onTap: (){
@@ -193,10 +187,14 @@ Widget buildPostCard(PostModel post) {
         ),
         Row(
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.thumb_up, color: Colors.cyan)),
+            IconButton(onPressed: () {
+
+            }, icon: Icon(Icons.thumb_up, color: Colors.cyan)),
             Text('${post.likes}', style: TextStyle(color: Colors.white)),
             SizedBox(width: 16),
-            IconButton(onPressed: () {}, icon: Icon(Icons.comment, color: Colors.white)),
+            IconButton(onPressed: () {
+
+            }, icon: Icon(Icons.comment, color: Colors.white)),
             Text('${post.comments}', style: TextStyle(color: Colors.white)),
             Spacer(),
             if (post.location != null)

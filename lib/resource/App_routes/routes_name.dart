@@ -43,6 +43,9 @@ class RouteName{
   static const String porviderSupportView="/Porvider_SupportView";
   static const String providerWithDrawCompleteView="/Provider_WithDraw_CompleteView";
   static const String providerWithdrawRequestView="/Provider_Withdraw_RequestView";
+  static const String followingView="/Following_View";
+  static const String favoritesScreenView="/Favorites_ScreenView";
+  static const String bookingPageView="/Booking_PageView";
 
 
 

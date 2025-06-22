@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import for FilteringTextInputFormatter
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
@@ -58,7 +58,8 @@ class SignupUserView extends StatelessWidget {
                 errorText: controller.userWeightError, // Use user-specific error
               ),
               buildDropdown(
-                "Your Sex",
+                "Your Gender",
+
                 controller.userSelectedSex, // Use user-specific RxString
                 controller.sexOptions,
                 errorText: controller.userSexError, // Use user-specific error

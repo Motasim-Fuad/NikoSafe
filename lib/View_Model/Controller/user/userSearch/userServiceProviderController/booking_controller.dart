@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../../../../../Repositry/userSearch/trainer/trainer_booking_repo.dart';
-import '../../../../../models/userSearch/trainer/trainer_booking_model.dart';
+import '../../../../../Repositry/userSearch/UserServiceProviderRepo/booking_repo.dart';
 
-class TrainerBookingController extends GetxController {
+import '../../../../../models/userSearch/userServiceProviderModel/bookingmodel.dart';
+import '../../../../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
+
+class BookingController extends GetxController {
   RxList<DateTime> selectedDates = <DateTime>[].obs;
   RxList<String> selectedTimeSlots = <String>[].obs;
   Rx<DateTime> focusedDay = DateTime.now().obs;
@@ -16,7 +18,7 @@ class TrainerBookingController extends GetxController {
     "2:00 PM - 3:00 PM",
   ];
 
-  final TrainerBookingRepository _repo = TrainerBookingRepository();
+  final BookingRepository _repo = BookingRepository();
 
   @override
   void onInit() {
@@ -50,12 +52,13 @@ class TrainerBookingController extends GetxController {
       return;
     }
 
-    TrainerBookingModel booking = TrainerBookingModel(
+    BookingModel booking = BookingModel(
       dates: selectedDates.toList(),
       timeSlots: selectedTimeSlots.toList(),
     );
 
-    _repo.bookTrainer(booking);
-    Get.snackbar("Success", "Booking confirmed");
+    _repo.book(booking);
+    Get.bottomSheet( TaskRequestBottomSheet());
+    // Get.snackbar("Success", "Booking confirmed");
   }
 }

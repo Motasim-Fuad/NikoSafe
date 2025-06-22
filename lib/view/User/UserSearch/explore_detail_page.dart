@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/utils/utils.dart';
+import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
 import '../../../models/userSearch/explore_item_model.dart';
 import '../../../resource/Colors/app_colors.dart';
 import '../../../resource/compunents/customBackButton.dart';
@@ -6,7 +10,7 @@ import '../../../resource/compunents/customBackButton.dart';
 class ExploreDetailPage extends StatelessWidget {
   final ExploreItemModel item;
   ExploreDetailPage({required this.item});
-
+  final ExploreController controller = Get.put(ExploreController());
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,13 +67,50 @@ class ExploreDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColor.primaryTextColor,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          item.title,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.primaryTextColor,
+                          ),
+                        ),
+                  Spacer(),
+                        item.category != "club_event"
+                            ? Obx(() {
+                          bool isFollowing = controller.isFollowing(item.id);
+                          return RoundButton(
+                            width: 150,
+                            height: 40,
+                            title: isFollowing ? "Following" : "Follow",
+                            onPress: () {
+                              controller.toggleFollow(item);
+                              Utils.successSnackBar(
+                                  isFollowing ? "Unfollowed" : "Followed",
+                                  "${item.title} ${isFollowing ? 'removed from' : 'added to'} following list"
+                              );
+                            },
+                          );
+                        })
+                            : IconButton(
+                          onPressed: () {
+                            controller.toggleFavorite(item);
+                          },
+                          icon: Obx(() {
+                            bool isFav = controller.isFavorite(item.id);
+                            return Icon(
+                              isFav ? Icons.star : Icons.star_border_purple500_sharp,
+                              color: isFav ? Colors.amber : Colors.white,
+                            );
+                          }),
+                        )
+
+
+
+
+                      ],
                     ),
                     SizedBox(height: 16),
                     // Contact Info

@@ -64,49 +64,14 @@ class Userserviceproviderlistview extends StatelessWidget {
                          PopupMenuItem(value: 'Plumber', child: Text('Plumber',style: TextStyle(color: AppColor.primaryTextColor),)),
                          PopupMenuItem(value: 'Electrician', child: Text('Electrician',style: TextStyle(color: AppColor.primaryTextColor),)),
                          PopupMenuItem(value: 'Carpenter', child: Text('Carpenter',style: TextStyle(color: AppColor.primaryTextColor),)),
+                         PopupMenuItem(value: 'Trainer', child: Text('Trainer',style: TextStyle(color: AppColor.primaryTextColor),)),
+                         PopupMenuItem(value: 'Therapy', child: Text('Therapy',style: TextStyle(color: AppColor.primaryTextColor),)),
                       ],
                     )
                   ],
                 ),
                 const SizedBox(height: 16),
-                // therephy and taineer
 
-
-                Row(
-                  children: [
-                    CustomSectionButton(
-                      title: "Therapy sessions",
-                      icon:SvgPicture.asset(ImageAssets.therapy),
-                      onPress: () {
-                        Get.toNamed(RouteName.theraphySessionListView);
-                      },
-                      height: 40, // 7% of screen height
-                      width: width * 0.48,  // 40% of screen width
-                      loading: false,
-                      textColor: Colors.white,
-
-                    ),
-
-              SizedBox(width: width *0.02,),
-                    CustomSectionButton(
-                      title: "Trainer",
-                      icon:SvgPicture.asset(ImageAssets.trainer),
-                      onPress: () {
-                        Get.toNamed(RouteName.trainerView);
-                      },
-                      height: 40,
-                      width: width * 0.4,  // 40% of screen width
-
-                      loading: false,
-                      textColor: Colors.white,
-
-                    ),
-                  ],
-                ),
-
-
-
-                const SizedBox(height: 16),
                 const Align(
                   alignment: Alignment.centerLeft,
                   child: Text('Find Trusted Professionals', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),

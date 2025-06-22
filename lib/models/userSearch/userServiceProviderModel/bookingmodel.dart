@@ -1,8 +1,8 @@
-class TrainerBookingModel {
+class BookingModel {
   final List<DateTime> dates;
   final List<String> timeSlots;
 
-  TrainerBookingModel({required this.dates, required this.timeSlots});
+  BookingModel({required this.dates, required this.timeSlots});
 
   Map<String, dynamic> toJson() {
     return {

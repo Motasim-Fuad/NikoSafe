@@ -26,7 +26,7 @@ class CustomDropdown extends StatelessWidget {
           text: label,
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: Colors.black,
+          color: Colors.white,
         ),
         SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -52,7 +52,7 @@ class CustomDropdown extends StatelessWidget {
               value: item,
               child: CustomText(
                 text: item,
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 15,
               ),
             ),
@@ -77,7 +77,7 @@ class CustomText extends StatelessWidget {
     this.bottom = 0,
     this.fontSize = 14,
     this.fontWeight = FontWeight.w400,
-    this.color = Colors.black,
+    this.color = Colors.white,
     this.text = "",
     this.overflow = TextOverflow.fade,
     this.letterSpace,
