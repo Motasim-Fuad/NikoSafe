@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../../../Repositry/userSearch/UserServiceProviderRepo/booking_repo.dart';
 
 import '../../../../../models/userSearch/userServiceProviderModel/bookingmodel.dart';
+import '../../../../../utils/utils.dart';
 import '../../../../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
 
 class BookingController extends GetxController {
@@ -47,10 +48,6 @@ class BookingController extends GetxController {
   }
 
   void bookNow() {
-    if (selectedDates.isEmpty || selectedTimeSlots.isEmpty) {
-      Get.snackbar("Error", "Please select at least one date and time slot");
-      return;
-    }
 
     BookingModel booking = BookingModel(
       dates: selectedDates.toList(),
@@ -58,7 +55,8 @@ class BookingController extends GetxController {
     );
 
     _repo.book(booking);
-    Get.bottomSheet( TaskRequestBottomSheet());
-    // Get.snackbar("Success", "Booking confirmed");
+
+    Utils.successSnackBar("Booking", "Booking Request Successfully",
+    );
   }
 }

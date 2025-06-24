@@ -12,24 +12,4 @@ class ProfileController extends GetxController {
     profileImage: ImageAssets.userHome_userProfile,
   ).obs;
 
-  Future<void> logout() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-
-      // Clear token and other user data
-      await prefs.clear();
-
-      // Optionally reset observable profile if needed
-      // profile.value = MyProfileModel(
-      //   name: "",
-      //   points: 0,
-      //   profileImage: ImageAssets.userHome_userProfile,
-      // );
-
-      // Navigate to login screen
-      Get.offAllNamed(RouteName.authView); // Replace with your login route
-    } catch (e) {
-      Get.snackbar("Error", "Logout failed: $e");
-    }
-  }
 }

@@ -11,6 +11,7 @@ class EarningCard extends StatelessWidget {
     return Obx(() {
       final percent = controller.earningChangePercent;
       final isPositive = percent >= 0;
+
       return Card(
         color: AppColor.cardColor,
         child: Padding(
@@ -27,7 +28,11 @@ class EarningCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Icon(isPositive ? Icons.trending_up : Icons.trending_down, size: 14, color: isPositive ? Colors.green : Colors.red),
+                      Icon(
+                        isPositive ? Icons.trending_up : Icons.trending_down,
+                        size: 14,
+                        color: isPositive ? Colors.green : Colors.red,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         "${percent.toStringAsFixed(1)}% from last month",
@@ -38,40 +43,25 @@ class EarningCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
+
+              /// Scrollable dropdown
               DropdownButton<String>(
                 value: controller.selectedMonth.value,
-                dropdownColor: AppColor.cardColor,
+                dropdownColor: AppColor.topLinear,
                 style: TextStyle(color: AppColor.primaryTextColor),
                 underline: const SizedBox(),
-                items: controller.months.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                onChanged: (value) => controller.changeMonth(value!),
+                icon: const Icon(Icons.arrow_drop_down),
+                menuMaxHeight: 200,
+                items: controller.months.map((e) {
+                  return DropdownMenuItem<String>(
+                    value: e,
+                    child: Text(e),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) controller.changeMonth(value);
+                },
               ),
-              // DropdownButtonTheme(
-              //   data: DropdownButtonThemeData(
-              //     menuMaxHeight: 150, // Approx height to show 3 items (3 * ~48)
-              //   ),
-              //   child: DropdownButton<String>(
-              //     value: controller.selectedMonth.value,
-              //     dropdownColor: AppColor.cardColor,
-              //     style: TextStyle(color: AppColor.primaryTextColor),
-              //     underline: const SizedBox(),
-              //     items: controller.months.map(
-              //           (e) => DropdownMenuItem(
-              //         value: e,
-              //         child: Text(e),
-              //       ),
-              //     ).toList(),
-              //     onChanged: (value) => controller.changeMonth(value!),
-              //   ),
-              // )
-
-
-
-
-
-
-
-
             ],
           ),
         ),

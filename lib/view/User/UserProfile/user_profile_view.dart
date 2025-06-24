@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/authentication/login_authentication_controller.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
@@ -8,6 +9,7 @@ import '../../../View_Model/Controller/user/MyProfile/my_profileController.dart'
 
 class UserProfileView extends StatelessWidget {
   final controller = Get.put(ProfileController());
+  final controller_logout = Get.put(LoginAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +102,7 @@ class UserProfileView extends StatelessWidget {
                 const SizedBox(height: 16),
                 TextButton.icon(
                   onPressed: () {
-                    controller.logout();
+                    controller_logout.logout();
                   },
                   style: TextButton.styleFrom(
                     side: const BorderSide(color: Colors.red),

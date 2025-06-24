@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/utils/utils.dart';
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
@@ -78,8 +79,22 @@ class ExploreDetailPage extends StatelessWidget {
                           ),
                         ),
                   Spacer(),
-                        item.category != "club_event"
-                            ? Obx(() {
+
+
+                        item.category == "club_event"
+                            ?
+                        IconButton(
+                          onPressed: () {
+                            controller.toggleFavorite(item);
+                          },
+                          icon: Obx(() {
+                            bool isFav = controller.isFavorite(item.id);
+                            return Icon(
+                              isFav ? Icons.star : Icons.star_border_purple500_sharp,
+                              color: isFav ? Colors.amber : Colors.white,
+                            );
+                          }),
+                        ) :Obx(() {
                           bool isFollowing = controller.isFollowing(item.id);
                           return RoundButton(
                             width: 150,
@@ -94,21 +109,6 @@ class ExploreDetailPage extends StatelessWidget {
                             },
                           );
                         })
-                            : IconButton(
-                          onPressed: () {
-                            controller.toggleFavorite(item);
-                          },
-                          icon: Obx(() {
-                            bool isFav = controller.isFavorite(item.id);
-                            return Icon(
-                              isFav ? Icons.star : Icons.star_border_purple500_sharp,
-                              color: isFav ? Colors.amber : Colors.white,
-                            );
-                          }),
-                        )
-
-
-
 
                       ],
                     ),
@@ -178,7 +178,9 @@ class ExploreDetailPage extends StatelessWidget {
             ],
           ),
         ),
-        bottomNavigationBar: Padding(
+             bottomNavigationBar:   item.category == "club_event" ?  RoundButton(title: "Book Reservation", onPress: (){
+            Get.toNamed(RouteName.userBookReservationView,arguments: [item]);
+             }):   Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [

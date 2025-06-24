@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:nikosafe/utils/utils.dart';
+import 'package:nikosafe/view/vendor/vendorHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../resource/App_routes/routes_name.dart';
 
@@ -19,11 +20,10 @@ class SplashServices {
       } else {
         if (role == 'user') {
           Get.offNamed(RouteName.userBottomNavView);
-        } else if (role == 'sub_admin') {
+        } else if (role == 'service_provider') {
           Get.offNamed(RouteName.providerBtmNavView);
         } else if (role == 'vendor') {
-         // Get.offNamed(RouteName.vendorBottomNavView); // ✅ Create route
-
+          Get.off(Vendorhome());
           Utils.successSnackBar("vendor", "vendor page");
         } else {
           Get.snackbar("Error", "Unknown role: $role");

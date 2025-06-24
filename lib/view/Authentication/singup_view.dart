@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/authentication/userAuthenticationController.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/Authentication/singup_provider_view.dart';
 import 'package:nikosafe/view/Authentication/singup_user_view.dart';
 import 'package:nikosafe/view/Authentication/singup_vendor_view.dart';
+import 'package:nikosafe/view/Authentication/widgets/dropdowm/dropdown.dart';
 import '../../View_Model/Controller/authentication/authentication_view_model.dart';
+
+import '../../View_Model/Controller/authentication/login_authentication_controller.dart';
+import '../../View_Model/Controller/authentication/servise_providerAuthenticationController.dart';
+import '../../View_Model/Controller/authentication/vendorController.dart';
+import '../../resource/compunents/customPopup_btn.dart';
 import 'widgets/common_widget.dart';
 
 class SignupView extends StatelessWidget {
-  final AuthViewModel controller = Get.put(AuthViewModel());
+  final MainAuthController mainController = Get.put(MainAuthController());
+  final LoginAuthController loginController = Get.put(LoginAuthController());
+  final UserAuthController userController = Get.put(UserAuthController());
+  final VendorAuthController vendorController = Get.put(VendorAuthController());
+  final ServiceProviderAuthController providerController = Get.put(ServiceProviderAuthController());
 
-  @override
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,62 +51,53 @@ class SignupView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Obx(() => Center(child: buildLoginSignUpToggle(controller))),
+                Obx(() => Center(child: buildLoginSignUpToggle(mainController))),
 
                 const SizedBox(height: 20),
 
                 // Role toggle section
-                Obx(() => !controller.isLogin.value
-                    ?
-
-                Column(
+                Obx(() => !mainController.isLogin.value
+                    ? Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
                       children: [
                         Expanded(
-                          child: buildTab("User", controller.isUser.value && !controller.isVendor.value, () {
-                            controller.isUser.value = true;
-                            controller.isVendor.value = false;
-                            controller.clearProviderSignupFields();
+                          child: buildTab("User", mainController.selectedRole.value == 'user', () {
+                            mainController.setRole('user');
                           }),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: buildTab("Service Provider", !controller.isUser.value && !controller.isVendor.value, () {
-                            controller.isUser.value = false;
-                            controller.isVendor.value = false;
-                            controller.clearUserSignupFields();
+                          child: buildTab("Service Provider", mainController.selectedRole.value == 'service_provider', () {
+                            mainController.setRole('service_provider');
                           }),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
-                    buildTab("Hospitality Venue", controller.isVendor.value, () {
-                      controller.isUser.value = false;
-                      controller.isVendor.value = true;
-                      controller.clearUserSignupFields();
-                      controller.clearProviderSignupFields();
+                    buildTab("Hospitality Venue", mainController.selectedRole.value == 'vendor', () {
+                      mainController.setRole('vendor');
                     }),
                   ],
                 )
-
                     : const SizedBox()),
 
                 const SizedBox(height: 20),
 
                 // Dynamic Form
                 Obx(() {
-                  if (controller.isLogin.value) {
-                    return buildLoginForm(controller);
-                  } else if (controller.isUser.value) {
-                    return SignupUserView(controller: controller);
-                  } else if (controller.isVendor.value) {
-                    return SignupVendorView();
+                  if (mainController.isLogin.value) {
+                    return buildLoginForm(loginController); // ✅ Correct
+                  } else if (mainController.selectedRole.value == 'user') {
+                    return SignupUserView(controller: userController); // ✅ Correct controller
+                  } else if (mainController.selectedRole.value == 'vendor') {
+                    return SignupVendorView(); // ✅ Correct controller
                   } else {
-                    return SignupProviderView(controller: controller);
+                    return SignupProviderView(controller: providerController); // ✅ Correct controller
                   }
                 }),
+
               ],
             ),
           ),
@@ -104,13 +106,12 @@ class SignupView extends StatelessWidget {
     );
   }
 
-
   Widget buildTab(String label, bool selected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 40,
-        width: double.infinity, // Ensures full width inside Column or Padding
+        width: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: selected ? const Color(0xFF00D1B7) : const Color(0xFF2B3A42),
@@ -121,65 +122,81 @@ class SignupView extends StatelessWidget {
     );
   }
 
-
-  Widget buildLoginForm(AuthViewModel controller) {
+  Widget buildLoginForm(LoginAuthController controller) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildInput(
-          controller.loginEmailController, // Use login-specific controller
+          controller.emailController,
           "Email",
           keyboardType: TextInputType.emailAddress,
-          errorText: controller.loginEmailError, // Use login-specific error
+          errorText: controller.emailError,
         ),
         buildInput(
-          controller.loginPasswordController, // Use login-specific controller
+          controller.passwordController,
           "Password",
           isPassword: true,
           isPasswordVisible: controller.isPasswordVisible,
-          errorText: controller.loginPasswordError, // Use login-specific error
+          errorText: controller.passwordError,
         ),
 
-        SizedBox(
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildRemember(controller), // Assuming remember me is common
+        const SizedBox(height: 10),
 
-              GestureDetector(
-                onTap: (){
-                  Get.toNamed(RouteName.forgotPasswordView);
-                },
-                child: Text("Forget Password ?",style: TextStyle(color: Colors.red,fontSize: 15),),
-              )
+        // Role Dropdown
+        Obx(() => CustomPopupButton<String>(
+          items: controller.roleOptions,
+          selectedItem: controller.selectedRole.value,
+          onSelected: (value) {
+            controller.selectedRole.value = value;
+          },
+          hintText: "Select Role",
+          customItemBuilder: (item) => Row(
+            children: [
+              const Icon(Icons.person_outline, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(item.capitalizeFirst ?? item),
             ],
           ),
+        )),
+
+
+
+        const SizedBox(height: 20),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            buildRemember(controller),
+            GestureDetector(
+              onTap: () {
+                Get.toNamed(RouteName.forgotPasswordView);
+              },
+              child: const Text("Forget Password ?", style: TextStyle(color: Colors.red, fontSize: 15)),
+            ),
+          ],
         ),
 
         const SizedBox(height: 20),
+
         Obx(() => controller.loading.value
-            ? const CircularProgressIndicator()
+            ? const Center(child: CircularProgressIndicator())
             : RoundButton(
           title: "Login",
-          onPress: (){
-            controller.login();
-
-            }, // Calls the central login method
+          onPress: () => controller.login(),
           width: double.infinity,
-        ),
-        ),
+        )),
       ],
     );
   }
+
 }
 
-// buildLoginSignUpToggle remains unchanged from your original code
-Widget buildLoginSignUpToggle(AuthViewModel controller) {
+Widget buildLoginSignUpToggle(MainAuthController controller) {
   return Container(
     height: 40,
     width: 215,
     decoration: BoxDecoration(
-      color: const Color(0x3300E6E0), // Outer background (cyan)
+      color: const Color(0x3300E6E0),
       borderRadius: BorderRadius.circular(24),
     ),
     child: Row(
@@ -187,9 +204,7 @@ Widget buildLoginSignUpToggle(AuthViewModel controller) {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              controller.isLogin.value = true;
-              controller.clearUserSignupFields();    // Clear signup fields when switching to login
-              controller.clearProviderSignupFields();
+              controller.switchToLogin();
             },
             child: Container(
               height: double.infinity,
@@ -211,8 +226,7 @@ Widget buildLoginSignUpToggle(AuthViewModel controller) {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              controller.isLogin.value = false;
-              controller.clearLoginFields(); // Clear login fields when switching to signup
+              controller.switchToSignup();
             },
             child: Container(
               height: double.infinity,

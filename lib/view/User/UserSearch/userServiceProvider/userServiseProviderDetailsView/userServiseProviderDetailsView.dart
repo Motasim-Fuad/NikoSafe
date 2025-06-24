@@ -6,8 +6,11 @@ import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServicesProviderDetailsReviewView.dart';
 import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsAboutView.dart';
+import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
+import '../../../../../View_Model/Controller/user/userSearch/userServiceProviderController/booking_controller.dart';
 import '../../../../../View_Model/toggle_tab_controller.dart';
 import '../../../../../models/userSearch/userServiceProviderModel/user_services_provider.dart';
+import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/compunents/toggle_tab_button.dart';
 
 
@@ -89,7 +92,7 @@ class UserServiceProviderDetailView extends StatelessWidget {
                   SizedBox(height: 10,),
 
                   RoundButton(width: 200,height:40,title: "Massage", onPress: (){
-
+                      Get.toNamed(RouteName.chatListView);
                   }),
                   const SizedBox(height: 16),
                   Padding(
@@ -126,6 +129,20 @@ class UserServiceProviderDetailView extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        bottomNavigationBar: provider.service == "Trainer" || provider.service == "Therapy"
+            ? RoundButton(
+          width: double.infinity,
+          title: "Booking Request",
+          onPress: () {
+            Get.toNamed(RouteName.bookingPageView);
+          },
+        )
+            : RoundButton(
+          title: "Booking Request",
+          onPress: () {
+            Get.bottomSheet( TaskRequestBottomSheet());
+          },
         ),
       ),
     );

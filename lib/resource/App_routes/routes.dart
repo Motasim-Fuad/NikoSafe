@@ -16,10 +16,10 @@ import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view
 import 'package:nikosafe/view/User/user_btn_nav.dart';
 import 'package:nikosafe/view/chat/chat_detail_view.dart';
 import 'package:nikosafe/view/chat/chat_list_view.dart';
+import '../../view/AllPayment/User/user_verification_view.dart';
 import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
 import '../../view/Splash_view.dart';
-
 import '../../view/User/UserHome/checkIn/user_checkin.dart';
 import '../../view/User/UserHome/user_home.dart';
 import '../../view/User/UserProfile/Screen/Following_View/following_view.dart';
@@ -35,12 +35,15 @@ import '../../view/User/UserProfile/Screen/user_history/user_review_view/user_re
 import '../../view/User/UserProfile/Screen/user_privacy_policy.dart';
 import '../../view/User/UserProfile/Screen/user_support.dart';
 import '../../view/User/UserProfile/Screen/user_tearms&conditions.dart';
+import '../../view/User/UserSearch/ClubEven/book_reservation_page.dart';
 import '../../view/User/UserSearch/userServiceProvider/UserServiceProviderList/userServiceProviderListView.dart';
 import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/booking_page_view.dart';
 import '../../view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsView.dart';
-import '../../view/home/home_view.dart';
 import '../../view/provider/ProviderEarning/provider_Withdraw/provider_withdraw_requestView.dart';
 import '../../view/provider/ProviderHome/provider_notification_view.dart';
+
+import '../../view/provider/ProviderHome/provider_task_detailsView.dart';
+import '../../view/provider/ProviderHome/send_quote_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_edit_view.dart';
 import '../../view/provider/ProviderProfile/Screen/ProviderBankDetails/provider_bank_details_view.dart';
 import '../../view/provider/ProviderProfile/Screen/porvider_support_view.dart';
@@ -305,6 +308,33 @@ class AppRouts {
     GetPage(
       name: RouteName.bookingPageView,
       page: () => BookingPageView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.userVerificationView,
+      page: () => UserVerificationView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.providerTaskDetailView,
+      page: () => ProviderTaskDetailsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.providerSendQuoteView,
+      page: () => ProviderSendQuoteView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.userBookReservationView,
+      page: () => UserBookReservationView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

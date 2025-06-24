@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../View_Model/Controller/authentication/authentication_view_model.dart';
+import '../../View_Model/Controller/authentication/servise_providerAuthenticationController.dart';
 import '../../resource/Colors/app_colors.dart';
 import '../../resource/compunents/RoundButton.dart';
 import 'widgets/common_widget.dart'; // Ensure this is imported
 
 class SignupProviderView extends StatelessWidget {
-  final AuthViewModel controller;
-  const SignupProviderView({required this.controller});
+  final ServiceProviderAuthController controller;
+
+   SignupProviderView({required this.controller,});
 
   @override
   Widget build(BuildContext context) {
@@ -16,31 +17,31 @@ class SignupProviderView extends StatelessWidget {
       child: Column(
         children: [
           buildInput(
-            controller.providerNameController, // Use provider-specific controller
+            controller.nameController, // Use provider-specific controller
             "Full Name",
-            errorText: controller.providerNameError, // Use provider-specific error
+            errorText: controller.nameError, // Use provider-specific error
             keyboardType: TextInputType.name,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
             ],
           ),
           buildInput(
-            controller.providerEmailController, // Use provider-specific controller
+            controller.emailController, // Use provider-specific controller
             "Email",
-            errorText: controller.providerEmailError, // Use provider-specific error
+            errorText: controller.emailError, // Use provider-specific error
             keyboardType: TextInputType.emailAddress,
           ),
 
           buildDropdown(
             "Your Designation",
-            controller.providerSelectedJob, // Use provider-specific RxString
+            controller.selectedJob, // Use provider-specific RxString
             controller.jobList,
-            errorText: controller.providerJobError, // Use provider-specific error
+            errorText: controller.jobError, // Use provider-specific error
           ),
           buildInput(
-            controller.providerPhoneController, // Use provider-specific controller
+            controller.phoneController, // Use provider-specific controller
             "Mobile Number",
-            errorText: controller.providerPhoneError, // Use provider-specific error
+            errorText: controller.phoneError, // Use provider-specific error
             keyboardType: TextInputType.phone,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -48,22 +49,22 @@ class SignupProviderView extends StatelessWidget {
             ],
           ),
           buildInput(
-            controller.providerPasswordController, // Use provider-specific controller
+            controller.passwordController, // Use provider-specific controller
             "Password",
             isPassword: true,
             isPasswordVisible: controller.isPasswordVisible,
-            errorText: controller.providerPasswordError, // Use provider-specific error
+            errorText: controller.passwordError, // Use provider-specific error
           ),
 
           buildInput(
-            controller.providerLocationController, // Use provider-specific controller
+            controller.locationController, // Use provider-specific controller
             "Location",
-            errorText: controller.providerLocationError, // Use provider-specific error
+            errorText: controller.locationError, // Use provider-specific error
             keyboardType: TextInputType.streetAddress,
           ),
-          buildUploadBox(controller), // Assuming image upload is common
+          buildUploadBoxForProvider(controller), // Assuming image upload is common
           const SizedBox(height: 10),
-          buildTermsCheck(controller), // Assuming terms check is common
+          buildTermsCheckForSearviesProvider(controller), // Assuming terms check is common
           const SizedBox(height: 20),
           Obx(
                 () => controller.loading.value

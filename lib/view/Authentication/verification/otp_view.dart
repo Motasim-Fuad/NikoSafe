@@ -4,6 +4,7 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 import '../../../View_Model/Controller/authentication/otp_controller.dart';
+import '../../../utils/utils.dart';
 import '../widgets/otp_input_filed.dart';
 
 class OTPView extends StatelessWidget {
@@ -11,12 +12,13 @@ class OTPView extends StatelessWidget {
 
   final OTPController controller = Get.put(OTPController());
 
+  // Use lowercase roles to match controller.role.value exactly
+  final List<String> roles = ['user', 'service_provider', 'vendor'];
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -31,12 +33,39 @@ class OTPView extends StatelessWidget {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            reverse: true, // Ensures keyboard doesn't hide content
+            reverse: true,
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  const SizedBox(height: 32),
+                  const Text(
+                    "Select Role",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(() => DropdownButton<String>(
+                    value: controller.role.value.isNotEmpty ? controller.role.value : null,
+                    dropdownColor: Colors.black87,
+                    iconEnabledColor: Colors.white,
+                    hint: const Text('Select Role', style: TextStyle(color: Colors.white)),
+                    items: roles.map((role) {
+                      return DropdownMenuItem<String>(
+                        value: role,
+                        child: Text(
+                          role[0].toUpperCase() + role.substring(1),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.role.value = value;
+                      }
+                    },
+                  )),
                   const SizedBox(height: 32),
                   const Text(
                     "Enter OTP",
@@ -57,16 +86,19 @@ class OTPView extends StatelessWidget {
                         controller: controller.controllers[index],
                         focusNode: controller.focusNodes[index],
                         autoFocus: index == 0,
-                        onChanged: (value) =>
-                            controller.onOTPChange(index, value, context),
+                        onChanged: (value) => controller.onOTPChange(index, value, context),
                       );
                     }),
                   ),
                   const SizedBox(height: 24),
-                  RoundButton(title: 'Verify', onPress: () {
-                    controller.verifyOtp();
-                  },
-            ),
+                  Obx(() => RoundButton(
+                    title: controller.isLoading.value ? "Verifying..." : 'Verify',
+                    onPress: controller.isLoading.value
+                        ? () {}    // empty callback instead of null
+                        : () {
+                      controller.verifyOtp();
+                    },
+                  )),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
@@ -84,7 +116,7 @@ class OTPView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16), // Extra bottom spacing
+                  const SizedBox(height: 16),
                 ],
               ),
             ),

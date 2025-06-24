@@ -35,13 +35,7 @@ class Userservicesproviderdetailsreviewview extends StatelessWidget {
         ),
         // Optional: Add booking button
         SizedBox(height: 20),
-        RoundButton(
-            width: double.infinity,
-            title: "Booking Request",
-            onPress: () {
-         Get.toNamed(RouteName.bookingPageView);
-            }
-        ),
+
 
       ],
     );

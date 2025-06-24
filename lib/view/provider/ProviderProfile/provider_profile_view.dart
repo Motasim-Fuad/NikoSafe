@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/authentication/login_authentication_controller.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
@@ -9,7 +10,7 @@ import '../../../View_Model/Controller/authentication/authentication_view_model.
 
 
 class ProviderProfileView extends StatelessWidget {
-  final controller = Get.put(AuthViewModel());
+  final controller_logout = Get.put(LoginAuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +104,7 @@ class ProviderProfileView extends StatelessWidget {
               const SizedBox(height: 16),
               TextButton.icon(
                 onPressed: () {
-                  controller.logout();
+                  controller_logout.logout();
                 },
                 style: TextButton.styleFrom(
                   side: const BorderSide(color: Colors.red),

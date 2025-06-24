@@ -46,6 +46,10 @@ class RouteName{
   static const String followingView="/Following_View";
   static const String favoritesScreenView="/Favorites_ScreenView";
   static const String bookingPageView="/Booking_PageView";
+  static const String userVerificationView="/User_VerificationView";
+  static const String providerTaskDetailView="/Provider_TaskDetailView";
+  static const String providerSendQuoteView="/ProviderSend_QuoteView";
+  static const String userBookReservationView="/UserBook_Reservation_View";
 
 
 

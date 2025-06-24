@@ -65,4 +65,11 @@ class ImageAssets{
   static const String profile_privacy="assets/icons/profile/Chield.svg";
   static const String profile_about="assets/icons/profile/Info_alt_light.svg";
 
+
+
+  static const String subscriptionPlanImage="assets/images/subscriptionPlan.svg";
+  static const String paymentSuccessIcon="assets/icons/PaymentSuccessIcon.svg";
+  static const String reviewVerificationImage="assets/images/reviewImage.svg";
+
+
 }

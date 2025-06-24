@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import for FilteringTextInputFormatter
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nikosafe/View_Model/Controller/authentication/userAuthenticationController.dart';
 import 'package:nikosafe/View_Model/Controller/authentication/vendorController.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 
-import '../../../View_Model/Controller/authentication/authentication_view_model.dart';
+import '../../../View_Model/Controller/authentication/authTapView.dart';
+import '../../../View_Model/Controller/authentication/login_authentication_controller.dart';
+import '../../../View_Model/Controller/authentication/servise_providerAuthenticationController.dart';
 
+// Updated common widgets that work with the new controllers
 Widget buildInput(
     TextEditingController controller,
     String hint, {
@@ -70,8 +77,6 @@ Widget buildInput(
     ),
   );
 }
-
-
 Widget buildSubmitButton(String text, VoidCallback onPressed) {
   return SizedBox(
     width: double.infinity,
@@ -80,7 +85,9 @@ Widget buildSubmitButton(String text, VoidCallback onPressed) {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF00D1B7),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
       ),
       child: Text(
         text,
@@ -90,11 +97,15 @@ Widget buildSubmitButton(String text, VoidCallback onPressed) {
   );
 }
 
-Widget buildTermsCheck(AuthViewModel controller) {
+
+
+
+// tarms and conditions  start
+Widget buildTermsCheckForUser(UserAuthController controller) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 12),
     child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // center vertically
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Obx(
               () => Checkbox(
@@ -104,23 +115,10 @@ Widget buildTermsCheck(AuthViewModel controller) {
             activeColor: const Color(0xFF00D1B7),
           ),
         ),
-        Flexible(
-          child: RichText(
-            text: TextSpan(
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-              children: [
-                const TextSpan(text: "I agree to the "),
-                TextSpan(
-                  text: "Terms & Conditions",
-                  style: const TextStyle(color: Color(0xFF00D1B7)),
-                ),
-                const TextSpan(text: " and "),
-                TextSpan(
-                  text: "Privacy Policy",
-                  style: const TextStyle(color: Color(0xFF00D1B7)),
-                ),
-              ],
-            ),
+        Expanded(
+          child: Text(
+            " I agree to the Terms & Conditions and Privacy Policy ",
+            style: TextStyle(color: AppColor.secondaryTextColor),
           ),
         ),
       ],
@@ -128,11 +126,11 @@ Widget buildTermsCheck(AuthViewModel controller) {
   );
 }
 
-Widget buildRemember(AuthViewModel controller) {
+Widget buildTermsCheckForSearviesProvider(ServiceProviderAuthController controller) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 12),
     child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center, // center vertically
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Obx(
               () => Checkbox(
@@ -142,8 +140,79 @@ Widget buildRemember(AuthViewModel controller) {
             activeColor: const Color(0xFF00D1B7),
           ),
         ),
+        Expanded(
+          child: Text(
+            " I agree to the Terms & Conditions and Privacy Policy ",
+            style: TextStyle(color: AppColor.secondaryTextColor),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildTermsCheckForVendor(VendorAuthController controller) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Obx(
+              () => Checkbox(
+            value: controller.agreeTerms.value,
+            onChanged: (val) => controller.agreeTerms.value = val ?? false,
+            checkColor: Colors.white,
+            activeColor: const Color(0xFF00D1B7),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            " I agree to the Terms & Conditions and Privacy Policy ",
+            style: TextStyle(color: AppColor.secondaryTextColor),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Widget buildTermsCheck(LoginAuthController controller) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Obx(
+              () => Checkbox(
+            value: controller.rememberMe.value,
+            onChanged: (val) => controller.rememberMe.value = val ?? false,
+            checkColor: Colors.white,
+            activeColor: const Color(0xFF00D1B7),
+          ),
+        ),
+
+        Text(" I agree to the Terms & Conditions and Privacy Policy "),
+
+      ],
+    ),
+  );
+}
+// tarms and conditions  end
+
+Widget buildRemember(LoginAuthController controller) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Obx(
+              () => Checkbox(
+            value: controller.rememberMe.value,
+            onChanged: (val) => controller.rememberMe.value = val ?? false,
+            checkColor: Colors.white,
+            activeColor: const Color(0xFF00D1B7),
+          ),
+        ),
         Text(
-          "Remember Me ",
+          "Remember Me",
           style: TextStyle(fontSize: 15, color: AppColor.primaryTextColor),
         ),
       ],
@@ -151,7 +220,6 @@ Widget buildRemember(AuthViewModel controller) {
   );
 }
 
-// Updated buildDropdown to include errorText
 Widget buildDropdown(
     String label,
     RxString selected,
@@ -169,7 +237,7 @@ Widget buildDropdown(
           child: Text(
             e,
             style: TextStyle(
-              color: AppColor.secondaryTextColor, // Dropdown item text color
+              color: AppColor.secondaryTextColor,
             ),
           ),
         ))
@@ -190,19 +258,19 @@ Widget buildDropdown(
           ),
           labelText: label,
           labelStyle: const TextStyle(
-            color: Colors.white54, // <-- White label text color
+            color: Colors.white54,
           ),
           errorText: errorText?.value,
         ),
         style: TextStyle(
-          color: AppColor.secondaryTextColor, // Selected item text color
+          color: AppColor.secondaryTextColor,
         ),
       ),
     ),
   );
 }
 
-Widget buildUploadBox(AuthViewModel controller) {
+Widget buildUploadBoxForProvider(ServiceProviderAuthController controller) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -246,15 +314,12 @@ Widget buildUploadBox(AuthViewModel controller) {
 }
 
 
-
-// vendor
-
-Widget buildUploadBoxforvendor(VendorSignupViewModel controller) {
+Widget buildUploadBoxForVendor(VendorAuthController controller) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Text(
-        "Your necessary documents",
+        "Upload Your ID Cards Here",
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,
@@ -292,40 +357,3 @@ Widget buildUploadBoxforvendor(VendorSignupViewModel controller) {
   );
 }
 
-// Widget buildTermsCheckvendor(VendorSignupViewModel controller) {
-//   return Padding(
-//     padding: const EdgeInsets.symmetric(vertical: 12),
-//     child: Row(
-//       crossAxisAlignment: CrossAxisAlignment.center, // center vertically
-//       children: [
-//         Obx(
-//               () => Checkbox(
-//             value: controller.agreeTerms.value,
-//             onChanged: (val) => controller.agreeTerms.value = val ?? false,
-//             checkColor: Colors.white,
-//             activeColor: const Color(0xFF00D1B7),
-//           ),
-//         ),
-//         Flexible(
-//           child: RichText(
-//             text: TextSpan(
-//               style: const TextStyle(color: Colors.white, fontSize: 14),
-//               children: [
-//                 const TextSpan(text: "I agree to the "),
-//                 TextSpan(
-//                   text: "Terms & Conditions",
-//                   style: const TextStyle(color: Color(0xFF00D1B7)),
-//                 ),
-//                 const TextSpan(text: " and "),
-//                 TextSpan(
-//                   text: "Privacy Policy",
-//                   style: const TextStyle(color: Color(0xFF00D1B7)),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }

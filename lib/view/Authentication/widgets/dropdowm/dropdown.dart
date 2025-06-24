@@ -26,7 +26,7 @@ class CustomDropdown extends StatelessWidget {
           text: label,
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: Colors.white,
+          color: Colors.white54,
         ),
         SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -35,7 +35,7 @@ class CustomDropdown extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
-            fillColor: Colors.grey[200],
+            fillColor: Color(0xfffffff),
             contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -52,7 +52,7 @@ class CustomDropdown extends StatelessWidget {
               value: item,
               child: CustomText(
                 text: item,
-                color: Colors.white,
+                color: Colors.white54,
                 fontSize: 15,
               ),
             ),
@@ -77,7 +77,7 @@ class CustomText extends StatelessWidget {
     this.bottom = 0,
     this.fontSize = 14,
     this.fontWeight = FontWeight.w400,
-    this.color = Colors.white,
+    this.color = Colors.green,
     this.text = "",
     this.overflow = TextOverflow.fade,
     this.letterSpace,
@@ -112,7 +112,7 @@ class CustomText extends StatelessWidget {
           fontSize: fontSize,
           fontWeight: fontWeight,
           color: color,
-          decorationColor: Colors.grey,
+          decorationColor: Colors.yellow,
           decoration: underline ? TextDecoration.underline : TextDecoration.none, // Conditionally apply underline
         ),
       ),

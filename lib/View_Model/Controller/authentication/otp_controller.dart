@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/resource/App_routes/routes_name.dart';
-import '../../../data/network/network_api_services.dart';
-import '../../../models/Login/User_Responce_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/utils.dart';
-import '../login/user_prefrrence/user_preference_view_model.dart';
+import '../../../view/AllPayment/ServiseProvider/subscription_selection_view.dart';
+import '../../../view/AllPayment/User/subscription_selection_view.dar.dart';
+import '../../../view/AllPayment/vendor/vendor_sebscription_plan_view.dart';
 
 
 class OTPController extends GetxController {
-  final List<TextEditingController> controllers =
-  List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(
+    6,
+        (_) => TextEditingController(),
+  );
   final List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
 
   RxBool isLoading = false.obs;
-
   late String email;
-
+  RxString role = ''.obs;  // Use RxString for reactive role
 
   @override
   void onInit() {
     super.onInit();
-    role = Get.arguments?['role'];
+    role.value = Get.arguments?['role']?.toLowerCase() ?? '';
     email = Get.arguments?['email'] ?? '';
-    print("Received role in OTPController: $role");
-
+    print("Received role in OTPController: ${role.value}");
   }
-
-  String role = '';
-
-
 
   void onOTPChange(int index, String value, BuildContext context) {
     if (value.isNotEmpty && index < focusNodes.length - 1) {
@@ -41,111 +37,44 @@ class OTPController extends GetxController {
 
   String getOtp() => controllers.map((e) => e.text).join();
 
-
-
-
-  void verifyOtp() async {
+  Future<void> verifyOtp() async {
     final otp = getOtp();
     if (otp.length != 6) {
       Utils.tostMassage("Enter 6 digit OTP");
       return;
     }
 
-    print("my role : $role");
-    if (role == 'user') {
-      print("my route role : $role");
-      Get.toNamed(RouteName.userBottomNavView);
-    } else if (role == 'sub_admin') {
-      print("my route role : $role");
-      Get.toNamed(RouteName.providerBtmNavView);
+    if (role.value.isEmpty) {
+      Utils.tostMassage("Please select a role");
+      return;
     }
 
+    isLoading.value = true;
 
+    try {
+      // Simulate OTP verification delay
+      await Future.delayed(const Duration(seconds: 2));
 
-    // isLoading.value = true;
-    // try {
-    //   final response = await NetworkApiServices().postApi(
-    //     {"otp": otp},
-    //     "http://115.127.156.131:2001/api/v1/otp/verify-otp",
-    //   );
+      // Save to SharedPreferences (simulate success)
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isVerified', true);
+      await prefs.setString('email', email);
+      await prefs.setString('role', role.value);
 
-      // if (response['success']) {
-      //   Utils.snackBar("Success", "OTP Verified");
-      //
-      //   final userModel = UserModel(
-      //     token: response['data']['token'],
-      //     role: response['data']['role'],
-      //   );
-      //
-      //   await UserPreferences().saveUser(userModel); // save to shared preferences
-      //
-      //   if (userModel.role == 'user') {
-      //     Get.toNamed(RouteName.userHomeView);
-      //   } else if (userModel.role == 'sub_admin') {
-      //     Get.toNamed(RouteName.prviderHomeView);
-      //   }
-      // }
-      // else {
-      //   Utils.snackBar("Failed", response['message'] ?? "OTP Invalid");
-      //
-      //   // ✅ Navigate based on role
-      //   final userModel = UserModel(
-      //     token: response['data']['token'],
-      //     role: response['data']['role'],
-      //   );
-      //   await UserPreferences().saveUser(userModel); // save to shared preferences
-      //   if (role == 'user') {
-      //     Get.toNamed(RouteName.userHomeView);
-      //   } else if (role == 'sub_admin') {
-      //     Get.toNamed(RouteName.prviderHomeView);
-      //   }
+      // Navigate to demo page after verification
 
-
-
-
-
-    //   }
-    // } catch (e) {
-      // Utils.snackBar("Error", e.toString());
-      //
-      // if( e.toString()=="TimeoutException after 0:00:10.000000: Future not completed"){
-      //   print(e);
-      //   // ✅ Navigate based on role
-      //   final response = await NetworkApiServices().postApi(
-      //     {"otp": otp},
-      //     "http://115.127.156.131:2001/api/v1/otp/verify-otp",
-      //   );
-      //
-      //   final userModel = UserModel(
-      //     token: response['data']['token'],
-      //     role: response['data']['role'],
-      //   );
-      //
-      //   await UserPreferences().saveUser(userModel); // save to shared preferences
-      //
-      //   //await UserPreferences().saveUser(userModel); // save to shared preferences
-      //   if (role == 'user') {
-      //     Get.toNamed(RouteName.userHomeView);
-      //   } else if (role == 'sub_admin') {
-      //     Get.toNamed(RouteName.prviderHomeView);
-      //   }
+      if(role.value=="user"){
+        Get.to(() => UserSubscriptionSelectionView(),);
+      }else if(role.value=="service_provider"){
+        Get.to(() => ServiseProviderSubscriptionSelectionView(),);
+      }else{
+        Get.to(() => VendorSubscriptionSelectionView(),);
       }
-      // print(e);
-      // // ✅ Navigate based on role
 
-      //await UserPreferences().saveUser(userModel); // save to shared preferences
-      // if (role == 'user') {
-      //   Get.toNamed(RouteName.userHomeView);
-      // } else if (role == 'sub_admin') {
-      //   Get.toNamed(RouteName.prviderHomeView);
-      // }
-
-
-  //   } finally {
-  //     isLoading.value = false;
-  //   }
-  // }
-
-
-
+    } catch (e) {
+      Utils.tostMassage("OTP verification failed: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

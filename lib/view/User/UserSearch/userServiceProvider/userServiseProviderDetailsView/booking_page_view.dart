@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../../View_Model/Controller/user/userSearch/userServiceProviderController/booking_controller.dart';
 
@@ -82,7 +83,9 @@ class BookingPageView extends StatelessWidget {
                 }).toList(),
               )),
               const SizedBox(height: 30),
-                RoundButton(width: double.infinity,title: "Book Now", onPress: controller.bookNow)
+                RoundButton(width: double.infinity,title: "Book Now", onPress: (){
+                  controller.bookNow();
+                })
             ],
           ),
         ),

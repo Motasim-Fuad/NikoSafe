@@ -15,7 +15,6 @@ class ProviderHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthViewModel controller= Get.put(AuthViewModel());
 
     final taskController = Get.put(TaskController());
     return Container(

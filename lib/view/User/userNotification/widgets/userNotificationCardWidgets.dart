@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nikosafe/models/Notification/userNotification_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/view/User/userNotification/QutationReviewview.dart';
 
 class UserNotificationCard extends StatelessWidget {
   final UsernotificationModel model;
@@ -53,33 +55,50 @@ class UserNotificationCard extends StatelessWidget {
               children: [
                 if (model.action1 != null)
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _handleAction1();
+                    },
                     child: Text(model.action1!),
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Color(0xff78bc4c),
+                        foregroundColor: Color(0xff78bc4c),
                         backgroundColor: const Color(0xFF435C34)),
                   ),
                 if (model.action2 != null)
                   ElevatedButton(
-                    onPressed: () {},
-                    child: Text(model.action2!),
-                    style: ElevatedButton.styleFrom(
+                      onPressed: () {},
+                      child: Text(model.action2!),
+                      style: ElevatedButton.styleFrom(
                         foregroundColor: Color(0xffcd2929),
                         backgroundColor: Color(0x4dcd2929),)
                   ),
                 if (model.action3 != null)
-               RoundButton(
-                 height: 40,
-                 width: double.infinity,
-                   title: model.action3!,
-                   onPress: (){
+                  RoundButton(
+                      height: 40,
+                      width: double.infinity,
+                      title: model.action3!,
+                      onPress: (){
 
-               })
+                      })
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _handleAction1() {
+    // Check if this is a quote notification with "Review Now" action
+    if (model.action1 == "Review Now" &&
+        model.serviceProvider != null &&
+        model.quote != null) {
+      Get.to(() => QuotationReviewView(
+        serviceProvider: model.serviceProvider!,
+        quote: model.quote!,
+      ));
+    } else {
+      // Handle other action1 types
+      print("Action1 pressed: ${model.action1}");
+    }
   }
 }

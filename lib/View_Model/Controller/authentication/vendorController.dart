@@ -2,47 +2,92 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../resource/App_routes/routes_name.dart';
 
-class VendorSignupViewModel extends GetxController {
-  final nameController = TextEditingController();
+class VendorAuthController extends GetxController {
+  // Form Controllers
+  final businessNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
-  final locationController = TextEditingController();
+  final addressController = TextEditingController();
+  final descriptionController = TextEditingController();
+  final hoursController = TextEditingController();
+  final capacityController = TextEditingController();
 
-  final nameError = Rxn<String>();
+  // Permissions as Multi-Select
+  final availablePermissions = [
+    'displayQRCodes',
+    'inAppPromotion',
+    'allowRewards',
+    'allowEvents',
+  ].obs;
+  final selectedPermissions = <String>[].obs;
+
+  // Venue Types as Multi-Select
+  final availableVenueTypes = ['Restaurant', 'Bar', 'Night life'].obs;
+  final selectedVenueTypes = <String>[].obs;
+
+  // UI State
+  final agreeTerms = false.obs;
+  final loading = false.obs;
+  final pickedImage = Rx<File?>(null);
+
+  // Error Handling
+  final businessNameError = Rxn<String>();
   final emailError = Rxn<String>();
   final phoneError = Rxn<String>();
   final passwordError = Rxn<String>();
-  final locationError = Rxn<String>();
-  final isPasswordVisible = false.obs;
-  // final agreeTerms = true.obs;
-  final loading = false.obs;
+  final addressError = Rxn<String>();
+  final descriptionError = Rxn<String>();
+  final hoursError = Rxn<String>();
+  final capacityError = Rxn<String>();
 
-  Rx<File?> pickedImage = Rx<File?>(null);
-
-  // --- Validation ---
-  bool validateAll() {
+  // Validation
+  bool validateForm() {
     bool isValid = true;
-    isValid = _validateField(nameController.text, nameError, "Business Name") && isValid;
+
+    isValid = _validate(businessNameController.text, businessNameError, "Venue Name cannot be empty") && isValid;
     isValid = _validateEmail(emailController.text) && isValid;
-    isValid = _validatePhone(phoneController.text) && isValid;
-    isValid = _validatePassword(passwordController.text) && isValid;
-    isValid = _validateField(locationController.text, locationError, "Address") && isValid;
+    isValid = _validate(phoneController.text, phoneError, "Phone Number cannot be empty") && isValid;
+    isValid = _validate(addressController.text, addressError, "Location cannot be empty") && isValid;
+    isValid = _validate(descriptionController.text, descriptionError, "Description cannot be empty") && isValid;
+    isValid = _validate(capacityController.text, capacityError, "Capacity cannot be empty") && isValid;
+
+    if (selectedVenueTypes.isEmpty) {
+      Get.snackbar("Venue Type Required", "Please select at least one venue type");
+      isValid = false;
+    }
+
+    if (selectedPermissions.isEmpty) {
+      Get.snackbar("Permissions Required", "Please select at least one permission option");
+      isValid = false;
+    }
+
+    if (!agreeTerms.value) {
+      Get.snackbar("Terms Required", "Please agree to the Terms & Conditions");
+      isValid = false;
+    }
+
     return isValid;
   }
 
-  bool _validateField(String value, Rxn<String> errorField, String fieldName) {
-    if (value.trim().isEmpty) {
-      errorField.value = "$fieldName cannot be empty";
+  bool _validate(String? val, Rxn<String> errorField, String errorMsg) {
+    if (val == null || val.trim().isEmpty) {
+      errorField.value = errorMsg;
       return false;
     }
     errorField.value = null;
     return true;
   }
 
-  bool _validateEmail(String value) {
-    if (value.trim().isEmpty || !GetUtils.isEmail(value)) {
+  bool _validateEmail(String? val) {
+    if (val == null || val.trim().isEmpty) {
+      emailError.value = "Email cannot be empty";
+      return false;
+    }
+    if (!GetUtils.isEmail(val)) {
       emailError.value = "Enter a valid email";
       return false;
     }
@@ -50,46 +95,80 @@ class VendorSignupViewModel extends GetxController {
     return true;
   }
 
-  bool _validatePhone(String value) {
-    if (!RegExp(r'^[0-9]{10,15}$').hasMatch(value)) {
-      phoneError.value = "Enter valid phone number";
-      return false;
-    }
-    phoneError.value = null;
-    return true;
-  }
-
-  bool _validatePassword(String value) {
-    if (value.length < 6) {
-      passwordError.value = "Min 6 characters";
-      return false;
-    }
-    passwordError.value = null;
-    return true;
-  }
-
   Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
       pickedImage.value = File(picked.path);
-    } else {
-      Get.snackbar("No Image", "No image selected");
+    }
+  }
+
+  Future<void> signup() async {
+    if (!validateForm()) return;
+
+    loading.value = true;
+    try {
+      final vendorData = {
+        'businessName': businessNameController.text.trim(),
+        'email': emailController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'password': passwordController.text.trim(),
+        'address': addressController.text.trim(),
+        'description': descriptionController.text.trim(),
+        'hoursOfOperation': hoursController.text.trim(),
+        'capacity': int.tryParse(capacityController.text.trim()) ?? 0,
+        'displayQRCodes': selectedPermissions.contains('displayQRCodes'),
+        'inAppPromotion': selectedPermissions.contains('inAppPromotion'),
+        'allowRewards': selectedPermissions.contains('allowRewards'),
+        'allowEvents': selectedPermissions.contains('allowEvents'),
+        'venueTypes': selectedVenueTypes.toList(),
+        'role': 'vendor',
+      };
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', 'vendor_token');
+      await prefs.setString('role', 'vendor');
+
+      Get.snackbar("Success", "Vendor signed up successfully");
+      Get.toNamed(RouteName.emailView, arguments: {
+        "role": "vendor",
+        "email": emailController.text.trim()
+      });
+
+      clearForm();
+    } catch (e) {
+      Get.snackbar("Error", e.toString());
+    } finally {
+      loading.value = false;
     }
   }
 
   void clearForm() {
-    nameController.clear();
+    businessNameController.clear();
     emailController.clear();
     phoneController.clear();
     passwordController.clear();
-    locationController.clear();
-    nameError.value = null;
-    emailError.value = null;
-    phoneError.value = null;
-    passwordError.value = null;
-    locationError.value = null;
+    addressController.clear();
+    descriptionController.clear();
+    hoursController.clear();
+    capacityController.clear();
     pickedImage.value = null;
-    // agreeTerms.value = false;
+    selectedVenueTypes.clear();
+    selectedPermissions.clear();
+    agreeTerms.value = false;
   }
+
+  // @override
+  // void onClose() {
+  //   businessNameController.dispose();
+  //   emailController.dispose();
+  //   phoneController.dispose();
+  //   passwordController.dispose();
+  //   addressController.dispose();
+  //   descriptionController.dispose();
+  //   hoursController.dispose();
+  //   capacityController.dispose();
+  //   super.onClose();
+  // }
 }

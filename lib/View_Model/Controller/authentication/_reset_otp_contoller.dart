@@ -3,29 +3,22 @@ import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import '../../../utils/utils.dart';
 
-
-
 class ResetOtpController extends GetxController {
-  final List<TextEditingController> controllers =
-  List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
 
   RxBool isLoading = false.obs;
 
   late String email;
 
-
   @override
   void onInit() {
     super.onInit();
     email = Get.arguments?['email'] ?? '';
-
-
   }
-
-
-
-
 
   void onOTPChange(int index, String value, BuildContext context) {
     if (value.isNotEmpty && index < focusNodes.length - 1) {
@@ -38,8 +31,7 @@ class ResetOtpController extends GetxController {
 
   String getOtp() => controllers.map((e) => e.text).join();
 
-
-  void veryfyOtpForResetPassword(){
+  void veryfyOtpForResetPassword() {
     final otp = getOtp();
     if (otp.length != 6) {
       Utils.tostMassage("Enter 6 digit OTP");
@@ -48,17 +40,5 @@ class ResetOtpController extends GetxController {
     print(email);
     // Get.toNamed(RouteName.resetPasswordView, arguments: {"email": email});
     Get.toNamed(RouteName.resetPasswordView);
-
   }
-
-
-
-
-
-
-
-
-
-
-
 }

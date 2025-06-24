@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
-
 import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/Colors/app_colors.dart';
 import '../../../../../resource/asseets/image_assets.dart';
 import '../../../../../resource/compunents/RoundButton.dart';
-import 'card.dart';
 
 class Userserviseproviderdetailsaboutview extends StatelessWidget {
   const Userserviseproviderdetailsaboutview({super.key});
@@ -63,13 +60,7 @@ class Userserviseproviderdetailsaboutview extends StatelessWidget {
               ],
             ),
           ),
-          RoundButton(
-              width: double.infinity,
-              title: "Booking Request",
-              onPress: () {
-                Get.toNamed(RouteName.bookingPageView);
-              }
-          ),
+
         ],
       ),
     );
