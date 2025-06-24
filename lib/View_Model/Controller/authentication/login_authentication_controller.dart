@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:nikosafe/view/vendor/vendorHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
@@ -65,14 +66,14 @@ class LoginAuthController extends GetxController {
       // Navigate to login screen
       Get.offAllNamed(RouteName.authView); // Replace with your login route
     } catch (e) {
-      Get.snackbar("Error", "Logout failed: $e");
+      Utils.errorSnackBar("Error", "Logout failed: $e");
     }
   }
 
 
   Future<void> login() async {
     if (!validateForm()) {
-      Get.snackbar("Input Error", "Please correct the errors in the login form.");
+      Utils.infoSnackBar("Input Error", "Please correct the errors in the login form.");
       return;
     }
 
@@ -104,7 +105,7 @@ class LoginAuthController extends GetxController {
         await prefs.setString('role', role);
         await prefs.setBool('isVerified', true);
 
-        Get.snackbar("Success", "Logged in successfully as $role");
+        Utils.successSnackBar("Success", "Logged in successfully as $role");
 
         // Navigate to appropriate screen based on role
         switch (role) {
@@ -120,10 +121,10 @@ class LoginAuthController extends GetxController {
             break;
         }
       } else {
-        Get.snackbar("Error", "Invalid credentials for selected role. Try password: password123");
+        Utils.errorSnackBar("Error", "Invalid credentials for selected role. Try password: password123");
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong: $e");
+      Utils.errorSnackBar("Error", "Something went wrong: $e");
     } finally {
       loading.value = false;
     }

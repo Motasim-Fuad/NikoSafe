@@ -5,6 +5,7 @@ import 'package:nikosafe/View_Model/Controller/AllPayment/userController/user_su
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/utils/utils.dart';
 
 import '../../../models/AllPaymentModel/user/user_subscription_model.dart';
 
@@ -135,7 +136,7 @@ class UserPaymentView extends StatelessWidget {
                           showModalBottomSheet(
                             context: Get.context!,
                             isScrollControlled: true,
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColor.topLinear,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                             ),
@@ -151,17 +152,27 @@ class UserPaymentView extends StatelessWidget {
                                 children: [
                                   TextField(
                                     controller: cardController.nameController,
-                                    decoration: InputDecoration(labelText: 'Bank Name'),
+                                    style: TextStyle(
+                                      color:AppColor.primaryTextColor
+                                    ),
+                                    decoration: InputDecoration(
+                                        labelText: 'Bank Name',
+                                        labelStyle: TextStyle(color: AppColor.secondaryTextColor)
+                                    ),
+
                                   ),
                                   TextField(
+                                    style: TextStyle(
+                                        color:AppColor.primaryTextColor
+                                    ),
                                     controller: cardController.idController,
-                                    decoration: InputDecoration(labelText: 'Last 4 digits'),
+                                    decoration: InputDecoration(labelText: 'Last 4 digits',labelStyle: TextStyle(color: AppColor.secondaryTextColor)),
                                     keyboardType: TextInputType.number,
                                     maxLength: 4,
                                   ),
                                   const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
+                                  RoundButton(width: double.infinity,
+                                    onPress: () {
                                       final name = cardController.nameController.text.trim();
                                       final id = cardController.idController.text.trim();
 
@@ -177,7 +188,9 @@ class UserPaymentView extends StatelessWidget {
                                         );
                                       }
                                     },
-                                    child: Text("Add Card"),
+                                    title: "Add Card",
+                                    buttonColor: AppColor.iconColor,
+                                    shadowColor: Colors.transparent,
                                   ),
                                 ],
                               ),
@@ -192,18 +205,21 @@ class UserPaymentView extends StatelessWidget {
 
 
               // Proceed Button
-              RoundButton(
-                width: double.infinity,
-                title: 'Proceed to Pay',
-                onPress: () {
-                  if (cardController.selectedCardIndex.value == -1) {
-                    Get.snackbar("Required", "Please select a card",
-                        snackPosition: SnackPosition.BOTTOM);
-                  } else {
-                    cardController.processPayment();
-                  }
-                },
-              ),
+          Obx(() =>     RoundButton(
+            width: double.infinity,
+            title: 'Proceed to Pay',
+            loading: cardController.isLoading.value,
+            showLoader: false,
+            showLoadingText: true,
+            loadingText: 'Proceed to Pay....',
+            onPress: () {
+              if (cardController.selectedCardIndex.value == -1) {
+                Utils.infoSnackBar("Required", "Please select a card");
+              } else {
+                cardController.processPayment();
+              }
+            },
+          ),)
             ],
           ),
         ),

@@ -7,7 +7,8 @@ import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import '../../../../View_Model/Controller/userEmargencyContuctContrller/emergency_contact_controller.dart';
 
 class UserEmergencyContactsView extends StatelessWidget {
-  final EmergencyContactController controller = Get.put(EmergencyContactController());
+  final EmergencyContactController controller = Get.put(EmergencyContactController(), permanent: true);
+
 
   UserEmergencyContactsView({super.key});
 
@@ -20,40 +21,84 @@ class UserEmergencyContactsView extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (_) => Dialog(
         backgroundColor: AppColor.topLinear,
-        title:  Text("Edit Contact",style: TextStyle(color: AppColor.primaryTextColor),),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              style: TextStyle(color: Colors.white),
-              controller: nameController,
-              decoration:  InputDecoration(hintText: "Enter name",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
-              onChanged: (val) => name = val,
-            ),
-
-            TextField(
-              style: TextStyle(color: Colors.white),
-              controller: numberController,
-              keyboardType: TextInputType.phone,
-              decoration:  InputDecoration(hintText: "Enter phone number",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
-              onChanged: (val) => number = val,
-            ),
-          ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          constraints: BoxConstraints(
+            maxWidth: 400,
+            maxHeight: 300,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Edit Contact",
+                style: TextStyle(
+                  color: AppColor.primaryTextColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                style: TextStyle(color: Colors.white),
+                controller: nameController,
+                decoration: InputDecoration(
+                    hintText: "Enter name",
+                    hintStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder()
+                ),
+                onChanged: (val) => name = val,
+              ),
+              SizedBox(height: 15),
+              TextField(
+                style: TextStyle(color: Colors.white),
+                controller: numberController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                    hintText: "Enter phone number",
+                    hintStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder()
+                ),
+                onChanged: (val) => number = val,
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomNeumorphicButton(
+                        backgroundColor: Colors.red,
+                        Depth: 1,
+                        labelDepth: 0,
+                        label: "Cancel",
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CustomNeumorphicButton(
+                        backgroundColor: Colors.green,
+                        Depth: 20,
+                        labelDepth: 1,
+                        label: "Update",
+                        onPressed: () {
+                          if (name.isNotEmpty && number.isNotEmpty) {
+                            controller.editContact(index, name, number);
+                            Navigator.pop(context);
+                          }
+                        }
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          CustomNeumorphicButton(backgroundColor:Colors.red,Depth: 1,labelDepth: 0,label: "Cancel", onPressed: (){
-            Navigator.pop(context);
-          }),
-          CustomNeumorphicButton(backgroundColor: Colors.green,Depth: 20,labelDepth: 1,label: "Update", onPressed: (){
-            if (name.isNotEmpty && number.isNotEmpty) {
-              controller.editContact(index, name, number);
-              Navigator.pop(context);
-            }
-          }),
-
-        ],
       ),
     );
   }
@@ -64,39 +109,82 @@ class UserEmergencyContactsView extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (_) => Dialog(
         backgroundColor: AppColor.topLinear,
-        title:  Text("Add Emergency Contact",style: TextStyle(color: AppColor.primaryTextColor),),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              style: TextStyle(color: Colors.white),
-              decoration:  InputDecoration(hintText: "Enter name",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
-              onChanged: (val) => name = val,
-            ),
-            SizedBox(height: 10,),
-            TextField(
-              style: TextStyle(color: Colors.white),
-              keyboardType: TextInputType.phone,
-              decoration:  InputDecoration(hintText: "Enter phone number",hintStyle: TextStyle(color: Colors.white),border: OutlineInputBorder()),
-              onChanged: (val) => phoneNumber = val,
-            ),
-          ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Container(
+          padding: EdgeInsets.all(20),
+          constraints: BoxConstraints(
+            maxWidth: 400,
+            maxHeight: 300,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Add Emergency Contact",
+                style: TextStyle(
+                  color: AppColor.primaryTextColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                    hintText: "Enter name",
+                    hintStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder()
+                ),
+                onChanged: (val) => name = val,
+              ),
+              SizedBox(height: 15),
+              TextField(
+                style: TextStyle(color: Colors.white),
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                    hintText: "Enter phone number",
+                    hintStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder()
+                ),
+                onChanged: (val) => phoneNumber = val,
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomNeumorphicButton(
+                        backgroundColor: Colors.red,
+                        Depth: 1,
+                        labelDepth: 0,
+                        label: "Cancel",
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CustomNeumorphicButton(
+                        backgroundColor: Colors.green,
+                        Depth: 20,
+                        labelDepth: 1,
+                        label: "Save",
+                        onPressed: () {
+                          if (name.isNotEmpty && phoneNumber.isNotEmpty) {
+                            controller.addContact(name, phoneNumber);
+                            Navigator.pop(context);
+                          }
+                        }
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          //TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
-          CustomNeumorphicButton(backgroundColor:Colors.red,Depth: 1,labelDepth: 0,label: "Cancel", onPressed: (){
-            Navigator.pop(context);
-          }),
-
-          CustomNeumorphicButton(backgroundColor: Colors.green,Depth: 20,labelDepth: 1,label: "Save", onPressed: (){
-            if (name.isNotEmpty && phoneNumber.isNotEmpty) {
-              controller.addContact(name, phoneNumber);
-              Navigator.pop(context);
-            }
-          }),
-        ],
       ),
     );
   }

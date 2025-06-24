@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:nikosafe/utils/utils.dart';
+
 class UserReviewController extends GetxController {
   var rating = 0.0.obs; // This will hold the user's selected rating (0-5 stars)
   var reviewText = ''.obs;
@@ -41,11 +43,11 @@ class UserReviewController extends GetxController {
 
   void submitReview() {
     if (rating.value == 0.0) {
-      Get.snackbar('Error', 'Please provide a rating.');
+      Utils.errorSnackBar('Error', 'Please provide a rating.');
       return;
     }
     if (reviewText.value.isEmpty) {
-      Get.snackbar('Error', 'Please write your review.');
+      Utils.errorSnackBar('Error', 'Please write your review.');
       return;
     }
 
@@ -55,7 +57,7 @@ class UserReviewController extends GetxController {
     print('Review Text: ${reviewText.value}');
     print('Image Path: ${pickedImagePath.value?.path ?? 'No image selected'}');
 
-    Get.snackbar('Success', 'Review submitted successfully!');
+    Utils.successSnackBar('Success', 'Review submitted successfully!');
     // Optionally, clear the form after submission
     rating.value = 0.0;
     reviewText.value = '';

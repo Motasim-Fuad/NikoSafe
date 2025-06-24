@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
+import '../../../utils/utils.dart';
 
 class VendorAuthController extends GetxController {
   // Form Controllers
@@ -56,17 +57,17 @@ class VendorAuthController extends GetxController {
     isValid = _validate(capacityController.text, capacityError, "Capacity cannot be empty") && isValid;
 
     if (selectedVenueTypes.isEmpty) {
-      Get.snackbar("Venue Type Required", "Please select at least one venue type");
+      Utils.infoSnackBar("Venue Type Required", "Please select at least one venue type");
       isValid = false;
     }
 
     if (selectedPermissions.isEmpty) {
-      Get.snackbar("Permissions Required", "Please select at least one permission option");
+      Utils.infoSnackBar("Permissions Required", "Please select at least one permission option");
       isValid = false;
     }
 
     if (!agreeTerms.value) {
-      Get.snackbar("Terms Required", "Please agree to the Terms & Conditions");
+      Utils.infoSnackBar("Terms Required", "Please agree to the Terms & Conditions");
       isValid = false;
     }
 
@@ -130,7 +131,7 @@ class VendorAuthController extends GetxController {
       await prefs.setString('token', 'vendor_token');
       await prefs.setString('role', 'vendor');
 
-      Get.snackbar("Success", "Vendor signed up successfully");
+      Utils.successSnackBar("Success", "Vendor signed up successfully");
       Get.toNamed(RouteName.emailView, arguments: {
         "role": "vendor",
         "email": emailController.text.trim()
@@ -138,7 +139,7 @@ class VendorAuthController extends GetxController {
 
       clearForm();
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      Utils.errorSnackBar("Error", e.toString());
     } finally {
       loading.value = false;
     }

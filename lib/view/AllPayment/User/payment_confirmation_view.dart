@@ -6,6 +6,8 @@ import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/AllPayment/User/payment_details_view.dart';
 
+import '../widgets/animation.dart';
+
 
 class UserPaymentConfirmationView extends StatelessWidget {
   const UserPaymentConfirmationView({super.key});
@@ -22,24 +24,32 @@ class UserPaymentConfirmationView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(ImageAssets.paymentSuccessIcon,height: 100,),
+              Spacer(flex: 1,),
+
+              const PulsingSvgIcon(),
+
+
               const SizedBox(height: 16),
                Text(
                 'user Payment Successful',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppColor.primaryTextColor
+                  color: AppColor.limeColor
                 ),
               ),
-              const SizedBox(height: 40),
+
+              Spacer(flex: 1,),
               RoundButton(
                 title: 'See Details',
                 onPress: () {
                   Get.to(UserPaymentDetailsView());
                 },
                 width: 200,
+                shadowColor: Colors.transparent,
+                buttonColor: AppColor.iconColor,
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

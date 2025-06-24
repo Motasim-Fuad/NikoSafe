@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nikosafe/utils/utils.dart';
 
 class AuthTabController extends GetxController {
   final selectedTab = 0.obs; // 0: Login, 1: Signup
@@ -29,7 +30,7 @@ class AuthTabController extends GetxController {
         pickedImage.value = File(pickedFile.path);
       }
     } catch (e) {
-      Get.snackbar("Error", "Failed to pick image: $e");
+      Utils.errorSnackBar("Error", "Failed to pick image: $e");
     }
   }
 }

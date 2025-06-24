@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
 
@@ -118,19 +119,19 @@ class ServiceProviderAuthController extends GetxController {
     if (picked != null) {
       pickedImage.value = File(picked.path);
     } else {
-      Get.snackbar("No Image", "No image selected");
+      Utils.infoSnackBar("No Image", "No image selected");
     }
   }
 
   // Signup Method
   Future<void> signup() async {
     if (!agreeTerms.value) {
-      Get.snackbar("Terms Required", "Please agree to the Terms & Conditions");
+      Utils.infoSnackBar("Terms Required", "Please agree to the Terms & Conditions");
       return;
     }
 
     if (!validateForm()) {
-      Get.snackbar("Input Error", "Please correct the errors in the form.");
+      Utils.infoSnackBar("Input Error", "Please correct the errors in the form.");
       return;
     }
 
@@ -156,7 +157,7 @@ class ServiceProviderAuthController extends GetxController {
       await prefs.setString('token', 'service_provider_token_${DateTime.now().millisecondsSinceEpoch}');
       await prefs.setString('role', 'service_provider');
 
-      Get.snackbar("Success", "Service Provider account created successfully");
+      Utils.successSnackBar("Success", "Service Provider account created successfully");
 
       // Navigate to email verification
       Get.toNamed(RouteName.emailView, arguments: {
@@ -166,7 +167,7 @@ class ServiceProviderAuthController extends GetxController {
 
       clearForm();
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong: $e");
+      Utils.errorSnackBar("Error", "Something went wrong: $e");
     } finally {
       loading.value = false;
     }

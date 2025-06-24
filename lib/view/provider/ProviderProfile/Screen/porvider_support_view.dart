@@ -41,11 +41,14 @@ class _PorviderSupportViewState extends State<PorviderSupportView> {
                 controller: _titleText,
 
               ),
+              SizedBox(height: 20,),
               CustomTextField(
                 fillColor: AppColor.topLinear,
                 label: "User Description",
 
                 controller: _descriptionText,
+                maxLines: 6,
+                minLines: 5,
 
               ),
               SizedBox(height: 50,),

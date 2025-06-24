@@ -8,6 +8,7 @@ import '../../../../view/AllPayment/User/payment_confirmation_view.dart';
 class UserCardController extends GetxController {
   var cards = <UserCardModel>[].obs;
   var selectedCardIndex = (-1).obs;
+  var isLoading = false.obs;
 
   final nameController = TextEditingController();
   final idController = TextEditingController();
@@ -30,7 +31,9 @@ class UserCardController extends GetxController {
   }
 
   void processPayment() {
+    isLoading.value = true;
     Future.delayed(Duration(seconds: 2), () {
+      isLoading.value = false;
       Get.to(() => UserPaymentConfirmationView());
     });
   }

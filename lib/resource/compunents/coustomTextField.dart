@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nikosafe/resource/Colors/app_colors.dart';
+
+import '../Colors/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? label;
@@ -13,6 +14,8 @@ class CustomTextField extends StatelessWidget {
   final Color? fillColor;
   final bool readOnly;
   final VoidCallback? onTap;
+  final int? minLines;
+  final int? maxLines;
 
   const CustomTextField({
     Key? key,
@@ -27,6 +30,8 @@ class CustomTextField extends StatelessWidget {
     this.fillColor,
     this.readOnly = false,
     this.onTap,
+    this.minLines,
+    this.maxLines,
   }) : super(key: key);
 
   @override
@@ -52,6 +57,8 @@ class CustomTextField extends StatelessWidget {
           obscureText: isPassword,
           readOnly: readOnly,
           onTap: onTap,
+          minLines: minLines,
+          maxLines: maxLines ?? 1,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
@@ -67,8 +74,7 @@ class CustomTextField extends StatelessWidget {
               child: Icon(suffixIcon, color: Colors.grey),
             )
                 : null,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey.shade700),
               borderRadius: BorderRadius.circular(12),

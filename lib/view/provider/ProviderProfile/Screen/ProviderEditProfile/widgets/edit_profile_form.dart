@@ -133,6 +133,12 @@ class ProviderEditProfileForm extends StatelessWidget {
             CustomTextField(label: "Location", controller: controller.locationController),
             const SizedBox(height: 10),
             CustomTextField(label: "Service Radius", controller: controller.radiusController),
+            const SizedBox(height: 10),
+            CustomTextField(label: "About Me", controller: controller.aboutController,minLines: 4,maxLines: 5,),
+            const SizedBox(height: 10),
+            CustomTextField(label: "Certifications", controller: controller.cirtificationsController,minLines: 3,maxLines: 5,),
+            const SizedBox(height: 10),
+            CustomTextField(label: "Years of Experience", controller: controller.expriencesController),
 
             const SizedBox(height: 20),
             RoundButton(title: "Save", width: double.infinity, onPress: controller.saveProfile),

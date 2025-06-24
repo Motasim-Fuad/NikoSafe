@@ -12,7 +12,7 @@ import '../../../../View_Model/Controller/user/userHome/feedController.dart';
 import '../../../../models/userHome/post_model.dart';
 
 Widget topBar() {
-  final EmergencyContactController _emergencyContactController =EmergencyContactController();
+  final emargencycontroller = Get.put(EmergencyContactController());
   return Padding(
     padding: const EdgeInsets.all(16.0),
     child: Row(
@@ -60,7 +60,7 @@ Widget topBar() {
         Spacer(),
         GestureDetector(
           onTap: (){
-            _emergencyContactController.sendSOSAlert();
+            emargencycontroller.sendSOSAlert();
           },
           child: CircleAvatar(
             backgroundColor: Colors.red,

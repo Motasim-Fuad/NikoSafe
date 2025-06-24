@@ -7,7 +7,7 @@ import '../../../../view/AllPayment/vendor/payment_confirm_view.dart';
 class Vendorcardcontroller extends GetxController {
   var cards = <VendorCardModel>[].obs;
   var selectedCardIndex = (-1).obs;
-
+    var isLoading =false.obs;
   final nameController = TextEditingController();
   final idController = TextEditingController();
 
@@ -29,7 +29,9 @@ class Vendorcardcontroller extends GetxController {
   }
 
   void processPayment() {
+    isLoading.value = true;
     Future.delayed(Duration(seconds: 2), () {
+      isLoading.value = false;
        Get.to(() => VendorPaymentConfirmationView());
     });
   }

@@ -319,7 +319,7 @@ Widget buildUploadBoxForVendor(VendorAuthController controller) {
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Text(
-        "Upload Your ID Cards Here",
+        "Upload Your License Cards Here",
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,

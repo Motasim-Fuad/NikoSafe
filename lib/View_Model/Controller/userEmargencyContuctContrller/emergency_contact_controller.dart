@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
-
+import 'package:nikosafe/utils/utils.dart';
 import '../../../models/EmargencyContucts.dart';
-
 class EmergencyContactController extends GetxController {
   var contactList = <EmergencyContact>[].obs;
 
@@ -27,7 +26,7 @@ class EmergencyContactController extends GetxController {
   void sendSOSAlert() {
     final activeContacts = contactList.where((e) => e.isEnabled).toList();
     if (activeContacts.isEmpty) {
-      Get.snackbar("Alert", "No active emergency contact found.");
+      Utils.errorSnackBar("Alert", "No active emergency contact found.");
       return;
     }
 
@@ -35,7 +34,7 @@ class EmergencyContactController extends GetxController {
       _sendMessageTo(contact.number);
     }
 
-    Get.snackbar("Success", "Alert sent to ${activeContacts.length} contact(s).");
+    Utils.successSnackBar("Success", "Alert sent to ${activeContacts.length} contact(s).");
   }
 
   void _sendMessageTo(String number) {

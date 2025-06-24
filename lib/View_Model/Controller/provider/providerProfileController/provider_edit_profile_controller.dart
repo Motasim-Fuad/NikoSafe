@@ -57,6 +57,9 @@ class ProviderEditProfileController extends GetxController {
   final payRateController = TextEditingController(text: '\$22 per hour');
   final locationController = TextEditingController(text: 'Downtown LA');
   final radiusController = TextEditingController(text: 'Up to 10 km');
+  final aboutController = TextEditingController(text: 'I am a professional plumber with hands-on experience in fixing and installing water systems.I take pride in delivering quality service with honesty and efficiency From leaks to full piping systems, I’m here to help—no job is too small or big.');
+  final cirtificationsController = TextEditingController(text: 'I am a certified plumber with training in residential and commercial plumbing systems.I hold certifications in pipefitting, water heater installation, and safety compliance.My credentials ensure reliable, code-compliant work every time.');
+  final expriencesController = TextEditingController(text: '7 years');
 
   void saveProfile() {
     // Your save logic here

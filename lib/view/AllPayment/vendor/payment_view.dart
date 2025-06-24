@@ -7,6 +7,8 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 
+import '../../../utils/utils.dart';
+
 class VendorPaymentView extends StatelessWidget {
   const VendorPaymentView({super.key});
 
@@ -14,6 +16,7 @@ class VendorPaymentView extends StatelessWidget {
   Widget build(BuildContext context) {
     final subscriptionController = Get.put(VendorSubscriptionController());
     final cardController = Get.put(Vendorcardcontroller());
+
 
     final selectedPlan = subscriptionController.plans.firstWhere(
           (p) => p.id == subscriptionController.selectedPlanId.value,
@@ -191,18 +194,21 @@ class VendorPaymentView extends StatelessWidget {
 
 
               // Proceed Button
-              RoundButton(
+              Obx(() =>     RoundButton(
                 width: double.infinity,
                 title: 'Proceed to Pay',
+                loading: cardController.isLoading.value,
+                showLoader: false,
+                showLoadingText: true,
+                loadingText: 'Proceed to Pay....',
                 onPress: () {
                   if (cardController.selectedCardIndex.value == -1) {
-                    Get.snackbar("Required", "Please select a card",
-                        snackPosition: SnackPosition.BOTTOM);
+                    Utils.infoSnackBar("Required", "Please select a card");
                   } else {
                     cardController.processPayment();
                   }
                 },
-              ),
+              ),)
             ],
           ),
         ),

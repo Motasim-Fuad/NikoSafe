@@ -19,9 +19,9 @@ class SignupUserView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildInput(
-                controller.nameController, // Use user-specific controller
+                controller.nameController,
                 "Full Name",
-                errorText: controller.nameError, // Use user-specific error
+                errorText: controller.nameError,
                 keyboardType: TextInputType.name,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
@@ -45,47 +45,47 @@ class SignupUserView extends StatelessWidget {
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(3),
                 ],
-                errorText: controller.ageError, // Use user-specific error
+                errorText: controller.ageError,
               ),
               buildInput(
-                controller.weightController, // Use user-specific controller
+                controller.weightController,
                 "Your Weight",
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(3),
                 ],
-                errorText: controller.weightError, // Use user-specific error
+                errorText: controller.weightError,
               ),
               buildDropdown(
                 "Your Gender",
 
-                controller.selectedSex, // Use user-specific RxString
+                controller.selectedSex,
                 controller.sexOptions,
-                errorText: controller.sexError, // Use user-specific error
+                errorText: controller.sexError,
               ),
               buildInput(
-                controller.emailController, // Use user-specific controller
+                controller.emailController,
                 "Email",
                 keyboardType: TextInputType.emailAddress,
-                errorText: controller.emailError, // Use user-specific error
+                errorText: controller.emailError,
               ),
               buildInput(
-                controller.passwordController, // Use user-specific controller
+                controller.passwordController,
                 "Password",
                 isPassword: true,
                 isPasswordVisible: controller.isPasswordVisible,
-                errorText: controller.passwordError, // Use user-specific error
+                errorText: controller.passwordError,
               ),
 
               const SizedBox(height: 10),
               buildTermsCheckForUser(controller),
               const SizedBox(height: 20),
-              Obx(
-                    () => controller.loading.value
-                    ? const Center(child: CircularProgressIndicator())
-                    : RoundButton(
+              Obx(()=>
+                RoundButton(
                   title: "Verify Email",
+                  loading: controller.loading.value,
+                  showLoader: true,
                   width: double.infinity,
                   shadowColor: AppColor.buttonShadeColor,
                   onPress: () {

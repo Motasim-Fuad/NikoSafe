@@ -67,10 +67,10 @@ class SignupProviderView extends StatelessWidget {
           buildTermsCheckForSearviesProvider(controller), // Assuming terms check is common
           const SizedBox(height: 20),
           Obx(
-                () => controller.loading.value
-                ? const CircularProgressIndicator()
-                : RoundButton(
+                () =>  RoundButton(
               title: "Verify Email",
+               loading: controller.loading.value,
+               showLoader: true,
               width: double.infinity,
               shadowColor: AppColor.buttonShadeColor,
               onPress: () {

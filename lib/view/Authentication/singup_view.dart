@@ -178,9 +178,10 @@ class SignupView extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        Obx(() => controller.loading.value
-            ? const Center(child: CircularProgressIndicator())
-            : RoundButton(
+        Obx(() => RoundButton(
+          loading:  controller.loading.value,
+          showLoader: true,
+
           title: "Login",
           onPress: () => controller.login(),
           width: double.infinity,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nikosafe/models/AllPaymentModel/user/user_payment_model.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -78,9 +79,9 @@ class UserPaymentController extends GetxController {
       await file.writeAsBytes(await pdf.save());
 
       await OpenFilex.open(path);
-      Get.snackbar('Success', 'PDF receipt downloaded.');
+      Utils.successSnackBar('Success', 'PDF receipt downloaded.');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to generate PDF: $e');
+      Utils.errorSnackBar('Error', 'Failed to generate PDF: $e');
       print('PDF Error: $e');
     }
   }

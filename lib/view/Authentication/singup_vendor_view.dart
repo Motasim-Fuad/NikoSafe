@@ -34,16 +34,16 @@ class SignupVendorView extends StatelessWidget {
           buildTermsCheckForVendor(controller),
           const SizedBox(height: 20),
 
-          Obx(() => controller.loading.value
-              ? const CircularProgressIndicator()
-              : RoundButton(
+          Obx(() =>RoundButton(
+            loading: controller.loading.value,
             title: "Verify Email",
+            showLoader: true,
             width: double.infinity,
-            shadowColor: AppColor.buttonShadeColor,
             onPress: () {
               controller.signup();
             },
-          )),
+          )
+          ),
           const SizedBox(height: 20),
         ],
       ),

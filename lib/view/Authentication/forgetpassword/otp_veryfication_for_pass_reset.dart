@@ -65,7 +65,9 @@ class OtpVeryficationForPassResetView extends StatelessWidget {
                     }),
                   ),
                   const SizedBox(height: 24),
-                  RoundButton(title: "Verify", onPress: (){
+                  RoundButton(
+                      title: "Verify",
+                      onPress: (){
                     controller.veryfyOtpForResetPassword();
                   }),
                   const SizedBox(height: 16),
