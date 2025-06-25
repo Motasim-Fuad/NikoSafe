@@ -66,16 +66,33 @@ class ServiceDetailView extends StatelessWidget {
             detailRow("Task ", task.task),
             detailRow("Price ", task.amount),
             const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child:task.status == "Completed" ? SizedBox():task.status == "Cancelled" ? SizedBox():RoundButton(
-                width: double.infinity,
-                title: "Make as Complete",
-                onPress: () {
-                  Utils.successSnackBar("Task", "Task Complete Successful");
-                },
+            if (task.status != "Completed" && task.status != "Cancelled")
+              Row(
+                children: [
+                  Expanded(
+                    child: RoundButton(
+                      title: "Make as Complete",
+                      onPress: () {
+                        Utils.successSnackBar("Task", "Task Complete Successful");
+                      },
+                      buttonColor: AppColor.iconColor,
+                      shadowColor: Colors.transparent,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: RoundButton(
+                      title: "Cancel",
+                      onPress: () {
+                        Utils.successSnackBar("Task", "Task Cancel Successful");
+                      },
+                      buttonColor: AppColor.iconColor,
+                      shadowColor: Colors.transparent,
+                    ),
+                  ),
+                ],
               ),
-            ),
+
           ]),
         ),
       ),
