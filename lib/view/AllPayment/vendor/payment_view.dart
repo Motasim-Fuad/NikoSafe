@@ -137,7 +137,7 @@ class VendorPaymentView extends StatelessWidget {
                           showModalBottomSheet(
                             context: Get.context!,
                             isScrollControlled: true,
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColor.topLinear,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                             ),
@@ -152,18 +152,24 @@ class VendorPaymentView extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   TextField(
+                                    style: TextStyle(
+                                        color:AppColor.primaryTextColor
+                                    ),
                                     controller: cardController.nameController,
-                                    decoration: InputDecoration(labelText: 'Bank Name'),
+                                    decoration: InputDecoration(labelText: 'Bank Name',labelStyle: TextStyle(color: AppColor.secondaryTextColor)),
                                   ),
                                   TextField(
+                                    style: TextStyle(
+                                        color:AppColor.primaryTextColor
+                                    ),
                                     controller: cardController.idController,
-                                    decoration: InputDecoration(labelText: 'Last 4 digits'),
+                                    decoration: InputDecoration(labelText: 'Last 4 digits',labelStyle: TextStyle(color: AppColor.secondaryTextColor)),
                                     keyboardType: TextInputType.number,
                                     maxLength: 4,
                                   ),
                                   const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
+                                  RoundButton(
+                                    onPress: () {
                                       final name = cardController.nameController.text.trim();
                                       final id = cardController.idController.text.trim();
 
@@ -179,7 +185,10 @@ class VendorPaymentView extends StatelessWidget {
                                         );
                                       }
                                     },
-                                    child: Text("Add Card"),
+                                    title: "Add Card",
+                                    width: double.infinity,
+                                    shadowColor: Colors.transparent,
+                                    buttonColor: AppColor.iconColor,
                                   ),
                                 ],
                               ),

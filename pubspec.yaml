@@ -56,6 +56,13 @@ dependencies:
   table_calendar: ^3.0.9
   emoji_picker_flutter: ^4.3.0
   smooth_page_indicator: ^1.1.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/splash.png"
+
 
 
 dev_dependencies:

@@ -59,6 +59,8 @@ class SignupUserView extends StatelessWidget {
               ),
               buildDropdown(
                 "Your Gender",
+                dropdownBackgroundColor: AppColor.topLinear,
+                fillColor: AppColor.iconColor,
 
                 controller.selectedSex,
                 controller.sexOptions,

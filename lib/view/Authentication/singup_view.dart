@@ -146,15 +146,19 @@ class SignupView extends StatelessWidget {
         Obx(() => CustomPopupButton<String>(
           items: controller.roleOptions,
           selectedItem: controller.selectedRole.value,
+          backgroundColor: AppColor.topLinear,
+          hintTextColor: AppColor.primaryTextColor,
+          itemTextColor: AppColor.primaryTextColor,
+          selectedTextColor: AppColor.primaryTextColor,
           onSelected: (value) {
             controller.selectedRole.value = value;
           },
           hintText: "Select Role",
           customItemBuilder: (item) => Row(
             children: [
-              const Icon(Icons.person_outline, color: Colors.blue),
+               Icon(Icons.person_outline, color: AppColor.limeColor),
               const SizedBox(width: 8),
-              Text(item.capitalizeFirst ?? item),
+              Text(item.capitalizeFirst ?? item,style: TextStyle(color: AppColor.primaryTextColor),),
             ],
           ),
         )),

@@ -133,8 +133,9 @@ class SignupVendorView extends StatelessWidget {
         Checkbox(
           value: value,
           onChanged: onChanged,
-          activeColor: Colors.white,
-          checkColor: Colors.black,
+          activeColor: Color(0xFF00D1B7),
+          checkColor: Colors.white,
+          side: BorderSide(color: Colors.white),
         ),
         Expanded(
           child: Text(

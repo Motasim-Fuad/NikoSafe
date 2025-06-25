@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -162,15 +163,8 @@ class UserMyPaymentDetails extends StatelessWidget {
     final controller = Get.put(PaymentDetailsController());
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF2D3E4F),
-            Color(0xFF1A252F),
-          ],
-        ),
+      decoration:  BoxDecoration(
+        gradient: AppColor.backGroundColor
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,

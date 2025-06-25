@@ -5,8 +5,9 @@ import 'package:image_picker/image_picker.dart';
 
 class ChatInputController extends GetxController {
   final Rx<File?> selectedMedia = Rx<File?>(null);
-  final RxnString selectedLocation = RxnString(); // ✅ Fixed: allow null
+  final RxnString selectedLocation = RxnString(); // allow null
   final RxBool showEmojiPicker = false.obs;
+  final RxBool isAttachmentMenuOpen = false.obs; // Tracks if menu is open
 
   final ImagePicker _picker = ImagePicker();
 
@@ -32,13 +33,17 @@ class ChatInputController extends GetxController {
     'https://maps.google.com/?q=${position.latitude},${position.longitude}';
   }
 
+  void toggleAttachmentMenu() {
+    isAttachmentMenuOpen.toggle();
+  }
   void toggleEmojiPicker() {
     showEmojiPicker.toggle();
   }
 
   void clear() {
     selectedMedia.value = null;
-    selectedLocation.value = null; // ✅ Fixed
+    selectedLocation.value = null;
     showEmojiPicker.value = false;
+    isAttachmentMenuOpen.value = false;
   }
 }

@@ -22,35 +22,38 @@ class UserSettingsView extends StatelessWidget {
           automaticallyImplyLeading: false,
           leading: CustomBackButton(),
         ),
-        body: Column(
-          children: [
-            GestureDetector(
-              onTap: (){
-                Get.toNamed(RouteName.userChangePasswordView);
-              },
-              child: Card(
-                color: Color(0x4dffffff),
-                child: ListTile(
-                  leading: Icon(Icons.lock_outline,color: AppColor.primaryTextColor,),
-                  title: Text("Change Password",style: TextStyle(color: AppColor.primaryTextColor),),
-                  trailing: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: (){
+                  Get.toNamed(RouteName.userChangePasswordView);
+                },
+                child: Card(
+                  color: Color(0x4dffffff),
+                  child: ListTile(
+                    leading: Icon(Icons.lock_outline,color: AppColor.primaryTextColor,),
+                    title: Text("Change Password",style: TextStyle(color: AppColor.primaryTextColor),),
+                    trailing: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                  ),
                 ),
               ),
-            ),
-            GestureDetector(
-              onTap: (){
-                Get.toNamed(RouteName.userDeleteAccauuntview);
-              },
-              child: Card(
-                color: Color(0x4dffffff),
-                child: ListTile(
-                  leading: Icon(Icons.delete_outline,color: Colors.red,),
-                  title: Text("Delete account",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
-                  trailing: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+              GestureDetector(
+                onTap: (){
+                  Get.toNamed(RouteName.userDeleteAccauuntview);
+                },
+                child: Card(
+                  color: Color(0x4dffffff),
+                  child: ListTile(
+                    leading: Icon(Icons.delete_outline,color: Colors.red,),
+                    title: Text("Delete account",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
+                    trailing: Icon(Icons.arrow_forward_ios,color: Colors.white,),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

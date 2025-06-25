@@ -39,7 +39,7 @@ Widget buildInput(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFF2B3A42),
+        fillColor: AppColor.iconColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -67,7 +67,7 @@ Widget buildInput(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFF2B3A42),
+        fillColor: AppColor.iconColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -113,6 +113,7 @@ Widget buildTermsCheckForUser(UserAuthController controller) {
             onChanged: (val) => controller.agreeTerms.value = val ?? false,
             checkColor: Colors.white,
             activeColor: const Color(0xFF00D1B7),
+            side: BorderSide(color: Colors.white),
           ),
         ),
         Expanded(
@@ -138,6 +139,7 @@ Widget buildTermsCheckForSearviesProvider(ServiceProviderAuthController controll
             onChanged: (val) => controller.agreeTerms.value = val ?? false,
             checkColor: Colors.white,
             activeColor: const Color(0xFF00D1B7),
+            side: BorderSide(color: Colors.white),
           ),
         ),
         Expanded(
@@ -162,6 +164,7 @@ Widget buildTermsCheckForVendor(VendorAuthController controller) {
             onChanged: (val) => controller.agreeTerms.value = val ?? false,
             checkColor: Colors.white,
             activeColor: const Color(0xFF00D1B7),
+            side: BorderSide(color: Colors.white),
           ),
         ),
         Expanded(
@@ -209,6 +212,7 @@ Widget buildRemember(LoginAuthController controller) {
             onChanged: (val) => controller.rememberMe.value = val ?? false,
             checkColor: Colors.white,
             activeColor: const Color(0xFF00D1B7),
+            side: BorderSide(color: Colors.white),
           ),
         ),
         Text(
@@ -225,57 +229,89 @@ Widget buildDropdown(
     RxString selected,
     List<String> items, {
       Rxn<String>? errorText,
+      Color? dropdownBackgroundColor,
+      Color? itemTextColor,
+      Color? fillColor,
+      Color? borderColor,
+      Color? labelColor,
+      Color? iconColor,
+      TextStyle? itemTextStyle,
+      TextStyle? labelTextStyle,
     }) {
   return Obx(
         () => Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
-        value: (selected.value.isEmpty || !items.contains(selected.value)) ? null : selected.value,
+        value: (selected.value.isEmpty || !items.contains(selected.value))
+            ? null
+            : selected.value,
         items: items
             .map((e) => DropdownMenuItem(
           value: e,
-          child: Text(
-            e,
-            style: TextStyle(
-              color: AppColor.secondaryTextColor,
+          child: Container(
+            // Background color for each item (optional)
+            color: Colors.transparent,
+            child: Text(
+              e,
+              style: itemTextStyle ??
+                  TextStyle(
+                    color: itemTextColor ?? AppColor.secondaryTextColor,
+                  ),
             ),
           ),
         ))
             .toList(),
         onChanged: (val) {
           selected.value = val ?? "";
-          if (errorText != null) {
-            errorText.value = null;
-          }
+          if (errorText != null) errorText.value = null;
         },
-        dropdownColor: const Color(0xFF2B3A42),
+        dropdownColor: dropdownBackgroundColor ?? const Color(0xFF2B3A42),
+        iconEnabledColor: iconColor ?? Colors.white, // Dropdown arrow color
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color(0xFF2B3A42),
+          fillColor: fillColor ?? const Color(0xFF2B3A42),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: borderColor ?? Colors.transparent,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: borderColor ?? Colors.transparent,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: borderColor ?? Colors.white,
+              width: 1.5,
+            ),
           ),
           labelText: label,
-          labelStyle: const TextStyle(
-            color: Colors.white54,
-          ),
+          labelStyle: labelTextStyle ??
+              TextStyle(
+                color: labelColor ?? Colors.white54,
+              ),
           errorText: errorText?.value,
         ),
-        style: TextStyle(
-          color: AppColor.secondaryTextColor,
-        ),
+        style: itemTextStyle ??
+            TextStyle(
+              color: itemTextColor ?? AppColor.secondaryTextColor,
+            ),
       ),
     ),
   );
 }
+
 
 Widget buildUploadBoxForProvider(ServiceProviderAuthController controller) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Text(
-        "Upload your necessary documents.",
+        "Upload Your Necessary Document",
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,
@@ -288,8 +324,8 @@ Widget buildUploadBoxForProvider(ServiceProviderAuthController controller) {
         child: Obx(() {
           final image = controller.pickedImage.value;
           return Container(
-            width: 120,
-            height: 120,
+            width: double.infinity,
+            height: 200,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
@@ -319,7 +355,7 @@ Widget buildUploadBoxForVendor(VendorAuthController controller) {
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
       Text(
-        "Upload Your License Cards Here",
+        "Upload Your License Card Here",
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w500,
@@ -332,8 +368,8 @@ Widget buildUploadBoxForVendor(VendorAuthController controller) {
         child: Obx(() {
           final image = controller.pickedImage.value;
           return Container(
-            width: 120,
-            height: 120,
+            width: double.infinity,
+            height: 200,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),

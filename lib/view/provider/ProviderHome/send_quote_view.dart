@@ -32,7 +32,9 @@ class ProviderSendQuoteView extends StatelessWidget {
           child: Column(
             children: [
               CustomTextField(controller: taskTitle,label: "Task Title",),
-              CustomTextField(controller: taskDescription,label: "Task Description",),
+              SizedBox(height: 10,),
+              CustomTextField(controller: taskDescription,label: "Task Description",minLines: 4,maxLines: 5,),
+              SizedBox(height: 10,),
               CustomTextField(controller: taskPrice,keyboardType: TextInputType.number,label: "Task Price",),
 
               Spacer(),

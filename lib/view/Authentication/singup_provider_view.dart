@@ -37,6 +37,8 @@ class SignupProviderView extends StatelessWidget {
             controller.selectedJob, // Use provider-specific RxString
             controller.jobList,
             errorText: controller.jobError, // Use provider-specific error
+            dropdownBackgroundColor: AppColor.topLinear,
+            fillColor: AppColor.iconColor,
           ),
           buildInput(
             controller.phoneController, // Use provider-specific controller

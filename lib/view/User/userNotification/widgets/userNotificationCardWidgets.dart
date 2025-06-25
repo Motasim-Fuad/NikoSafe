@@ -51,7 +51,7 @@ class UserNotificationCard extends StatelessWidget {
 
             // Action Buttons
             Wrap(
-              spacing: 8,
+              spacing: 18,
               children: [
                 if (model.action1 != null)
                   ElevatedButton(
@@ -71,14 +71,18 @@ class UserNotificationCard extends StatelessWidget {
                         foregroundColor: Color(0xffcd2929),
                         backgroundColor: Color(0x4dcd2929),)
                   ),
+
                 if (model.action3 != null)
                   RoundButton(
+                    buttonColor: AppColor.iconColor,
+                      shadowColor: Colors.transparent,
                       height: 40,
                       width: double.infinity,
                       title: model.action3!,
                       onPress: (){
 
-                      })
+                      }),
+
               ],
             ),
           ],
