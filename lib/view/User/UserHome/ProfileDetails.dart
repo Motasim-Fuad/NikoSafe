@@ -6,6 +6,7 @@ import '../../../View_Model/Controller/user/userHome/connectController.dart';
 import '../../../models/userHome/connect_provider_model.dart';
 import '../../../models/userHome/connect_user_model.dart';
 import '../../../resource/Colors/app_colors.dart';
+import '../../../resource/compunents/RoundButton.dart';
 
 class ProfileDetailsPage extends StatelessWidget {
   @override
@@ -57,17 +58,12 @@ class ProfileDetailsPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              ElevatedButton(
-                onPressed: () => controller.sendFriendRequest(user.name),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.cyan,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                RoundButton(
+                  onPress: () => controller.sendFriendRequest(user.name),
+                  height: 40,
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  title: "Connect",
                 ),
-                child: Text("Connect", style: TextStyle(color: AppColor.blackTextColor)),
-              ),
-
 
               const SizedBox(height: 16),
 

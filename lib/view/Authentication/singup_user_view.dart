@@ -19,9 +19,18 @@ class SignupUserView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildInput(
-                controller.nameController,
-                "Full Name",
-                errorText: controller.nameError,
+                controller.firstNameController,
+                "First Name",
+                errorText: controller.firstnameError,
+                keyboardType: TextInputType.name,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                ],
+              ),
+              buildInput(
+                controller.lastNameController,
+                "Last Name",
+                errorText: controller.lastnameError,
                 keyboardType: TextInputType.name,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),

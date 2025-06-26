@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customSearchBar.dart';
 import '../../../View_Model/Controller/user/userHome/connectController.dart';
 
@@ -69,18 +70,11 @@ class _ConnectTabViewState extends State<ConnectTabView> {
                       const SizedBox(height: 10),
                       Text(connection.name, style: const TextStyle(color: Colors.white)),
                       const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () => controller.sendFriendRequest(connection.name),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.cyan,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Text(
-                          "Connect",
-                          style: TextStyle(color: AppColor.blackTextColor),
-                        ),
+                      RoundButton(
+                        onPress: () => controller.sendFriendRequest(connection.name),
+                        height: 40,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        title: "Connect",
                       ),
                     ],
                   ),

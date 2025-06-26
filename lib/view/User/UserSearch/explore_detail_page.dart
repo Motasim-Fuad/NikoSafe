@@ -206,7 +206,7 @@ class ExploreDetailPage extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle Join Tavern Chat
+                    // Handle Chat
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColor.buttonColor, // Use your accent color
@@ -216,11 +216,13 @@ class ExploreDetailPage extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Join Tavern Chat',
+                    ' Chat',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
+
+
             ],
           ),
         ),

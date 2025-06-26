@@ -17,9 +17,18 @@ class SignupProviderView extends StatelessWidget {
       child: Column(
         children: [
           buildInput(
-            controller.nameController, // Use provider-specific controller
-            "Full Name",
-            errorText: controller.nameError, // Use provider-specific error
+            controller.firstNameController, // Use provider-specific controller
+            "First Name",
+            errorText: controller.firstNameError, // Use provider-specific error
+            keyboardType: TextInputType.name,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+            ],
+          ),
+          buildInput(
+            controller.lastNameController, // Use provider-specific controller
+            "Last Name",
+            errorText: controller.lastNameError, // Use provider-specific error
             keyboardType: TextInputType.name,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),

@@ -8,7 +8,8 @@ import '../../../resource/App_routes/routes_name.dart';
 
 class ServiceProviderAuthController extends GetxController {
   // Form Controllers
-  final nameController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
@@ -16,7 +17,8 @@ class ServiceProviderAuthController extends GetxController {
   final selectedJob = RxString('');
 
   // Error Fields
-  final nameError = Rxn<String>();
+  final firstNameError = Rxn<String>();
+  final lastNameError = Rxn<String>();
   final emailError = Rxn<String>();
   final phoneError = Rxn<String>();
   final passwordError = Rxn<String>();
@@ -31,15 +33,23 @@ class ServiceProviderAuthController extends GetxController {
   final rememberMe = false.obs;
 
   // Options
-  final List<String> jobList = ["Plumber", "Electrician", "Cleaner", "Carpenter", "Painter"];
+  final List<String> jobList = ["Plumber", "Electrician", "Cleaner", "Carpenter", "Painter","Trainer","Therapist"];
 
   // Validation Methods
-  bool validateName(String? value) {
+  bool validateFirstName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      nameError.value = "Name cannot be empty";
+      firstNameError.value = "Name cannot be empty";
       return false;
     }
-    nameError.value = null;
+    firstNameError.value = null;
+    return true;
+  }
+  bool validateLastName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      lastNameError.value = "Name cannot be empty";
+      return false;
+    }
+    lastNameError.value = null;
     return true;
   }
 
@@ -102,7 +112,8 @@ class ServiceProviderAuthController extends GetxController {
 
   bool validateForm() {
     bool isValid = true;
-    isValid = validateName(nameController.text) && isValid;
+    isValid = validateFirstName(firstNameController.text) && isValid;
+    isValid = validateLastName(lastNameController.text) && isValid;
     isValid = validateEmail(emailController.text) && isValid;
     isValid = validatePhone(phoneController.text) && isValid;
     isValid = validatePassword(passwordController.text) && isValid;
@@ -140,7 +151,8 @@ class ServiceProviderAuthController extends GetxController {
     try {
       // Prepare service provider data
       Map<String, dynamic> providerData = {
-        'name': nameController.text.trim(),
+        'firstName': firstNameController.text.trim(),
+        'lastName': lastNameController.text.trim(),
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
         'password': passwordController.text,
@@ -175,14 +187,16 @@ class ServiceProviderAuthController extends GetxController {
 
   // Clear Form
   void clearForm() {
-    nameController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
     emailController.clear();
     phoneController.clear();
     passwordController.clear();
     locationController.clear();
     selectedJob.value = '';
 
-    nameError.value = null;
+    firstNameError.value = null;
+    lastNameError.value = null;
     emailError.value = null;
     phoneError.value = null;
     passwordError.value = null;

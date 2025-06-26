@@ -8,7 +8,8 @@ import '../../../resource/App_routes/routes_name.dart';
 
 class UserAuthController extends GetxController {
   // Form Controllers
-  final nameController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
@@ -17,7 +18,8 @@ class UserAuthController extends GetxController {
   final selectedSex = ''.obs;
 
   // Error Fields
-  final nameError = Rxn<String>();
+  final firstnameError = Rxn<String>();
+  final lastnameError = Rxn<String>();
   final emailError = Rxn<String>();
   final phoneError = Rxn<String>();
   final passwordError = Rxn<String>();
@@ -36,12 +38,20 @@ class UserAuthController extends GetxController {
   final List<String> sexOptions = ["Male", "Female", "Other"];
 
   // Validation Methods
-  bool validateName(String? value) {
+  bool validateFirstName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      nameError.value = "Name cannot be empty";
+      firstnameError.value = "Name cannot be empty";
       return false;
     }
-    nameError.value = null;
+    firstnameError.value = null;
+    return true;
+  }
+  bool validateLastName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      lastnameError.value = "Name cannot be empty";
+      return false;
+    }
+    lastnameError.value = null;
     return true;
   }
 
@@ -123,7 +133,8 @@ class UserAuthController extends GetxController {
 
   bool validateForm() {
     bool isValid = true;
-    isValid = validateName(nameController.text) && isValid;
+    isValid = validateFirstName(firstNameController.text) && isValid;
+    isValid = validateLastName(lastNameController.text) && isValid;
     isValid = validateEmail(emailController.text) && isValid;
     isValid = validatePhone(phoneController.text) && isValid;
     isValid = validatePassword(passwordController.text) && isValid;
@@ -162,7 +173,8 @@ class UserAuthController extends GetxController {
     try {
       // Prepare user data
       Map<String, dynamic> userData = {
-        'name': nameController.text.trim(),
+        'firstName': firstNameController.text.trim(),
+        'lastName': lastNameController.text.trim(),
         'email': emailController.text.trim(),
         'phone': phoneController.text.trim(),
         'password': passwordController.text,
@@ -198,7 +210,8 @@ class UserAuthController extends GetxController {
 
   // Clear Form
   void clearForm() {
-    nameController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
     emailController.clear();
     phoneController.clear();
     passwordController.clear();
@@ -206,7 +219,8 @@ class UserAuthController extends GetxController {
     weightController.clear();
     selectedSex.value = '';
 
-    nameError.value = null;
+    firstnameError.value = null;
+    lastnameError.value = null;
     emailError.value = null;
     phoneError.value = null;
     passwordError.value = null;
