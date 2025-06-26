@@ -178,48 +178,25 @@ class ExploreDetailPage extends StatelessWidget {
             ],
           ),
         ),
-             bottomNavigationBar:   item.category == "club_event" ?  RoundButton(title: "Book Reservation", onPress: (){
-            Get.toNamed(RouteName.userBookReservationView,arguments: [item]);
-             }):   Padding(
-          padding: const EdgeInsets.all(16.0),
+
+ bottomNavigationBar:  item.category == "club_event" ?
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16,left: 8,right: 8),
+              child: RoundButton(title: "Book Reservation", onPress: (){
+              Get.toNamed(RouteName.userBookReservationView,arguments: [item]);
+               }),
+            )  : Padding(
+          padding: const EdgeInsets.only(bottom: 16,left: 8,right: 8),
           child: Row(
             children: [
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle Reserve a Table
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.buttonColor, // Use your accent color
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Reserve a Table',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+                child:
+               RoundButton(title: "Reserve a Table", icon: Icons.call,onPress: (){}),
               ),
               SizedBox(width: 16),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle Chat
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.buttonColor, // Use your accent color
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    ' Chat',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+                child:
+              RoundButton(title: "Chat", icon: Icons.chat,onPress: (){})
               ),
 
 

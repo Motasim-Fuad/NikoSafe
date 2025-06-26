@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../Colors/app_colors.dart';
 
 class RoundButton extends StatelessWidget {
@@ -14,8 +13,10 @@ class RoundButton extends StatelessWidget {
     this.height = 50,
     this.loading = false,
     this.loadingText = 'Please wait...',
-    this.showLoader = false, // ✅ show circular loader
-    this.showLoadingText = false, // ✅ show loading text
+    this.showLoader = false,
+    this.showLoadingText = false,
+    this.icon, // 👈 optional icon added
+    this.iconSpacing = 8.0, // spacing between icon and text
   }) : super(key: key);
 
   final bool loading;
@@ -26,6 +27,8 @@ class RoundButton extends StatelessWidget {
   final double height, width;
   final VoidCallback onPress;
   final Color textColor, buttonColor, shadowColor;
+  final IconData? icon; // 👈 optional icon
+  final double iconSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -73,50 +76,25 @@ class RoundButton extends StatelessWidget {
                 ),
             ],
           )
-              : Text(
-            title,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: textColor),
+              : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null)
+                Icon(icon, color: textColor, size: 20),
+              if (icon != null)
+                SizedBox(width: iconSpacing),
+              Text(
+                title,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: textColor),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
-
-
-//
-// RoundButton(
-// title: 'Proceed to Pay',
-// loading: true,
-// loadingText: 'Pay to proceed...',
-// showLoader: true,
-// showLoadingText: true,
-// onPress: () {},
-// ),
-
-
-// 📝 Only loading text (no spinner):
-
-// RoundButton(
-// title: 'Proceed to Pay',
-// loading: true,
-// loadingText: 'Processing...',
-// showLoader: false,
-// showLoadingText: true,
-// onPress: () {},
-// ),
-
-
-
-// 🔄 Only spinner (no text):
-
-// RoundButton(
-// title: 'Proceed to Pay',
-// loading: true,
-// showLoader: true,
-// showLoadingText: false,
-// onPress: () {},
-// ),
