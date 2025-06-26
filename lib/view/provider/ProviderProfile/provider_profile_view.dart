@@ -77,8 +77,8 @@ class ProviderProfileView extends StatelessWidget {
 
 
 
-              _buildTile(ImageAssets.profile_edit, "Edit Profile Details", () {
-                // Get.toNamed(RouteName.userEditProfileView);
+              _buildTile(Icons.edit, "Edit Profile Details", () {
+
                 Get.to(ProviderEditProfileView());
               }),
               _buildTile(ImageAssets.profile_withdrow, "Withdraws History", () {
@@ -88,18 +88,23 @@ class ProviderProfileView extends StatelessWidget {
               _buildTile(ImageAssets.profile_bank, "Bank Details", () {
                 Get.toNamed(RouteName.providerBankDetailsView);
               }),
-              _buildTile(ImageAssets.profile_suport, "Support", () {
+              _buildTile(Icons.support_agent, "Support", () {
                 Get.toNamed(RouteName.porviderSupportView);
               }),
-              _buildTile(ImageAssets.profile_privacy, "Privacy Policy", () {
+              _buildTile(Icons.question_mark, "FAQ", () {
+                Get.toNamed(RouteName.faqView);
+              }),
+              _buildTile(Icons.privacy_tip, "Privacy Policy", () {
                 Get.toNamed(RouteName.userPrivacyPolicy);
               }),
-              _buildTile(ImageAssets.profile_tarms, "Terms & Conditions", () {
+              _buildTile(Icons.description, "Terms & Conditions", () {
                 Get.toNamed(RouteName.userTearmsConditions);
               }),
-              _buildTile(ImageAssets.profile_about, "About Us", () {
+              _buildTile(Icons.info_outline, "About Us", () {
                 Get.toNamed(RouteName.userAboutUs);
               }),
+
+
 
               const SizedBox(height: 16),
               TextButton.icon(

@@ -457,7 +457,7 @@ class CustomBackButton extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: const Icon(
-          Icons.arrow_back_ios,
+          Icons.arrow_back_ios_rounded,
           color: Colors.white,
           size: 16,
         ),

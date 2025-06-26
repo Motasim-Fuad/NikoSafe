@@ -19,6 +19,7 @@ import 'package:nikosafe/view/chat/chat_list_view.dart';
 import '../../view/AllPayment/User/user_verification_view.dart';
 import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
+import '../../view/FAQ/faq_view.dart';
 import '../../view/Splash_view.dart';
 import '../../view/User/UserHome/checkIn/user_checkin.dart';
 import '../../view/User/UserHome/user_home.dart';
@@ -335,6 +336,13 @@ class AppRouts {
     GetPage(
       name: RouteName.userBookReservationView,
       page: () => UserBookReservationView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.faqView,
+      page: () => FaqView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

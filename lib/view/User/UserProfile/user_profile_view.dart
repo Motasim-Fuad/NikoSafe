@@ -89,6 +89,9 @@ class UserProfileView extends StatelessWidget {
                 _buildTile(Icons.support_agent, "Support", () {
                   Get.toNamed(RouteName.userSupport);
                 }),
+                _buildTile(Icons.question_mark, "FAQ", () {
+                  Get.toNamed(RouteName.faqView);
+                }),
                 _buildTile(Icons.privacy_tip, "Privacy Policy", () {
                   Get.toNamed(RouteName.userPrivacyPolicy);
                 }),
@@ -98,6 +101,8 @@ class UserProfileView extends StatelessWidget {
                 _buildTile(Icons.info_outline, "About Us", () {
                   Get.toNamed(RouteName.userAboutUs);
                 }),
+
+
 
                 const SizedBox(height: 16),
                 TextButton.icon(
