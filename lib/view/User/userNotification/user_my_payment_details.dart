@@ -443,26 +443,3 @@ class UserMyPaymentDetails extends StatelessWidget {
   }
 }
 
-// Custom Back Button (as referenced in your code)
-class CustomBackButton extends StatelessWidget {
-  const CustomBackButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          Icons.arrow_back_ios_rounded,
-          color: Colors.white,
-          size: 16,
-        ),
-      ),
-      onPressed: () => Get.back(),
-    );
-  }
-}

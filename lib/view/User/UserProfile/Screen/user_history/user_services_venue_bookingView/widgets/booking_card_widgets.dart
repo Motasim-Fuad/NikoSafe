@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 import '../../../../../../../models/myProfileModel/user_history_booking_model.dart';
 
@@ -82,71 +84,52 @@ class UserHistoryBookingCard extends StatelessWidget {
     switch (action) {
       case BookingAction.cancel:
         return [
-          _buildButton(
-            'Cancel',
-            Colors.red,
-            Colors.red.withOpacity(0.2),
-                () {
-              // TODO: Handle cancel
-              print('Cancel tapped');
-            },
+          Expanded(
+            child: RoundButton(
+              title: 'Cancel',
+              buttonColor: Colors.red,
+              shadowColor: Colors.transparent,
+              onPress: (){
+
+              },
+            ),
           ),
         ];
       case BookingAction.rebook:
         return [
-          _buildButton(
-            'Rebook',
-            Colors.green,
-            Colors.green.withOpacity(0.2),
-                () {
-              // TODO: Handle rebook
-              print('Rebook tapped');
-            },
+          Expanded(
+            child: RoundButton(
+              title: 'Rebook',
+              onPress: (){
+
+              },
+            ),
           ),
         ];
       case BookingAction.rebookAndReview:
         return [
-          _buildButton(
-            'Rebook',
-            Colors.green,
-            Colors.green.withOpacity(0.2),
-                () {
-              // TODO: Handle rebook
-              print('Rebook tapped');
-            },
-          ),
-          _buildButton(
-            'Leave a review',
-            Colors.green,
-            Colors.green.withOpacity(0.2),
-                () {
+          Expanded(
+            child: RoundButton(
+              title: 'Rebook',
+              onPress: (){
 
-              Get.toNamed(RouteName.userReviewPageView);
-              // TODO: Handle review
-              print('Leave a review tapped');
-            },
+              },
+            ),
+          ),
+          SizedBox(width: 10,),
+          Expanded(
+            child: RoundButton(
+              title: 'Leave a review',
+              buttonColor: AppColor.limeColor,
+              shadowColor: Colors.transparent,
+              onPress: (){
+
+              },
+            ),
           ),
         ];
     }
   }
 
-  Widget _buildButton(String text, Color color, Color bgColor, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: bgColor,
-            border: Border.all(color: color),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Text(text, style: TextStyle(color: color)),
-        ),
-      ),
-    );
-  }
 }
 

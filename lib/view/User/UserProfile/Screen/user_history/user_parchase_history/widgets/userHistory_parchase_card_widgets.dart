@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/models/myProfileModel/user_history_purchase_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 
 class UserhistoryParchaseCardWidgets extends StatelessWidget {
@@ -77,48 +79,69 @@ class UserhistoryParchaseCardWidgets extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Delivery Status
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                decoration: BoxDecoration(
-                  color: purchase.isDelivered ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
-                  border: Border.all(color: purchase.isDelivered ? Colors.green : Colors.orange),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Text(
-                  purchase.isDelivered ? 'Delivered' : 'Pending',
-                  style: TextStyle(
-                    color: purchase.isDelivered ? Colors.green : Colors.orange,
-                  ),
-                ),
-              ),
-
-              // View Button
-              GestureDetector(
-                onTap: () {
-                  // TODO: Handle view action
-                  Get.toNamed(RouteName.userParchaseReceiptDetailsPage);
-                  print('View tapped for ${purchase.itemName}');
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Text(
-                    'View',
-                    style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
+              Text('Status', style: TextStyle(color: Colors.white.withOpacity(0.6))),
+              purchase.isDelivered?Text("Delivered",style: TextStyle(color: AppColor.primaryTextColor)):Text("Pending",style: TextStyle(color: AppColor.primaryTextColor),)
             ],
           ),
+
+          const SizedBox(height: 10),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     // Delivery Status
+          //     Container(
+          //       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          //       decoration: BoxDecoration(
+          //         color: purchase.isDelivered ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
+          //         border: Border.all(color: purchase.isDelivered ? Colors.green : Colors.orange),
+          //         borderRadius: BorderRadius.circular(30),
+          //       ),
+          //       child: Text(
+          //         purchase.isDelivered ? 'Delivered' : 'Pending',
+          //         style: TextStyle(
+          //           color: purchase.isDelivered ? Colors.green : Colors.orange,
+          //         ),
+          //       ),
+          //     ),
+          //
+          //     // View Button
+          //     GestureDetector(
+          //       onTap: () {
+          //         // TODO: Handle view action
+          //         Get.toNamed(RouteName.userParchaseReceiptDetailsPage);
+          //         print('View tapped for ${purchase.itemName}');
+          //       },
+          //       child: Container(
+          //         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+          //         decoration: BoxDecoration(
+          //           color: Colors.blue.withOpacity(0.1),
+          //           border: Border.all(color: Colors.blue),
+          //           borderRadius: BorderRadius.circular(30),
+          //         ),
+          //         child: const Text(
+          //           'View',
+          //           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+
+        SizedBox(height: 20,),
+          purchase.isDelivered ?  RoundButton(width: double.infinity,title: "View", onPress: (){
+            Get.toNamed(RouteName.userParchaseReceiptDetailsPage);
+          }) : SizedBox(child: Row(
+            children: [
+              Expanded(child: RoundButton(buttonColor: Colors.red,shadowColor: Colors.transparent,title: "cancel", onPress: (){})),
+              SizedBox(width: 10,),
+              Expanded(child: RoundButton(title: "view", onPress: (){
+                Get.toNamed(RouteName.userParchaseReceiptDetailsPage);
+              })),
+            ],
+          ),),
 
 
         ],

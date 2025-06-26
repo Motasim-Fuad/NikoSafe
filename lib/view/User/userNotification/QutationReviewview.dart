@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:nikosafe/models/Notification/userNotification_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/userNotification/paymentSuccessView.dart';
 
 class QuotationReviewView extends StatelessWidget {
@@ -25,11 +26,8 @@ class QuotationReviewView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
+          automaticallyImplyLeading: false,
+          leading: CustomBackButton(),
           title: const Text(
             'Review & Confirm',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),

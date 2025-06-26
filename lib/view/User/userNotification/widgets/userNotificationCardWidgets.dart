@@ -50,41 +50,53 @@ class UserNotificationCard extends StatelessWidget {
               const SizedBox(height: 12),
 
             // Action Buttons
-            Wrap(
-              spacing: 18,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (model.action1 != null)
-                  ElevatedButton(
-                    onPressed: () {
-                      _handleAction1();
-                    },
-                    child: Text(model.action1!),
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: Color(0xff78bc4c),
-                        backgroundColor: const Color(0xFF435C34)),
-                  ),
-                if (model.action2 != null)
-                  ElevatedButton(
-                      onPressed: () {},
-                      child: Text(model.action2!),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _handleAction1,
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Color(0xffcd2929),
-                        backgroundColor: Color(0x4dcd2929),)
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        foregroundColor: const Color(0xff78bc4c),
+                        backgroundColor: const Color(0xFF435C34),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text(model.action1!, style: const TextStyle(fontSize: 14)),
+                    ),
                   ),
-
+                if (model.action2 != null) const SizedBox(width: 10),
+                if (model.action2 != null)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        foregroundColor: const Color(0xffcd2929),
+                        backgroundColor: const Color(0x4dcd2929),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text(model.action2!, style: const TextStyle(fontSize: 14)),
+                    ),
+                  ),
+                if (model.action3 != null) const SizedBox(width: 10),
                 if (model.action3 != null)
-                  RoundButton(
-                    buttonColor: AppColor.iconColor,
-                      shadowColor: Colors.transparent,
-                      height: 40,
-                      width: double.infinity,
-                      title: model.action3!,
-                      onPress: (){
-
-                      }),
-
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        foregroundColor: AppColor.primaryTextColor,
+                        backgroundColor: AppColor.iconColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text(model.action3!, style: const TextStyle(fontSize: 14)),
+                    ),
+                  ),
               ],
             ),
+
           ],
         ),
       ),
