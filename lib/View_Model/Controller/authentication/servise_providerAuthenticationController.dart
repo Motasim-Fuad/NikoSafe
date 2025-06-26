@@ -16,6 +16,15 @@ class ServiceProviderAuthController extends GetxController {
   final locationController = TextEditingController();
   final selectedJob = RxString('');
 
+  // FocusNodes
+  final firstNameFocus = FocusNode();
+  final lastNameFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final phoneFocus = FocusNode();
+  final passwordFocus = FocusNode();
+  final locationFocus = FocusNode();
+
+
   // Error Fields
   final firstNameError = Rxn<String>();
   final lastNameError = Rxn<String>();
@@ -214,6 +223,13 @@ class ServiceProviderAuthController extends GetxController {
   //   phoneController.dispose();
   //   passwordController.dispose();
   //   locationController.dispose();
+
+  // firstNameFocus.dispose();
+  // lastNameFocus.dispose();
+  // emailFocus.dispose();
+  // phoneFocus.dispose();
+  // passwordFocus.dispose();
+  // locationFocus.dispose();
   //   super.onClose();
   // }
 }

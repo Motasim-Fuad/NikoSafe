@@ -14,98 +14,121 @@ class SignupUserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildInput(
-                controller.firstNameController,
-                "First Name",
-                errorText: controller.firstnameError,
-                keyboardType: TextInputType.name,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                ],
-              ),
-              buildInput(
-                controller.lastNameController,
-                "Last Name",
-                errorText: controller.lastnameError,
-                keyboardType: TextInputType.name,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-                ],
-              ),
-              buildInput(
-                controller.phoneController, // Use user-specific controller
-                "Mobile Number",
-                keyboardType: TextInputType.phone,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(15),
-                ],
-                errorText: controller.phoneError, // Use user-specific error
-              ),
-              buildInput(
-                controller.ageController, // Use user-specific controller
-                "Your Age",
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(3),
-                ],
-                errorText: controller.ageError,
-              ),
-              buildInput(
-                controller.weightController,
-                "Your Weight",
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(3),
-                ],
-                errorText: controller.weightError,
-              ),
-              buildDropdown(
-                "Your Gender",
-                dropdownBackgroundColor: AppColor.topLinear,
-                fillColor: AppColor.iconColor,
-
-                controller.selectedSex,
-                controller.sexOptions,
-                errorText: controller.sexError,
-              ),
-              buildInput(
-                controller.emailController,
-                "Email",
-                keyboardType: TextInputType.emailAddress,
-                errorText: controller.emailError,
-              ),
-              buildInput(
-                controller.passwordController,
-                "Password",
-                isPassword: true,
-                isPasswordVisible: controller.isPasswordVisible,
-                errorText: controller.passwordError,
-              ),
-
-              const SizedBox(height: 10),
-              buildTermsCheckForUser(controller),
-              const SizedBox(height: 20),
-              Obx(()=>
-                RoundButton(
-                  title: "Verify Email",
-                  loading: controller.loading.value,
-                  showLoader: true,
-                  width: double.infinity,
-                  shadowColor: AppColor.buttonShadeColor,
-                  onPress: () {
-                    controller.signup(); // Calls the central signup method
-                  },
+        child: GestureDetector(
+          onTap:()=> FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildInput(
+                  controller.firstNameController,
+                  "First Name",
+                  focusNode: controller.firstNameFocus,
+                  nextFocusNode: controller.lastNameFocus,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  ],
+                  errorText: controller.firstnameError,
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                buildInput(
+                  controller.lastNameController,
+                  "Last Name",
+                  focusNode: controller.lastNameFocus,
+                  nextFocusNode: controller.phoneFocus,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                  ],
+                  errorText: controller.lastnameError,
+                ),
+                buildInput(
+                  controller.phoneController,
+                  "Mobile Number",
+                  focusNode: controller.phoneFocus,
+                  nextFocusNode: controller.ageFocus,
+                  keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(15),
+                  ],
+                  errorText: controller.phoneError,
+                ),
+                buildInput(
+                  controller.ageController,
+                  "Your Age",
+                  focusNode: controller.ageFocus,
+                  nextFocusNode: controller.weightFocus,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  errorText: controller.ageError,
+                ),
+                buildInput(
+                  controller.weightController,
+                  "Your Weight",
+                  focusNode: controller.weightFocus,
+                  nextFocusNode: controller.emailFocus,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(3),
+                  ],
+                  errorText: controller.weightError,
+                ),
+                buildDropdown(
+                  "Your Gender",
+                  dropdownBackgroundColor: AppColor.topLinear,
+                  fillColor: AppColor.iconColor,
+                  controller.selectedSex,
+                  controller.sexOptions,
+                  errorText: controller.sexError,
+                ),
+                buildInput(
+                  controller.emailController,
+                  "Email",
+                  focusNode: controller.emailFocus,
+                  nextFocusNode: controller.passwordFocus,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  errorText: controller.emailError,
+                ),
+                buildInput(
+                  controller.passwordController,
+                  "Password",
+                  isPassword: true,
+                  isPasswordVisible: controller.isPasswordVisible,
+                  focusNode: controller.passwordFocus,
+                  textInputAction: TextInputAction.done,
+                  errorText: controller.passwordError,
+                ),
+
+                const SizedBox(height: 10),
+                buildTermsCheckForUser(controller),
+                const SizedBox(height: 20),
+                Obx(()=>
+                  RoundButton(
+                    title: "Verify Email",
+                    loading: controller.loading.value,
+                    showLoader: true,
+                    width: double.infinity,
+                    shadowColor: AppColor.buttonShadeColor,
+                    onPress: () {
+                      controller.signup(); // Calls the central signup method
+                      FocusScope.of(context).unfocus();
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),

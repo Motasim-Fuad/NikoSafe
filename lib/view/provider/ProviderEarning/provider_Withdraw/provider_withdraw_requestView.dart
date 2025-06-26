@@ -10,6 +10,8 @@ class ProviderWithdrawRequestView extends StatelessWidget {
 
   final TextEditingController amountText = TextEditingController();
   final TextEditingController regionText = TextEditingController();
+  final  amountFocus = FocusNode();
+  final  regionFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,9 @@ class ProviderWithdrawRequestView extends StatelessWidget {
         gradient: AppColor.backGroundColor,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent, // ✅ Important
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.transparent, // Optional for gradient header
+          backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
           title: Text(
@@ -31,13 +33,15 @@ class ProviderWithdrawRequestView extends StatelessWidget {
           leading: CustomBackButton(),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16), // ✅ Corrected padding
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              CustomTextField(controller: amountText,keyboardType: TextInputType.number,),
+              CustomTextField(controller: amountText,keyboardType: TextInputType.number,label: "Amount",focusNode: amountFocus,onSubmitted: (value) {
+                FocusScope.of(context).requestFocus(regionFocus);
+              },),
               const SizedBox(height: 10),
-              CustomTextField(controller: regionText),
-              const SizedBox(height: 10),
+              CustomTextField(controller: regionText ,label: "Region",maxLines: 5,minLines: 3,focusNode: regionFocus,),
+              const SizedBox(height: 20),
               RoundButton(
                 width: double.infinity,
                 title: "Withdraw Request",
@@ -46,6 +50,7 @@ class ProviderWithdrawRequestView extends StatelessWidget {
 
                   amountText.clear();
                   regionText.clear();
+                  FocusScope.of(context).unfocus();
 
                 },
               )

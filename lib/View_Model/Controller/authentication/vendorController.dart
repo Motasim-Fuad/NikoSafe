@@ -17,6 +17,14 @@ class VendorAuthController extends GetxController {
   final hoursController = TextEditingController();
   final capacityController = TextEditingController();
 
+  // Focus Nodes
+  final businessNameFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final phoneFocus = FocusNode();
+  final addressFocus = FocusNode();
+  final descriptionFocus = FocusNode();
+  final capacityFocus = FocusNode();
+
   // Permissions as Multi-Select
   final availablePermissions = [
     'displayQRCodes',
@@ -170,6 +178,13 @@ class VendorAuthController extends GetxController {
   //   descriptionController.dispose();
   //   hoursController.dispose();
   //   capacityController.dispose();
+
+  // businessNameFocus.dispose();
+  // emailFocus.dispose();
+  // phoneFocus.dispose();
+  // addressFocus.dispose();
+  // descriptionFocus.dispose();
+  // capacityFocus.dispose();
   //   super.onClose();
   // }
 }

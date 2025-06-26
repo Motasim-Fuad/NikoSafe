@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../Colors/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -16,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final int? minLines;
   final int? maxLines;
+  final FocusNode? focusNode; // 👈 Add this line
+  final ValueChanged<String>? onSubmitted;
 
   const CustomTextField({
     Key? key,
@@ -32,6 +33,8 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.minLines,
     this.maxLines,
+    this.focusNode, // 👈 Add this to constructor
+    this.onSubmitted
   }) : super(key: key);
 
   @override
@@ -53,7 +56,9 @@ class CustomTextField extends StatelessWidget {
           ),
         TextField(
           controller: controller,
+          focusNode: focusNode, // 👈 Pass the focus node here
           keyboardType: keyboardType,
+          onSubmitted: onSubmitted,
           obscureText: isPassword,
           readOnly: readOnly,
           onTap: onTap,

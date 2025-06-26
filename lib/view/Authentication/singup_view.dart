@@ -131,6 +131,9 @@ class SignupView extends StatelessWidget {
           "Email",
           keyboardType: TextInputType.emailAddress,
           errorText: controller.emailError,
+          focusNode: controller.emailFocus,
+          nextFocusNode: controller.passwordFocus,
+          textInputAction: TextInputAction.next,
         ),
         buildInput(
           controller.passwordController,
@@ -138,6 +141,8 @@ class SignupView extends StatelessWidget {
           isPassword: true,
           isPasswordVisible: controller.isPasswordVisible,
           errorText: controller.passwordError,
+          focusNode: controller.passwordFocus,
+          textInputAction: TextInputAction.done,
         ),
 
         const SizedBox(height: 10),

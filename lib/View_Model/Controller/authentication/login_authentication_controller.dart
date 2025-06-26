@@ -10,6 +10,12 @@ class LoginAuthController extends GetxController {
   final passwordController = TextEditingController();
   final selectedRole = 'user'.obs;
 
+
+  //focus node
+  final emailFocus = FocusNode();
+  final passwordFocus = FocusNode();
+
+
   final emailError = Rxn<String>();
   final passwordError = Rxn<String>();
 
@@ -134,6 +140,8 @@ class LoginAuthController extends GetxController {
   // void onClose() {
   //   emailController.dispose();
   //   passwordController.dispose();
+  // emailFocus.dispose();
+  // passwordFocus.dispose();
   //   super.onClose();
   // }
 }

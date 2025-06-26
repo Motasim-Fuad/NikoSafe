@@ -15,6 +15,15 @@ class UserAuthController extends GetxController {
   final passwordController = TextEditingController();
   final ageController = TextEditingController();
   final weightController = TextEditingController();
+
+
+  final firstNameFocus = FocusNode();
+  final lastNameFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final phoneFocus = FocusNode();
+  final passwordFocus = FocusNode();
+  final ageFocus = FocusNode();
+  final weightFocus = FocusNode();
   final selectedSex = ''.obs;
 
   // Error Fields
@@ -219,6 +228,8 @@ class UserAuthController extends GetxController {
     weightController.clear();
     selectedSex.value = '';
 
+
+
     firstnameError.value = null;
     lastnameError.value = null;
     emailError.value = null;
@@ -243,6 +254,13 @@ class UserAuthController extends GetxController {
   //   passwordController.dispose();
   //   ageController.dispose();
   //   weightController.dispose();
+  // firstNameFocus.dispose();
+  // lastNameFocus.dispose();
+  // emailFocus.dispose();
+  // phoneFocus.dispose();
+  // passwordFocus.dispose();
+  // ageFocus.dispose();
+  // weightFocus.dispose();
   //   super.onClose();
   // }
 }

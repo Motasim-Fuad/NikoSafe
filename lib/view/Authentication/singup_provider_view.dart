@@ -8,8 +8,7 @@ import 'widgets/common_widget.dart'; // Ensure this is imported
 
 class SignupProviderView extends StatelessWidget {
   final ServiceProviderAuthController controller;
-
-   SignupProviderView({required this.controller,});
+  SignupProviderView({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -17,78 +16,88 @@ class SignupProviderView extends StatelessWidget {
       child: Column(
         children: [
           buildInput(
-            controller.firstNameController, // Use provider-specific controller
+            controller.firstNameController,
             "First Name",
-            errorText: controller.firstNameError, // Use provider-specific error
+            focusNode: controller.firstNameFocus,
+            nextFocusNode: controller.lastNameFocus,
+            textInputAction: TextInputAction.next,
             keyboardType: TextInputType.name,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-            ],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))],
+            errorText: controller.firstNameError,
           ),
           buildInput(
-            controller.lastNameController, // Use provider-specific controller
+            controller.lastNameController,
             "Last Name",
-            errorText: controller.lastNameError, // Use provider-specific error
+            focusNode: controller.lastNameFocus,
+            nextFocusNode: controller.emailFocus,
+            textInputAction: TextInputAction.next,
             keyboardType: TextInputType.name,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-            ],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))],
+            errorText: controller.lastNameError,
           ),
           buildInput(
-            controller.emailController, // Use provider-specific controller
+            controller.emailController,
             "Email",
-            errorText: controller.emailError, // Use provider-specific error
+            focusNode: controller.emailFocus,
+            nextFocusNode: controller.phoneFocus,
+            textInputAction: TextInputAction.next,
             keyboardType: TextInputType.emailAddress,
+            errorText: controller.emailError,
           ),
-
           buildDropdown(
             "Your Designation",
-            controller.selectedJob, // Use provider-specific RxString
+            controller.selectedJob,
             controller.jobList,
-            errorText: controller.jobError, // Use provider-specific error
+            errorText: controller.jobError,
             dropdownBackgroundColor: AppColor.topLinear,
             fillColor: AppColor.iconColor,
           ),
           buildInput(
-            controller.phoneController, // Use provider-specific controller
+            controller.phoneController,
             "Mobile Number",
-            errorText: controller.phoneError, // Use provider-specific error
+            focusNode: controller.phoneFocus,
+            nextFocusNode: controller.passwordFocus,
+            textInputAction: TextInputAction.next,
             keyboardType: TextInputType.phone,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(15),
             ],
+            errorText: controller.phoneError,
           ),
           buildInput(
-            controller.passwordController, // Use provider-specific controller
+            controller.passwordController,
             "Password",
             isPassword: true,
             isPasswordVisible: controller.isPasswordVisible,
-            errorText: controller.passwordError, // Use provider-specific error
+            focusNode: controller.passwordFocus,
+            nextFocusNode: controller.locationFocus,
+            textInputAction: TextInputAction.next,
+            errorText: controller.passwordError,
           ),
-
           buildInput(
-            controller.locationController, // Use provider-specific controller
+            controller.locationController,
             "Location",
-            errorText: controller.locationError, // Use provider-specific error
+            focusNode: controller.locationFocus,
+            textInputAction: TextInputAction.done,
             keyboardType: TextInputType.streetAddress,
+            errorText: controller.locationError,
           ),
-          buildUploadBoxForProvider(controller), // Assuming image upload is common
+          buildUploadBoxForProvider(controller),
           const SizedBox(height: 10),
-          buildTermsCheckForSearviesProvider(controller), // Assuming terms check is common
+          buildTermsCheckForSearviesProvider(controller),
           const SizedBox(height: 20),
-          Obx(
-                () =>  RoundButton(
-              title: "Verify Email",
-               loading: controller.loading.value,
-               showLoader: true,
-              width: double.infinity,
-              shadowColor: AppColor.buttonShadeColor,
-              onPress: () {
-                controller.signup(); // Calls the central signup method
-              },
-            ),
-          ),
+          Obx(() => RoundButton(
+            title: "Verify Email",
+            loading: controller.loading.value,
+            showLoader: true,
+            width: double.infinity,
+            shadowColor: AppColor.buttonShadeColor,
+            onPress: () {
+              controller.signup();
+              FocusScope.of(context).unfocus();
+            },
+          )),
           const SizedBox(height: 20),
         ],
       ),

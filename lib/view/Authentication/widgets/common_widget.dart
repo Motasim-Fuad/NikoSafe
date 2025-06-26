@@ -21,6 +21,9 @@ Widget buildInput(
       TextInputType keyboardType = TextInputType.text,
       List<TextInputFormatter>? inputFormatters,
       Rxn<String>? errorText,
+      FocusNode? focusNode,
+      FocusNode? nextFocusNode, // <-- NEW PARAM
+      TextInputAction textInputAction = TextInputAction.next, // <-- NEW PARAM
     }) {
   if (isPassword && isPasswordVisible == null) {
     throw Exception("isPasswordVisible RxBool must be provided for password fields.");
@@ -31,10 +34,19 @@ Widget buildInput(
     child: isPassword
         ? Obx(() => TextField(
       controller: controller,
+      focusNode: focusNode,
       obscureText: !isPasswordVisible!.value,
       style: const TextStyle(color: Colors.white),
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      textInputAction: textInputAction,
+      onSubmitted: (_) {
+        if (nextFocusNode != null) {
+          FocusScope.of(Get.context!).requestFocus(nextFocusNode);
+        } else {
+          FocusScope.of(Get.context!).unfocus();
+        }
+      },
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -60,9 +72,18 @@ Widget buildInput(
     ))
         : TextField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
+      focusNode: focusNode,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
+      textInputAction: textInputAction,
+      onSubmitted: (_) {
+        if (nextFocusNode != null) {
+          FocusScope.of(Get.context!).requestFocus(nextFocusNode);
+        } else {
+          FocusScope.of(Get.context!).unfocus();
+        }
+      },
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey),
@@ -77,6 +98,8 @@ Widget buildInput(
     ),
   );
 }
+
+
 Widget buildSubmitButton(String text, VoidCallback onPressed) {
   return SizedBox(
     width: double.infinity,

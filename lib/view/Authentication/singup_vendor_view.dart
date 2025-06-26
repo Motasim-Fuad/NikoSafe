@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../View_Model/Controller/authentication/vendorController.dart';
 import '../../resource/compunents/RoundButton.dart';
-import '../../resource/Colors/app_colors.dart';
 import 'widgets/common_widget.dart';
 
 class SignupVendorView extends StatelessWidget {
@@ -14,36 +13,77 @@ class SignupVendorView extends StatelessWidget {
       padding: const EdgeInsets.all(0),
       child: Column(
         children: [
-          buildInput(controller.businessNameController, "Venue Name", errorText: controller.businessNameError),
-          buildInput(controller.emailController, "Email", errorText: controller.emailError),
-          buildInput(controller.phoneController, "Phone Number", errorText: controller.phoneError),
-          buildInput(controller.addressController, "Location", errorText: controller.addressError),
-          buildInput(controller.descriptionController, "Hours of Operation", errorText: controller.descriptionError),
-          buildInput(controller.capacityController, "Capacity", keyboardType: TextInputType.number, errorText: controller.capacityError),
-
-
+          buildInput(
+            controller.businessNameController,
+            "Venue Name",
+            focusNode: controller.businessNameFocus,
+            nextFocusNode: controller.emailFocus,
+            textInputAction: TextInputAction.next,
+            errorText: controller.businessNameError,
+          ),
+          buildInput(
+            controller.emailController,
+            "Email",
+            focusNode: controller.emailFocus,
+            nextFocusNode: controller.phoneFocus,
+            textInputAction: TextInputAction.next,
+            errorText: controller.emailError,
+          ),
+          buildInput(
+            controller.phoneController,
+            "Phone Number",
+            focusNode: controller.phoneFocus,
+            nextFocusNode: controller.addressFocus,
+            textInputAction: TextInputAction.next,
+            errorText: controller.phoneError,
+          ),
+          buildInput(
+            controller.addressController,
+            "Location",
+            focusNode: controller.addressFocus,
+            nextFocusNode: controller.descriptionFocus,
+            textInputAction: TextInputAction.next,
+            errorText: controller.addressError,
+          ),
+          buildInput(
+            controller.descriptionController,
+            "Hours of Operation",
+            focusNode: controller.descriptionFocus,
+            nextFocusNode: controller.capacityFocus,
+            textInputAction: TextInputAction.next,
+            keyboardType: TextInputType.number,
+            errorText: controller.descriptionError,
+          ),
+          buildInput(
+            controller.capacityController,
+            "Capacity",
+            focusNode: controller.capacityFocus,
+            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.number,
+            errorText: controller.capacityError,
+          ),
 
           const SizedBox(height: 20),
           _buildPermissionCheckboxes(),
           const SizedBox(height: 20),
           _buildVenueTypeSelection(),
-
           const SizedBox(height: 20),
+
           buildUploadBoxForVendor(controller),
           const SizedBox(height: 10),
           buildTermsCheckForVendor(controller),
           const SizedBox(height: 20),
 
-          Obx(() =>RoundButton(
+          Obx(() => RoundButton(
             loading: controller.loading.value,
             title: "Verify Email",
             showLoader: true,
             width: double.infinity,
             onPress: () {
               controller.signup();
+              FocusScope.of(context).unfocus(); // dismiss keyboard
             },
-          )
-          ),
+          )),
           const SizedBox(height: 20),
         ],
       ),
