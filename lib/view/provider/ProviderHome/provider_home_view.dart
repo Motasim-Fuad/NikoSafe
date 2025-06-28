@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
@@ -36,6 +37,18 @@ class ProviderHomeView extends StatelessWidget {
                   CircleAvatar(
                     backgroundImage: AssetImage(ImageAssets.userHome_peopleProfile4),
                   ),
+                  Spacer(),
+                  GestureDetector(
+                    onTap: (){
+                      Get.toNamed(RouteName.chatListView);
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: AppColor.iconColor,
+                      maxRadius: 20,
+                      child:SvgPicture.asset(ImageAssets.userHome_chat),
+                    ),
+                  ),
+                  SizedBox(width: 10,),
                   CircleAvatar(
                     backgroundColor: AppColor.iconColor,
                     child: IconButton(
