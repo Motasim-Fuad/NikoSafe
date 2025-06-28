@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:nikosafe/view/User/UserProfile/Screen/user_Settings/change_password/widgets/password_widgets.dart';
 
 class UserChangePasswordView extends StatelessWidget {
@@ -77,8 +78,10 @@ class UserChangePasswordView extends StatelessWidget {
               Spacer(),
 
               RoundButton(width: double.infinity,title: "Submit", onPress: (){
-
-
+                  Utils.successSnackBar("Change Password", "Your password has been changed !");
+                  confirmNewPasswordController.clear();
+                  currentPasswordController.clear();
+                  newPasswordController.clear();
               }),
 
               SizedBox(height: 10,),

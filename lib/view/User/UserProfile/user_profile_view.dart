@@ -83,7 +83,7 @@ class UserProfileView extends StatelessWidget {
                 _buildTile(Icons.add, "Following", () {
                   Get.toNamed(RouteName.followingView);
                 }),
-                _buildTile(Icons.contacts, "Emergency contacts", () {
+                _buildTile(Icons.contacts, "Emergency Contacts", () {
                   Get.toNamed(RouteName.userEmergencyContactsView);
                 }),
                 _buildTile(Icons.support_agent, "Support", () {
@@ -114,7 +114,7 @@ class UserProfileView extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   ),
                   icon: const Icon(Icons.logout, color: Colors.red),
-                  label: const Text("Log Out", style: TextStyle(color: Colors.red)),
+                  label: const Text("Sign Out", style: TextStyle(color: Colors.red)),
                 ),
                 const SizedBox(height: 30),
               ],

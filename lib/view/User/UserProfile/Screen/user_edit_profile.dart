@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import '../../../../View_Model/Controller/user/MyProfile/user_edit_profile.dart';
 
 
@@ -87,18 +88,11 @@ class UserEditProfileView extends StatelessWidget {
                 focusNode: controller.locationFocus,
               ),
               const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: controller.saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.cyanAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  ),
-                  child: const Text("Save", style: TextStyle(fontSize: 16)),
-                ),
-              )
+
+              RoundButton(title: "Save", width: double.infinity,onPress: (){
+                controller.saveProfile();
+              })
+
             ],
           ),
         ),

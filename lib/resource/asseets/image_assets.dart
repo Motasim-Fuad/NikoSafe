@@ -5,6 +5,12 @@ class ImageAssets{
 
 
 
+  static const String appleIcon="assets/icons/AppleOutlined.svg";
+
+  static const String googleIcon="assets/icons/google.svg";
+
+
+
   static const String userHome_location="assets/icons/location.svg";
   static const String userHome_chat="assets/icons/chat.svg";
   static const String userHome_notification="assets/icons/notification.svg";

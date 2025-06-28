@@ -123,7 +123,7 @@ class UserHistoryBookingCard extends StatelessWidget {
               buttonColor: AppColor.limeColor,
               shadowColor: Colors.transparent,
               onPress: (){
-
+                  Get.toNamed(RouteName.userReviewPageView);
               },
             ),
           ),

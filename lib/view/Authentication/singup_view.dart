@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/authentication/userAuthenticationController.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:nikosafe/view/Authentication/singup_provider_view.dart';
 import 'package:nikosafe/view/Authentication/singup_user_view.dart';
 import 'package:nikosafe/view/Authentication/singup_vendor_view.dart';
@@ -88,7 +91,7 @@ class SignupView extends StatelessWidget {
                 // Dynamic Form
                 Obx(() {
                   if (mainController.isLogin.value) {
-                    return buildLoginForm(loginController); // ✅ Correct
+                    return buildLoginForm(context, loginController); // ✅ Correct
                   } else if (mainController.selectedRole.value == 'user') {
                     return SignupUserView(controller: userController); // ✅ Correct controller
                   } else if (mainController.selectedRole.value == 'vendor') {
@@ -122,7 +125,7 @@ class SignupView extends StatelessWidget {
     );
   }
 
-  Widget buildLoginForm(LoginAuthController controller) {
+  Widget buildLoginForm(BuildContext context, LoginAuthController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -167,11 +170,6 @@ class SignupView extends StatelessWidget {
             ],
           ),
         )),
-
-
-
-        const SizedBox(height: 20),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -184,17 +182,84 @@ class SignupView extends StatelessWidget {
             ),
           ],
         ),
-
-        const SizedBox(height: 20),
-
         Obx(() => RoundButton(
           loading:  controller.loading.value,
           showLoader: true,
 
-          title: "Login",
+          title: "Sign In",
           onPress: () => controller.login(),
           width: double.infinity,
         )),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              decoration: const BoxDecoration(
+                border: Border.symmetric(horizontal: BorderSide(color: Colors.white)),
+              ),
+            ),
+            SizedBox(width:  MediaQuery.of(context).size.width * 0.02,),
+             Text("or",style: TextStyle(color: AppColor.limeColor,fontWeight: FontWeight.bold),),
+            SizedBox(width:MediaQuery.of(context).size.width * 0.02,),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.4,
+              decoration: const BoxDecoration(
+                border: Border.symmetric(horizontal: BorderSide(color: Colors.white, )),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10), // <-- Add spacing here
+
+        GestureDetector(
+          onTap: (){
+            Utils.successSnackBar("Google", "Google Sign In.......");
+          },
+          child: Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white,width: 1,strokeAlign: 1,),
+              color: AppColor.bottomLinear,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(ImageAssets.googleIcon,width: 30,height: 30,),
+                SizedBox(width: 8,),
+                Text("Google",style: TextStyle(color: AppColor.primaryTextColor),)
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 10,),
+        GestureDetector(
+          onTap: (){
+            Utils.successSnackBar("Apple", "Apple Sign In.......");
+          },
+          child: Container(
+            height: 50,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white,width: 1,strokeAlign: 1,),
+              borderRadius: BorderRadius.circular(20),
+              color: AppColor.bottomLinear,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(ImageAssets.appleIcon,width: 30,height: 30,),
+                SizedBox(width: 8,),
+                Text("Apple",style: TextStyle(color: AppColor.primaryTextColor),)
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -224,7 +289,7 @@ Widget buildLoginSignUpToggle(MainAuthController controller) {
               ),
               alignment: Alignment.center,
               child: Text(
-                "Log In",
+                "Sign In",
                 style: TextStyle(
                   color: controller.isLogin.value ? const Color(0xFFFFFFFF) : Colors.white,
                   fontWeight: FontWeight.bold,

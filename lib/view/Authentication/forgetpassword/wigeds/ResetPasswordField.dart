@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nikosafe/resource/Colors/app_colors.dart';
 
 class ResetPasswordField extends StatelessWidget {
   final TextEditingController controller;
@@ -21,8 +22,8 @@ class ResetPasswordField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-              color: Colors.white70, fontWeight: FontWeight.w500),
+          style:  TextStyle(
+              color: AppColor.primaryTextColor, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Container(
@@ -36,6 +37,7 @@ class ResetPasswordField extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: "Enter Password",
+              hintStyle: TextStyle(color: AppColor.secondaryTextColor),
               border: InputBorder.none,
               contentPadding:
               const EdgeInsets.symmetric(horizontal: 12, vertical: 14),

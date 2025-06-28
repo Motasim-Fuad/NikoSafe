@@ -61,7 +61,7 @@ class UserHistoryScreen extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(5),
                                 child: Text(
-                                  'Service & Venue Bookings',
+                                  'Service & Venue Booking',
                                   style: TextStyle(
                                     color: historyController.currentTab.value == 0
                                         ? Colors.white

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/RoundButton.dart';
+import 'package:nikosafe/utils/utils.dart';
 import 'package:nikosafe/view/Authentication/forgetpassword/wigeds/ResetPasswordField.dart';
 
 
@@ -49,9 +51,11 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               const SizedBox(height: 30),
 
               ResetPasswordField(
+
                 controller: newPasswordController,
                 label: "Enter new password",
                 isVisible: newPasswordVisible,
+
                 onToggleVisibility: () {
                   setState(() {
                     newPasswordVisible = !newPasswordVisible;
@@ -72,22 +76,12 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               ),
 
               const SizedBox(height: 30),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.cyanAccent,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                onPressed: () {
-                  // Validate and process new password
 
-                  Get.toNamed(RouteName.authView);
-                },
-                child: const Text("Update Password", style: TextStyle(fontSize: 16)),
-              )
+              RoundButton(width: double.infinity,title: "Update Password", onPress: (){
+                Utils.successSnackBar(" password", "Password Update Successfully");
+                Get.toNamed(RouteName.authView);
+              })
+
             ],
           ),
         ),

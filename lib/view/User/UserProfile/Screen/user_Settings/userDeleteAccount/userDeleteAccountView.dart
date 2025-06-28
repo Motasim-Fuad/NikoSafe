@@ -68,14 +68,14 @@ class UserDeleteAccauuntview extends StatelessWidget {
               ),
 
 
-              SizedBox(height: 20,),
+              Spacer(),
               RoundButton(width: double.infinity,title: "Delete Account",
                   onPress: () {
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          backgroundColor: Color(0xcc1b1a1a),
+                          backgroundColor: AppColor.topLinear,
                           title: const Text("Are you sure?",style: TextStyle(color: Colors.white),),
                           content: const Text("This action will permanently delete your account.",style: TextStyle(color: Colors.white)),
                           actions: [

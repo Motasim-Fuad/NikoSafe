@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
+import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/UserProfile/Screen/favariteScreen/provider_view.dart';
 
 import '../../../../../View_Model/toggle_tab_controller.dart';
@@ -18,8 +19,16 @@ class FavoritesScreenView extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppColor.backGroundColor
       ),
+
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.transparent,
+          title: Text("Favorites",style: TextStyle(color: AppColor.primaryTextColor),),
+          centerTitle: true,
+          leading: CustomBackButton(),
+        ),
         body: SafeArea(
           child: Column(
             children: [
