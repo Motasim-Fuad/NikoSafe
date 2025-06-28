@@ -13,6 +13,10 @@ class ProviderSendQuoteView extends StatelessWidget {
     final TextEditingController taskTitle =TextEditingController();
     final TextEditingController taskDescription =TextEditingController();
     final TextEditingController taskPrice =TextEditingController();
+
+    final  taskTitleFocus =FocusNode();
+    final  taskDescriptionFocus =FocusNode();
+    final  taskPriceFocus =FocusNode();
     return Container(
 
       decoration: BoxDecoration(
@@ -31,16 +35,21 @@ class ProviderSendQuoteView extends StatelessWidget {
           padding: EdgeInsetsGeometry.all(16),
           child: Column(
             children: [
-              CustomTextField(controller: taskTitle,label: "Task Title",),
+              CustomTextField(controller: taskTitle,label: "Task Title",focusNode: taskTitleFocus,onSubmitted: (value) {
+                FocusScope.of(context).requestFocus(taskDescriptionFocus);
+              },),
               SizedBox(height: 10,),
-              CustomTextField(controller: taskDescription,label: "Task Description",minLines: 4,maxLines: 5,),
+              CustomTextField(controller: taskDescription,label: "Task Description",minLines: 4,maxLines: 5,focusNode: taskDescriptionFocus,onSubmitted: (value) {
+                FocusScope.of(context).requestFocus(taskPriceFocus);
+              },),
               SizedBox(height: 10,),
-              CustomTextField(controller: taskPrice,keyboardType: TextInputType.number,label: "Task Price",),
+              CustomTextField(controller: taskPrice,keyboardType: TextInputType.number,label: "Task Price",focusNode: taskPriceFocus,),
 
               Spacer(),
               RoundButton(width: double.infinity,title: "Send", onPress: (){
                 //TODO
                 Utils.successSnackBar("Quote", "Quote Send Successfully");
+                FocusScope.of(context).unfocus();
                 taskTitle.clear();
                 taskDescription.clear();
                 taskPrice.clear();

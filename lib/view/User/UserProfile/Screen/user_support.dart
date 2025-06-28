@@ -15,8 +15,10 @@ class UserSupport extends StatefulWidget {
 
 class _UserSupportState extends State<UserSupport> {
   final TextEditingController _titleText =TextEditingController();
-
   final TextEditingController _descriptionText =TextEditingController();
+
+  final _titleFocus =FocusNode();
+  final _descriptionFocus =FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +42,17 @@ class _UserSupportState extends State<UserSupport> {
             label: "Issue Title",
           fillColor: AppColor.topLinear,
             controller: _titleText,
+              focusNode: _titleFocus,
+              onSubmitted: (value) {
+              FocusScope.of(context).requestFocus(_descriptionFocus);
+            },
           
           ),
             SizedBox(height: 20,),
             CustomTextField(
               fillColor: AppColor.topLinear,
             label: "User Description",
-          
+              focusNode: _descriptionFocus,
             controller: _descriptionText,
               maxLines: 6,
               minLines: 5,
@@ -56,6 +62,7 @@ class _UserSupportState extends State<UserSupport> {
           
               RoundButton(title: "Submit",width: double.infinity, onPress: (){
                   Utils.successSnackBar("Support", "Submit You Issue Successfully");
+                  FocusScope.of(context).unfocus();
                   _titleText.clear();
                   _descriptionText.clear();
               }),

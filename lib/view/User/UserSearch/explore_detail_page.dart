@@ -191,7 +191,7 @@ class ExploreDetailPage extends StatelessWidget {
             children: [
               Expanded(
                 child:
-               RoundButton(title: "Reserve a Table", icon: Icons.call,onPress: (){}),
+               RoundButton(title: "Call", icon: Icons.call,onPress: (){}),
               ),
               SizedBox(width: 16),
               Expanded(

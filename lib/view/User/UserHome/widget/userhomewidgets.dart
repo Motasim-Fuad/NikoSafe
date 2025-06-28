@@ -166,11 +166,27 @@ Widget buildPostCard(PostModel post) {
               Utils.successSnackBar("Blocked",
                 "You have blocked this user.",);
               }
+              if (value == 'delete') {
+              Utils.successSnackBar("Delete",
+                "You have Delete this user.",);
+              }
+              if (value == 'hide') {
+              Utils.successSnackBar("Hide",
+                "You have Hide this user.",);
+              }
             },
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'block',
                 child: Text('Block', style: TextStyle(color: Colors.white)),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Text('Delete', style: TextStyle(color: Colors.white)),
+              ),
+              PopupMenuItem(
+                value: 'hide',
+                child: Text('Hide', style: TextStyle(color: Colors.white)),
               ),
             ],
             icon: Icon(Icons.more_vert, color: Colors.white),

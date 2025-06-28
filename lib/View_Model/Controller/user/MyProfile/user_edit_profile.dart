@@ -15,6 +15,14 @@ class UserEditProfileController extends GetxController {
   final locationController = TextEditingController(text: "Downtown LA");
 
 
+
+  final nameFocus = FocusNode();
+  final mobileFocus = FocusNode();
+  final ageFocus = FocusNode();
+  final weightFocus = FocusNode();
+  final sexFocus = FocusNode();
+  final locationFocus = FocusNode();
+
   void pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
@@ -28,4 +36,24 @@ class UserEditProfileController extends GetxController {
     // TODO: Call API or save to local database
     Get.snackbar("Success", "Profile updated successfully", backgroundColor: Colors.green, colorText: Colors.white);
   }
+
+
+  // @override
+  // void onClose() {
+    // nameController.dispose();
+    // mobileController.dispose();
+    // ageController.dispose();
+    // weightController.dispose();
+    // sexController.dispose();
+    // emailController.dispose();
+    // locationController.dispose();
+    //
+    // nameFocus.dispose();
+    // mobileFocus.dispose();
+    // ageFocus.dispose();
+    // weightFocus.dispose();
+    // sexFocus.dispose();
+    // locationFocus.dispose();
+  //   super.onClose();
+  // }
 }

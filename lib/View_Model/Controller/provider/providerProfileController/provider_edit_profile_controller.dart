@@ -61,8 +61,86 @@ class ProviderEditProfileController extends GetxController {
   final cirtificationsController = TextEditingController(text: 'I am a certified plumber with training in residential and commercial plumbing systems.I hold certifications in pipefitting, water heater installation, and safety compliance.My credentials ensure reliable, code-compliant work every time.');
   final expriencesController = TextEditingController(text: '7 years');
 
+
+
+  final fullNameFocus = FocusNode();
+  final jobTitleFocus = FocusNode();
+  final emailFocus = FocusNode();
+  final phoneFocus = FocusNode();
+  final payRateFocus = FocusNode();
+  final locationFocus = FocusNode();
+  final radiusFocus = FocusNode();
+  final aboutFocus = FocusNode();
+  final certificationsFocus = FocusNode();
+  final experienceFocus = FocusNode();
+
   void saveProfile() {
     // Your save logic here
 Utils.successSnackBar('Success', 'Profile Saved');
+  }
+
+
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    fullNameFocus.addListener(() {
+      if (fullNameFocus.hasFocus) debugPrint("✅ Full Name Focused");
+    });
+
+    jobTitleFocus.addListener(() {
+      if (jobTitleFocus.hasFocus) debugPrint("✅ Job Title Focused");
+    });
+
+    emailFocus.addListener(() {
+      if (emailFocus.hasFocus) debugPrint("✅ Email Focused");
+    });
+
+    phoneFocus.addListener(() {
+      if (phoneFocus.hasFocus) debugPrint("✅ Phone Focused");
+    });
+
+    payRateFocus.addListener(() {
+      if (payRateFocus.hasFocus) debugPrint("✅ Pay Rate Focused");
+    });
+
+    locationFocus.addListener(() {
+      if (locationFocus.hasFocus) debugPrint("✅ Location Focused");
+    });
+
+    radiusFocus.addListener(() {
+      if (radiusFocus.hasFocus) debugPrint("✅ Radius Focused");
+    });
+
+    aboutFocus.addListener(() {
+      if (aboutFocus.hasFocus) debugPrint("✅ About Me Focused");
+    });
+
+    certificationsFocus.addListener(() {
+      if (certificationsFocus.hasFocus) debugPrint("✅ Certifications Focused");
+    });
+
+    experienceFocus.addListener(() {
+      if (experienceFocus.hasFocus) debugPrint("✅ Experience Focused");
+    });
+  }
+
+
+
+  @override
+  void onClose() {
+    fullNameFocus.dispose();
+    jobTitleFocus.dispose();
+    emailFocus.dispose();
+    phoneFocus.dispose();
+    payRateFocus.dispose();
+    locationFocus.dispose();
+    radiusFocus.dispose();
+    aboutFocus.dispose();
+    certificationsFocus.dispose();
+    experienceFocus.dispose();
+
+    super.onClose();
   }
 }

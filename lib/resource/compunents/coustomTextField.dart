@@ -15,8 +15,9 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTap;
   final int? minLines;
   final int? maxLines;
-  final FocusNode? focusNode; // 👈 Add this line
+  final FocusNode? focusNode;
   final ValueChanged<String>? onSubmitted;
+  final String? Function(String?)? validator; // ✅ Add validator
 
   const CustomTextField({
     Key? key,
@@ -33,8 +34,9 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.minLines,
     this.maxLines,
-    this.focusNode, // 👈 Add this to constructor
-    this.onSubmitted
+    this.focusNode,
+    this.onSubmitted,
+    this.validator, // ✅ Add validator to constructor
   }) : super(key: key);
 
   @override
@@ -54,25 +56,24 @@ class CustomTextField extends StatelessWidget {
               ),
             ),
           ),
-        TextField(
+        TextFormField(
           controller: controller,
-          focusNode: focusNode, // 👈 Pass the focus node here
+          focusNode: focusNode,
           keyboardType: keyboardType,
-          onSubmitted: onSubmitted,
+          onFieldSubmitted: onSubmitted,
           obscureText: isPassword,
           readOnly: readOnly,
           onTap: onTap,
           minLines: minLines,
           maxLines: maxLines ?? 1,
           style: const TextStyle(color: Colors.white),
+          validator: validator, // ✅ Hook in validator
           decoration: InputDecoration(
             filled: true,
             fillColor: fillColor ?? AppColor.iconColor,
             hintText: hintText,
             hintStyle: const TextStyle(color: Colors.grey),
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: Colors.grey)
-                : null,
+            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: Colors.grey) : null,
             suffixIcon: suffixIcon != null
                 ? GestureDetector(
               onTap: onSuffixTap,
@@ -86,6 +87,14 @@ class CustomTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(color: Colors.greenAccent),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.redAccent),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.redAccent),
               borderRadius: BorderRadius.circular(12),
             ),
           ),

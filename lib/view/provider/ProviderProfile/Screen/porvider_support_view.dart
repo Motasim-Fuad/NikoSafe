@@ -16,7 +16,8 @@ class _PorviderSupportViewState extends State<PorviderSupportView> {
   final TextEditingController _titleText =TextEditingController();
 
   final TextEditingController _descriptionText =TextEditingController();
-
+  final _titleFocus =FocusNode();
+  final _descriptionFocus =FocusNode();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -39,13 +40,16 @@ class _PorviderSupportViewState extends State<PorviderSupportView> {
                 label: "Issue Title",
                 fillColor: AppColor.topLinear,
                 controller: _titleText,
-
+                focusNode: _titleFocus,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(_descriptionFocus);
+                },
               ),
               SizedBox(height: 20,),
               CustomTextField(
                 fillColor: AppColor.topLinear,
                 label: "User Description",
-
+                focusNode: _descriptionFocus,
                 controller: _descriptionText,
                 maxLines: 6,
                 minLines: 5,
@@ -55,6 +59,7 @@ class _PorviderSupportViewState extends State<PorviderSupportView> {
 
               RoundButton(title: "Submit",width: double.infinity, onPress: (){
                 Utils.successSnackBar("Support", "Submit You Issue Successfully");
+                FocusScope.of(context).unfocus();
                 _titleText.clear();
                 _descriptionText.clear();
               }),

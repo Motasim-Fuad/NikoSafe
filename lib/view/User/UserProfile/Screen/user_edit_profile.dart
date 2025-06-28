@@ -48,13 +48,44 @@ class UserEditProfileView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              _buildField(controller.nameController, "Full Name"),
-              _buildField(controller.mobileController, "Mobile Number", keyboard: TextInputType.phone),
-              _buildField(controller.ageController, "Your Age", keyboard: TextInputType.number),
-              _buildField(controller.weightController, "Your Weight", keyboard: TextInputType.number),
-              _buildField(controller.sexController, "Your Sex"),
-              _buildField(controller.emailController, "Email address", readOnly: true),
-              _buildField(controller.locationController, "Location"),
+              _buildField(
+                controller.nameController,
+                "Full Name",
+                focusNode: controller.nameFocus,
+                onSubmitted: (_) => FocusScope.of(context).requestFocus(controller.mobileFocus),
+              ),
+              _buildField(
+                controller.mobileController,
+                "Mobile Number",
+                keyboard: TextInputType.phone,
+                focusNode: controller.mobileFocus,
+                onSubmitted: (_) => FocusScope.of(context).requestFocus(controller.ageFocus),
+              ),
+              _buildField(
+                controller.ageController,
+                "Your Age",
+                keyboard: TextInputType.number,
+                focusNode: controller.ageFocus,
+                onSubmitted: (_) => FocusScope.of(context).requestFocus(controller.weightFocus),
+              ),
+              _buildField(
+                controller.weightController,
+                "Your Weight",
+                keyboard: TextInputType.number,
+                focusNode: controller.weightFocus,
+                onSubmitted: (_) => FocusScope.of(context).requestFocus(controller.sexFocus),
+              ),
+              _buildField(
+                controller.sexController,
+                "Your Sex",
+                focusNode: controller.sexFocus,
+                onSubmitted: (_) => FocusScope.of(context).requestFocus(controller.locationFocus),
+              ),
+              _buildField(
+                controller.locationController,
+                "Location",
+                focusNode: controller.locationFocus,
+              ),
               const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
@@ -75,15 +106,24 @@ class UserEditProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildField(TextEditingController controller, String hint,
-      {bool readOnly = false, TextInputType keyboard = TextInputType.text}) {
+  Widget _buildField(
+      TextEditingController controller,
+      String hint, {
+        bool readOnly = false,
+        TextInputType keyboard = TextInputType.text,
+        FocusNode? focusNode,
+        Function(String)? onSubmitted,
+      }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
         controller: controller,
         readOnly: readOnly,
         keyboardType: keyboard,
+        focusNode: focusNode,
+        onSubmitted: onSubmitted,
         style: const TextStyle(color: Colors.white),
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Colors.white54),
@@ -102,4 +142,5 @@ class UserEditProfileView extends StatelessWidget {
       ),
     );
   }
+
 }
