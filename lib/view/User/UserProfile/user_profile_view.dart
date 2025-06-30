@@ -83,7 +83,7 @@ class UserProfileView extends StatelessWidget {
                 _buildTile(Icons.add, "Following", () {
                   Get.toNamed(RouteName.followingView);
                 }),
-                _buildTile(Icons.contacts, "Emergency Contacts", () {
+                _buildTile(Icons.contacts, "Alert Contacts", () {
                   Get.toNamed(RouteName.userEmergencyContactsView);
                 }),
                 _buildTile(Icons.support_agent, "Support", () {

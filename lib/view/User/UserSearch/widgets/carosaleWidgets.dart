@@ -11,7 +11,7 @@ class BannerCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() => SizedBox(
-      height: 300,
+      height: 250,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [

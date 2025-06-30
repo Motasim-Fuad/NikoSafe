@@ -38,78 +38,81 @@ class ExploreListPage extends StatelessWidget {
           leading: CustomBackButton(),
           automaticallyImplyLeading: false,
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SearchBarWidget(controller: controller),
-            ),
-                // Bannner
-            BannerCarousel(),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-            GestureDetector(
-              onTap: (){
+              BannerCarousel(),
+              GestureDetector(
+                onTap: () {
                   Get.to(BannerPromotionsView());
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                Text("See all on going promotions",style: TextStyle(color: Colors.blue),),
-                Icon(Icons.arrow_forward,color: Colors.blue,),
-              ],
-            ),),
-            // Rounded tab container
-            Obx(() => Container(
-              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Color(0xFF1C2F34),
-                borderRadius: BorderRadius.circular(30),
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("See all ongoing promotions", style: TextStyle(color: Colors.blue)),
+                    Icon(Icons.arrow_forward, color: Colors.blue),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: categoryLabels.entries.map((entry) {
-                  final key = entry.key;
-                  final label = entry.value;
-                  final isSelected = controller.selectedCategory.value == key;
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SearchBarWidget(controller: controller),
+              ),
+              Obx(() => Container(
+                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Color(0xFF1C2F34),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: categoryLabels.entries.map((entry) {
+                    final key = entry.key;
+                    final label = entry.value;
+                    final isSelected = controller.selectedCategory.value == key;
 
-                  return GestureDetector(
-                    onTap: () => controller.filterByCategory(key),
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Color(0xFF2D6A7B) : Colors.transparent,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.white70,
-                          fontWeight: FontWeight.w500,
+                    return GestureDetector(
+                      onTap: () => controller.filterByCategory(key),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 200),
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Color(0xFF2D6A7B) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          label,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white70,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            )),
-
-            // List of filtered items
-            Expanded(
-              child: Obx(() => ListView.builder(
-                padding: EdgeInsets.all(12),
-                itemCount: controller.filteredItems.length,
-                itemBuilder: (context, index) {
-                  final item = controller.filteredItems[index];
-                  return ExploreCard(item: item);
-                },
+                    );
+                  }).toList(),
+                ),
               )),
-            ),
-          ],
+              SizedBox(height: 8),
+              // ListView inside SingleChildScrollView must have a fixed height
+              Obx(() => SizedBox(
+                height: MediaQuery.of(context).size.height * 0.5, // or any suitable height
+                child: ListView.builder(
+                  padding: EdgeInsets.all(12),
+                  itemCount: controller.filteredItems.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.filteredItems[index];
+                    return ExploreCard(item: item);
+                  },
+                ),
+              )),
+            ],
+          ),
         ),
+
       ),
     );
   }

@@ -123,7 +123,7 @@ class UserEmergencyContactsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Add Emergency Contact",
+                "Alert Notification",
                 style: TextStyle(
                   color: AppColor.primaryTextColor,
                   fontSize: 18,
@@ -203,7 +203,7 @@ class UserEmergencyContactsView extends StatelessWidget {
           leading: const CustomBackButton(),
           backgroundColor: Colors.transparent,
           centerTitle: true,
-          title: Text("Emergency Contacts", style: TextStyle(color: AppColor.primaryTextColor)),
+          title: Text("Alert Notification", style: TextStyle(color: AppColor.primaryTextColor)),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -213,7 +213,7 @@ class UserEmergencyContactsView extends StatelessWidget {
               Expanded(
                 child: Obx(() {
                   return controller.contactList.isEmpty
-                      ?  Center(child: Text("No emergency contacts added yet.",style: TextStyle(color: AppColor.primaryTextColor),))
+                      ?  Center(child: Text("No contacts added yet.",style: TextStyle(color: AppColor.primaryTextColor),))
                       : ListView.builder(
                     itemCount: controller.contactList.length,
                     itemBuilder: (_, index) {
@@ -289,7 +289,7 @@ class UserEmergencyContactsView extends StatelessWidget {
               const SizedBox(height: 10),
               RoundButton(
                 width: double.infinity,
-                title: "Add Emergency Contact",
+                title: "Add Contact",
                 onPress: () => _showAddContactDialog(context),
               ),
               const SizedBox(height: 10),
