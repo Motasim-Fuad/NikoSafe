@@ -7,28 +7,39 @@ import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 class EmailView extends StatelessWidget {
-
-  const EmailView({super.key , });
+  const EmailView({super.key});
 
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments;
-    String userRole = args["role"];
+    String userEmail = args?["email"] ?? "";
 
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor, // LinearGradient should be defined in AppColor
+        gradient: AppColor.backGroundColor,
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent, // Make Scaffold see-through
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: Text("Verify your email",style: TextStyle(color: AppColor.primaryTextColor),),
+          title: Text(
+            "Verify your email",
+            style: TextStyle(color: AppColor.primaryTextColor),
+          ),
           centerTitle: true,
-          backgroundColor: Colors.transparent, // Optional: make AppBar transparent
+          backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            onPressed: () {},
-            icon: CircleAvatar(child: Icon(Icons.arrow_back_ios_new,color: AppColor.primaryTextColor,size: 15,),backgroundColor: Color(0xff525f67),),
+            onPressed: () {
+              Get.back();
+            },
+            icon: CircleAvatar(
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                color: AppColor.primaryTextColor,
+                size: 15,
+              ),
+              backgroundColor: Color(0xff525f67),
+            ),
           ),
         ),
         body: Padding(
@@ -38,17 +49,49 @@ class EmailView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                    SvgPicture.asset(ImageAssets.emailIcon),
-                 Text("Check Email ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color:AppColor.primaryTextColor ),),
-                Text("Please check your email to verify your account.",style: TextStyle(color: AppColor.primaryTextColor),),
-                SizedBox(height: 20,),
-                RoundButton(title: "Confirm Now ",shadowColor: AppColor.buttonShadeColor,width: double.infinity, onPress: () {
-                  print("selected role: $userRole");
-                  Get.toNamed(
-                    RouteName.oTPView,
-                    arguments: {'role': userRole}, // 👈 pass role here
-                  );
-                },),
+                SvgPicture.asset(ImageAssets.emailIcon),
+                SizedBox(height: 20),
+                Text(
+                  "Check Email",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: AppColor.primaryTextColor,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "We've sent a 4-digit verification code to:",
+                  style: TextStyle(color: AppColor.primaryTextColor),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  userEmail,
+                  style: TextStyle(
+                    color: AppColor.primaryTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "Please check your email and enter the code below.",
+                  style: TextStyle(color: AppColor.primaryTextColor),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 30),
+                RoundButton(
+                  title: "Enter Code",
+                  shadowColor: AppColor.buttonShadeColor,
+                  width: double.infinity,
+                  onPress: () {
+                    Get.toNamed(
+                      RouteName.oTPView,
+                      arguments: {'email': userEmail},
+                    );
+                  },
+                ),
               ],
             ),
           ),

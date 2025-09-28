@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/Repositry/userHome_repo/user_create_post_repo.dart' show UserPostRepository;
+import 'package:nikosafe/models/userCreatePost/UserLocation/user_location_model.dart';
 
 import 'package:nikosafe/models/userCreatePost/user_create_post_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/utils/utils.dart';
 
-
-import '../../../../../Repositry/userHome_repo/user_create_post_repo.dart';
-import '../../../../../models/userCreatePost/UserLocation/user_location_model.dart';
 
 class UserCreatePostController extends GetxController {
   final UserPostRepository userPostRepository;

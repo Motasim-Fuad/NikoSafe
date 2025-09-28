@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
-import '../../../../View_Model/Controller/user/userHome/poll_controller.dart';
+import '../../../../View_Model/Controller/user/userHome/post/poll/poll_controller.dart';
 import '../../../../resource/compunents/customBackButton.dart';
 
 class CreatePollView extends StatelessWidget {

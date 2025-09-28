@@ -1,54 +1,94 @@
-
+// NetworkApiServices.dart
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
-
-
+import 'package:nikosafe/utils/token_manager.dart';
 import '../Exceptation_Handle.dart';
 import 'base_api_servicrs.dart';
-import 'package:http/http.dart ' as http;
-class NetworkApiServices extends BaseApiServices{
+import 'package:http/http.dart' as http;
+
+class NetworkApiServices extends BaseApiServices {
+
+  // Method to get headers with optional auth
+  Future<Map<String, String>> _getHeaders({bool requireAuth = false}) async {
+    Map<String, String> headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    if (requireAuth) {
+      final token = await TokenManager.getAccessToken();
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+    }
+
+    return headers;
+  }
+
   @override
-
-  Future <dynamic> getApi(String url)async{
-
-    //jodi kisue print korta chai toba ai vaba print korbo
+  Future<dynamic> getApi(String url, {bool requireAuth = false}) async {
     if (kDebugMode) {
       print(url);
-
     }
     dynamic responceJson;
-    try{
-      final responce=await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
-      // backend devoloper bola diba time out a koto second hoba
-
-      responceJson= returnResponce(responce);
-    } on SocketException{
+    try {
+      final headers = await _getHeaders(requireAuth: requireAuth);
+      final responce = await http.get(
+        Uri.parse(url),
+        headers: headers,
+      ).timeout(const Duration(seconds: 10));
+      responceJson = returnResponce(responce);
+    } on SocketException {
       throw InternetException("");
-    }on RequestTimeOut{
+    } on RequestTimeOut {
       throw RequestTimeOut("");
     }
-
     return responceJson;
   }
 
+  // Update postMultipartApi method with optional auth
   Future<dynamic> postMultipartApi({
     required String url,
-    required Map<String, String> fields,
+    required Map<String, dynamic> data,
     File? imageFile,
-    String imageFieldName = "profileImage", // or the field name your backend expects
+    String imageFieldName = "image",
+    bool requireAuth = false,
   }) async {
     if (kDebugMode) {
       print('POST MULTIPART to: $url');
-      print('Fields: $fields');
+      print('Data: $data');
     }
 
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
-      request.fields.addAll(fields);
 
-      if (imageFile != null) {
+      // Add headers with optional auth
+      final headers = await _getHeaders(requireAuth: requireAuth);
+      request.headers.addAll(headers);
+
+      // Add all fields to the request
+      data.forEach((key, value) {
+        if (value != null) {
+          if (key == 'profileData' && value is Map) {
+            value.forEach((nestedKey, nestedValue) {
+              if (nestedValue != null) {
+                request.fields['profileData[$nestedKey]'] = nestedValue.toString();
+              }
+            });
+          } else if (value is List) {
+            for (int i = 0; i < value.length; i++) {
+              if (value[i] != null) {
+                request.fields['$key[$i]'] = value[i].toString();
+              }
+            }
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+      });
+
+      if (imageFile != null && imageFile.existsSync()) {
         var fileStream = await http.MultipartFile.fromPath(
           imageFieldName,
           imageFile.path,
@@ -56,23 +96,30 @@ class NetworkApiServices extends BaseApiServices{
         request.files.add(fileStream);
       }
 
-      var streamedResponse = await request.send().timeout(const Duration(seconds: 10));
+      if (kDebugMode) {
+        print('Final request fields: ${request.fields}');
+        print('Request files: ${request.files.map((f) => '${f.field}: ${f.filename}')}');
+      }
+
+      var streamedResponse = await request.send().timeout(const Duration(seconds: 45));
       var response = await http.Response.fromStream(streamedResponse);
 
       if (kDebugMode) {
-        print('Response: ${response.body}');
+        print('Response Status: ${response.statusCode}');
+        print('Response Body: ${response.body}');
       }
 
       return returnResponce(response);
-    } on SocketException {
-      throw InternetException("No Internet");
-    } on RequestTimeOut {
-      throw RequestTimeOut("Request Timeout");
+    } catch (e) {
+      if (kDebugMode) {
+        print('Multipart request error: $e');
+      }
+      rethrow;
     }
   }
 
-
-  Future<dynamic> postApi(var data, String url) async {
+  @override
+  Future<dynamic> postApi(var data, String url, {bool requireAuth = false}) async {
     if (kDebugMode) {
       print("URL: $url");
       print("Data: $data");
@@ -81,19 +128,18 @@ class NetworkApiServices extends BaseApiServices{
     dynamic responseJson;
 
     try {
-      final stopwatch = Stopwatch()..start(); // ⏱ Start measuring time
+      final stopwatch = Stopwatch()..start();
+      final headers = await _getHeaders(requireAuth: requireAuth);
 
       final response = await http
           .post(
         Uri.parse(url),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: headers,
         body: jsonEncode(data),
       )
           .timeout(const Duration(seconds: 45));
 
-      stopwatch.stop(); // ⏱ Stop measuring time
+      stopwatch.stop();
 
       if (kDebugMode) {
         print("⏱ Backend response time: ${stopwatch.elapsedMilliseconds} ms");
@@ -113,55 +159,25 @@ class NetworkApiServices extends BaseApiServices{
     return responseJson;
   }
 
-
-
-  // Future <dynamic> postApi(var data,String url)async{
-  //   //jodi kisue print korta chai toba ai vaba print korbo
-  //   if (kDebugMode) {
-  //     print(url);
-  //     print(data);
-  //   }
-  //
-  //   dynamic responceJson;
-  //   try{
-  //     final responce= await http .post(Uri.parse(url),
-  //       // headers: {
-  //       //   "Authorization":"Token$token",
-  //       //   "Content-Type":"application/json"
-  //       // },
-  //       body:data,// jsonEncode(data),//jodi row from a hoy taila body ai vaba
-  //       // row from a na hola , body:data, ai hoba
-  //
-  //
-  //
-  //
-  //     ).timeout(const Duration(seconds: 10));
-  //     // backend developer bola diba time out a koto second hoba
-  //
-  //     responceJson= returnResponce(responce);
-  //   } on SocketException{
-  //     throw InternetException("");
-  //   }on RequestTimeOut{
-  //     throw RequestTimeOut("");
-  //   }
-  //   if (kDebugMode) {
-  //     print(responceJson);
-  //   }
-  //   return responceJson;
-  // }
-
-  dynamic returnResponce(http.Response response){
-    switch (response.statusCode){
-      case 200:
-        dynamic responceJson= jsonDecode(response.body);
-        return responceJson;
-      case 400:
-        dynamic responceJson= jsonDecode(response.body);
-        return responceJson;
-      default:
-        throw FatchDataExceptation(" "+response.statusCode.toString());
+  dynamic returnResponce(http.Response response) {
+    if (kDebugMode) {
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
     }
 
+    switch (response.statusCode) {
+      case 200:
+      case 201:
+      case 400:
+      case 401:
+      case 403:
+      case 404:
+      case 422:
+      case 500:
+        dynamic responceJson = jsonDecode(response.body);
+        return responceJson;
+      default:
+        throw FatchDataExceptation("Error occurred with status code: ${response.statusCode}");
+    }
   }
-
 }

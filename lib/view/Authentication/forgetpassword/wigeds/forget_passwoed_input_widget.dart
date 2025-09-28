@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ForgotPasswordInputWidget extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSubmit;
+  final bool isLoading; // Optional: if you want to show loading in the button
 
   const ForgotPasswordInputWidget({
     Key? key,
     required this.controller,
     required this.onSubmit,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -39,6 +42,7 @@ class ForgotPasswordInputWidget extends StatelessWidget {
               Expanded(
                 child: TextFormField(
                   controller: controller,
+                  keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
                     hintText: "you@example.com",
@@ -48,14 +52,23 @@ class ForgotPasswordInputWidget extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: onSubmit,
+                onTap: isLoading ? null : onSubmit, // Disable when loading
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.cyan,
+                    color: isLoading ? Colors.grey : Colors.cyan,
                   ),
-                  child: const Icon(Icons.arrow_forward, color: Colors.white),
+                  child: isLoading
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                      : const Icon(Icons.arrow_forward, color: Colors.white),
                 ),
               )
             ],

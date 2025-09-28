@@ -15,11 +15,12 @@ class SignupUserView extends StatelessWidget {
     return Container(
       child: SafeArea(
         child: GestureDetector(
-          onTap:()=> FocusScope.of(context).unfocus(),
+          onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // First Name
                 buildInput(
                   controller.firstNameController,
                   "First Name",
@@ -32,6 +33,8 @@ class SignupUserView extends StatelessWidget {
                   ],
                   errorText: controller.firstnameError,
                 ),
+
+                // Last Name
                 buildInput(
                   controller.lastNameController,
                   "Last Name",
@@ -44,6 +47,8 @@ class SignupUserView extends StatelessWidget {
                   ],
                   errorText: controller.lastnameError,
                 ),
+
+                // Mobile Number
                 buildInput(
                   controller.phoneController,
                   "Mobile Number",
@@ -57,6 +62,8 @@ class SignupUserView extends StatelessWidget {
                   ],
                   errorText: controller.phoneError,
                 ),
+
+                // Age
                 buildInput(
                   controller.ageController,
                   "Your Age",
@@ -70,9 +77,11 @@ class SignupUserView extends StatelessWidget {
                   ],
                   errorText: controller.ageError,
                 ),
+
+                // Weight
                 buildInput(
                   controller.weightController,
-                  "Your Weight",
+                  "Your Weight (kg)",
                   focusNode: controller.weightFocus,
                   nextFocusNode: controller.emailFocus,
                   keyboardType: TextInputType.number,
@@ -83,6 +92,8 @@ class SignupUserView extends StatelessWidget {
                   ],
                   errorText: controller.weightError,
                 ),
+
+                // Gender Dropdown
                 buildDropdown(
                   "Your Gender",
                   dropdownBackgroundColor: AppColor.topLinear,
@@ -91,40 +102,40 @@ class SignupUserView extends StatelessWidget {
                   controller.sexOptions,
                   errorText: controller.sexError,
                 ),
+
+                // Email
                 buildInput(
                   controller.emailController,
                   "Email",
                   focusNode: controller.emailFocus,
-                  nextFocusNode: controller.passwordFocus,
                   keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  errorText: controller.emailError,
-                ),
-                buildInput(
-                  controller.passwordController,
-                  "Password",
-                  isPassword: true,
-                  isPasswordVisible: controller.isPasswordVisible,
-                  focusNode: controller.passwordFocus,
                   textInputAction: TextInputAction.done,
-                  errorText: controller.passwordError,
+                  errorText: controller.emailError,
                 ),
 
                 const SizedBox(height: 10),
+
+                // Terms & Conditions
                 buildTermsCheckForUser(controller),
+
                 const SizedBox(height: 20),
-                Obx(()=>
-                  RoundButton(
-                    title: "Verify Email",
-                    loading: controller.loading.value,
-                    showLoader: true,
-                    width: double.infinity,
-                    shadowColor: AppColor.buttonShadeColor,
-                    onPress: () {
-                      controller.signup(); // Calls the central signup method
-                      FocusScope.of(context).unfocus();
-                    },
-                  ),
+
+                // Register Button
+                Obx(() =>
+                    RoundButton(
+                      title: controller.loading.value ?"Registering.....":"Register",
+                      loading: controller.loading.value,
+                      showLoader: true,
+                      width: double.infinity,
+                      shadowColor: AppColor.buttonShadeColor,
+
+                      onPress: controller.loading.value
+                          ? () {} // Empty callback instead of null
+                          : () {
+                        controller.signup();
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
                 ),
                 const SizedBox(height: 20),
               ],

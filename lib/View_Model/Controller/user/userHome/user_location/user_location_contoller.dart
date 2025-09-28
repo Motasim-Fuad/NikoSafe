@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
-
 import 'package:nikosafe/Repositry/userHome_repo/user_location_repo.dart';
-
 import '../../../../../models/userCreatePost/UserLocation/user_location_model.dart';
 
 

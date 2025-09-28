@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/utils.dart';
-import '../../../view/AllPayment/ServiseProvider/subscription_selection_view.dart';
-import '../../../view/AllPayment/User/subscription_selection_view.dar.dart';
-import '../../../view/AllPayment/vendor/vendor_sebscription_plan_view.dart';
-
+import '../../../Repositry/auth_repo/auth_repositry.dart';
 
 class OTPController extends GetxController {
+  final _authRepository = AuthRepository();
+
+  // ✅ 4 digit OTP controllers (not 6)
   final List<TextEditingController> controllers = List.generate(
-    6,
+    4, // Changed from 6 to 4
         (_) => TextEditingController(),
   );
-  final List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
+  final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
 
   RxBool isLoading = false.obs;
   late String email;
-  RxString role = ''.obs;  // Use RxString for reactive role
 
   @override
   void onInit() {
     super.onInit();
-    role.value = Get.arguments?['role']?.toLowerCase() ?? '';
     email = Get.arguments?['email'] ?? '';
-    print("Received role in OTPController: ${role.value}");
+    print("📧 Email for OTP verification: $email");
   }
+
+  // @override
+  // void onClose() {
+  //   // Clean up controllers and focus nodes
+  //   for (var controller in controllers) {
+  //     controller.dispose();
+  //   }
+  //   for (var focusNode in focusNodes) {
+  //     focusNode.dispose();
+  //   }
+  //   super.onClose();
+  // }
 
   void onOTPChange(int index, String value, BuildContext context) {
     if (value.isNotEmpty && index < focusNodes.length - 1) {
@@ -39,42 +50,136 @@ class OTPController extends GetxController {
 
   Future<void> verifyOtp() async {
     final otp = getOtp();
-    if (otp.length != 6) {
-      Utils.tostMassage("Enter 6 digit OTP");
+
+    // ✅ Check for 4 digit OTP
+    if (otp.length != 4) {
+      Utils.tostMassage("Please enter 4-digit OTP");
       return;
     }
 
-    if (role.value.isEmpty) {
-      Utils.tostMassage("Please select a role");
+    if (email.isEmpty) {
+      Utils.tostMassage("Email not found");
       return;
     }
 
     isLoading.value = true;
 
     try {
-      // Simulate OTP verification delay
-      await Future.delayed(const Duration(seconds: 2));
+      // ✅ Prepare data for OTP verification API
+      final requestData = {
+        "email": email,
+        "otp": otp,
+      };
 
-      // Save to SharedPreferences (simulate success)
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isVerified', true);
-      await prefs.setString('email', email);
-      await prefs.setString('role', role.value);
+      print("🔐 Verifying OTP:");
+      print("Email: $email");
+      print("OTP: $otp");
 
-      // Navigate to demo page after verification
+      // ✅ Call your verify email API
+      final response = await _authRepository.verifyEmailOtp(requestData);
 
-      if(role.value=="user"){
-        Get.to(() => UserSubscriptionSelectionView(),);
-      }else if(role.value=="service_provider"){
-        Get.to(() => ServiseProviderSubscriptionSelectionView(),);
-      }else{
-        Get.to(() => VendorSubscriptionSelectionView(),);
+      print("📡 OTP Verification Response: $response");
+
+      if (response != null && response is Map) {
+        bool isSuccess = response['success'] == true;
+
+        if (isSuccess) {
+          final prefs = await SharedPreferences.getInstance();
+
+          // ✅ Save verification status
+          await prefs.setBool('isVerified', true);
+          await prefs.setString('verified_email', email);
+
+          // ✅ If backend returns tokens, save them
+          if (response['data']?['token'] != null) {
+            await prefs.setString('auth_token', response['data']['token']);
+          }
+
+          if (response['data']?['refreshToken'] != null) {
+            await prefs.setString('refresh_token', response['data']['refreshToken']);
+          }
+
+          Utils.successSnackBar("Success",
+              response['message'] ?? "Email verified successfully!");
+
+
+          Get.toNamed(
+            RouteName.passwordView,
+            arguments: {'email': email},
+          );
+
+        } else {
+          String errorMessage = "OTP verification failed";
+          if (response['message'] != null) {
+            errorMessage = response['message'].toString();
+          }
+          Utils.errorSnackBar("Verification Failed", errorMessage);
+        }
+      } else {
+        Utils.errorSnackBar("Error", "Invalid response from server");
       }
 
     } catch (e) {
-      Utils.tostMassage("OTP verification failed: $e");
+      print("❌ OTP Verification Error: $e");
+
+      String errorMessage = "Something went wrong";
+
+      if (e.toString().contains('400')) {
+        errorMessage = "Invalid OTP. Please try again.";
+      } else if (e.toString().contains('401')) {
+        errorMessage = "OTP expired. Please request a new one.";
+      } else if (e.toString().contains('422')) {
+        errorMessage = "Invalid email or OTP format.";
+      } else if (e.toString().contains('No Internet')) {
+        errorMessage = "No internet connection.";
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = "Request timeout. Please try again.";
+      }
+
+      Utils.errorSnackBar("Error", errorMessage);
     } finally {
       isLoading.value = false;
     }
   }
+
+  // ✅ Resend OTP functionality
+  Future<void> resendOtp() async {
+    if (email.isEmpty) {
+      Utils.tostMassage("Email not found");
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      final requestData = {"email": email};
+
+      // ✅ Call resend OTP API (you might need to create this in repository)
+      final response = await _authRepository.resendOtp(requestData);
+
+      if (response != null && response is Map && response['success'] == true) {
+        Utils.successSnackBar("Success", "OTP sent to your email");
+        clearOtp(); // Clear current OTP input
+      } else {
+        Utils.errorSnackBar("Error", "Failed to resend OTP");
+      }
+
+    } catch (e) {
+      Utils.errorSnackBar("Error", "Failed to resend OTP");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // ✅ Clear OTP fields
+  void clearOtp() {
+    for (var controller in controllers) {
+      controller.clear();
+    }
+    if (focusNodes.isNotEmpty) {
+      focusNodes[0].requestFocus();
+    }
+  }
+
+
 }

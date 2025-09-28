@@ -12,9 +12,6 @@ class OTPView extends StatelessWidget {
 
   final OTPController controller = Get.put(OTPController());
 
-  // Use lowercase roles to match controller.role.value exactly
-  final List<String> roles = ['user', 'service_provider', 'vendor'];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,10 +21,13 @@ class OTPView extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: const BackButton(color: Colors.white),
+          leading: BackButton(
+            color: Colors.white,
+            onPressed: () => Get.back(),
+          ),
           centerTitle: true,
           title: const Text(
-            "Verify your email",
+            "Verify Email",
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -39,49 +39,61 @@ class OTPView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 32),
-                  const Text(
-                    "Select Role",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Obx(() => DropdownButton<String>(
-                    value: controller.role.value.isNotEmpty ? controller.role.value : null,
-                    dropdownColor: Colors.black87,
-                    iconEnabledColor: Colors.white,
-                    hint: const Text('Select Role', style: TextStyle(color: Colors.white)),
-                    items: roles.map((role) {
-                      return DropdownMenuItem<String>(
-                        value: role,
-                        child: Text(
-                          role[0].toUpperCase() + role.substring(1),
-                          style: const TextStyle(color: Colors.white),
+                  const SizedBox(height: 60),
+
+                  // Email display
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "Verification code sent to:",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        controller.role.value = value;
-                      }
-                    },
-                  )),
-                  const SizedBox(height: 32),
+                        const SizedBox(height: 4),
+                        Text(
+                          controller.email,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+
                   const Text(
-                    "Enter OTP",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                    "Enter 4-Digit Code",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                     textAlign: TextAlign.center,
                   ),
+
                   const SizedBox(height: 8),
+
                   const Text(
-                    "We have just sent you 6 digit code via your email.",
+                    "Please enter the 4-digit verification code\nsent to your email.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
-                  const SizedBox(height: 32),
+
+                  const SizedBox(height: 40),
+
+                  // ✅ 4 OTP input fields (instead of 6)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(6, (index) {
+                    children: List.generate(4, (index) {
                       return OTPInputField(
                         controller: controller.controllers[index],
                         focusNode: controller.focusNodes[index],
@@ -90,33 +102,47 @@ class OTPView extends StatelessWidget {
                       );
                     }),
                   ),
-                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 40),
+
+                  // Verify Button
                   Obx(() => RoundButton(
-                    title: controller.isLoading.value ? "Verifying..." : 'Verify',
+                    title: controller.isLoading.value ? "Verifying..." : 'Verify Email',
+                    loading: controller.isLoading.value,
                     onPress: controller.isLoading.value
-                        ? () {}    // empty callback instead of null
+                        ? () {} // Empty callback instead of null
                         : () {
                       controller.verifyOtp();
+                      FocusScope.of(context).unfocus();
                     },
                   )),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      // Resend OTP logic here
-                    },
-                    child: const Text.rich(
-                      TextSpan(
-                        text: "Didn't receive code? ",
-                        children: [
-                          TextSpan(
-                            text: "Resend Code",
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ],
+
+                  const SizedBox(height: 24),
+
+                  // Resend Code
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Didn't receive the code? ",
+                        style: TextStyle(color: Colors.grey),
                       ),
-                    ),
+                      TextButton(
+                        onPressed: () {
+                          controller.resendOtp();
+                        },
+                        child: const Text(
+                          "Resend",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

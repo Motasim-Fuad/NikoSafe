@@ -1,27 +1,29 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nikosafe/Repositry/auth_repo/auth_repositry.dart';
 import 'package:nikosafe/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
 
 class UserAuthController extends GetxController {
-  // Form Controllers
+  final _authRepository = AuthRepository();
+
+  // Form Controllers - Only required fields
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  final passwordController = TextEditingController();
   final ageController = TextEditingController();
   final weightController = TextEditingController();
 
-
+  // Focus Nodes
   final firstNameFocus = FocusNode();
   final lastNameFocus = FocusNode();
   final emailFocus = FocusNode();
   final phoneFocus = FocusNode();
-  final passwordFocus = FocusNode();
   final ageFocus = FocusNode();
   final weightFocus = FocusNode();
   final selectedSex = ''.obs;
@@ -31,33 +33,30 @@ class UserAuthController extends GetxController {
   final lastnameError = Rxn<String>();
   final emailError = Rxn<String>();
   final phoneError = Rxn<String>();
-  final passwordError = Rxn<String>();
   final ageError = Rxn<String>();
   final weightError = Rxn<String>();
   final sexError = Rxn<String>();
 
   // UI State
-  final isPasswordVisible = false.obs;
   final agreeTerms = false.obs;
   final loading = false.obs;
-  final pickedImage = Rx<File?>(null);
-  final rememberMe = false.obs;
 
   // Options
-  final List<String> sexOptions = ["Male", "Female", "Other"];
+  final List<String> sexOptions = ["male", "female"];
 
   // Validation Methods
   bool validateFirstName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      firstnameError.value = "Name cannot be empty";
+      firstnameError.value = "First name cannot be empty";
       return false;
     }
     firstnameError.value = null;
     return true;
   }
+
   bool validateLastName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      lastnameError.value = "Name cannot be empty";
+      lastnameError.value = "Last name cannot be empty";
       return false;
     }
     lastnameError.value = null;
@@ -79,7 +78,7 @@ class UserAuthController extends GetxController {
 
   bool validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) {
-      phoneError.value = "Mobile Number cannot be empty";
+      phoneError.value = "Mobile number cannot be empty";
       return false;
     }
     if (!RegExp(r'^[0-9]{10,15}$').hasMatch(value.trim())) {
@@ -87,19 +86,6 @@ class UserAuthController extends GetxController {
       return false;
     }
     phoneError.value = null;
-    return true;
-  }
-
-  bool validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      passwordError.value = "Password cannot be empty";
-      return false;
-    }
-    if (value.length < 6) {
-      passwordError.value = "Password must be at least 6 characters";
-      return false;
-    }
-    passwordError.value = null;
     return true;
   }
 
@@ -122,7 +108,7 @@ class UserAuthController extends GetxController {
       weightError.value = "Weight cannot be empty";
       return false;
     }
-    final double? weight = double.tryParse(value.trim());
+    final int? weight = int.tryParse(value.trim());
     if (weight == null || weight < 0 || weight > 500) {
       weightError.value = "Weight must be between 0 and 500";
       return false;
@@ -146,26 +132,13 @@ class UserAuthController extends GetxController {
     isValid = validateLastName(lastNameController.text) && isValid;
     isValid = validateEmail(emailController.text) && isValid;
     isValid = validatePhone(phoneController.text) && isValid;
-    isValid = validatePassword(passwordController.text) && isValid;
     isValid = validateAge(ageController.text) && isValid;
     isValid = validateWeight(weightController.text) && isValid;
     isValid = validateSex(selectedSex.value) && isValid;
     return isValid;
   }
 
-  // Image Picker
-  Future<void> pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-
-    if (picked != null) {
-      pickedImage.value = File(picked.path);
-    } else {
-      Utils.infoSnackBar("No Image", "No image selected");
-    }
-  }
-
-  // Signup Method
+  // ✅ CLEAN SIGNUP METHOD - Only sends required data matching Postman
   Future<void> signup() async {
     if (!agreeTerms.value) {
       Utils.infoSnackBar("Terms Required", "Please agree to the Terms & Conditions");
@@ -180,38 +153,86 @@ class UserAuthController extends GetxController {
     loading.value = true;
 
     try {
-      // Prepare user data
-      Map<String, dynamic> userData = {
-        'firstName': firstNameController.text.trim(),
-        'lastName': lastNameController.text.trim(),
-        'email': emailController.text.trim(),
-        'phone': phoneController.text.trim(),
-        'password': passwordController.text,
-        'age': ageController.text.trim(),
-        'weight': weightController.text.trim(),
-        'sex': selectedSex.value,
-        'role': 'user',
+      // ✅ CLEAN: Only send data that matches your Postman request
+      final requestData = {
+        "first_name": firstNameController.text.trim(),
+        "last_name": lastNameController.text.trim(),
+        "mobile_number": phoneController.text.trim(),
+        "age": int.parse(ageController.text.trim()),
+        "weight": int.parse(weightController.text.trim()),
+        "sex": selectedSex.value,
+        "email": emailController.text.trim(),
       };
 
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 2));
+      print("🚀 Clean Registration Data:");
+      print(jsonEncode(requestData));
 
-      // Save to SharedPreferences (simulate success)
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', 'user_token_${DateTime.now().millisecondsSinceEpoch}');
-      await prefs.setString('role', 'user');
+      // ✅ Use clean JSON method
+      final response = await _authRepository.registerUserJson(requestData);
 
-     Utils.successSnackBar("Success", "User account created successfully");
+      print("📡 API Response: $response");
 
-      // Navigate to email verification
-      Get.toNamed(RouteName.emailView, arguments: {
-        "role": "user",
-        "email": emailController.text.trim()
-      });
+      if (response != null && response is Map) {
+        // Check if registration was successful
+        bool isSuccess = response['success'] == true;
 
-      clearForm();
+        if (isSuccess) {
+          final prefs = await SharedPreferences.getInstance();
+
+          // Save email for verification process
+          String email = response['data']?['email'] ?? emailController.text.trim();
+          await prefs.setString('pending_email', email);
+
+          // Check if OTP was sent and save it
+          if (response['data']?['is_sent'] == true) {
+            print("📧 OTP sent successfully to email");
+          }
+
+          Utils.successSnackBar("Success",
+              response['message'] ?? "Registration successful. Please check your email for verification code.");
+
+          // Navigate to email verification
+          Get.toNamed(RouteName.emailView, arguments: {
+            "email": email,
+          });
+
+          clearForm();
+        } else {
+          // Handle API error response
+          String errorMessage = "Registration failed";
+          if (response['message'] != null) {
+            errorMessage = response['message'].toString();
+          } else if (response['error'] != null) {
+            if (response['error'] is List && response['error'].isNotEmpty) {
+              errorMessage = response['error'][0]['message']?.toString() ?? errorMessage;
+            } else if (response['error'] is String) {
+              errorMessage = response['error'].toString();
+            }
+          }
+          Utils.errorSnackBar("Registration Failed", errorMessage);
+        }
+      } else {
+        Utils.errorSnackBar("Error", "Invalid response from server");
+      }
     } catch (e) {
-      Utils.errorSnackBar("Error", "Something went wrong: $e");
+      print("❌ Registration Error: $e");
+
+      String errorMessage = "Something went wrong";
+
+      // Handle specific error responses
+      if (e.toString().contains('400')) {
+        errorMessage = "Invalid input data. Please check your information.";
+      } else if (e.toString().contains('409')) {
+        errorMessage = "Email already exists. Please use a different email.";
+      } else if (e.toString().contains('422')) {
+        errorMessage = "Validation failed. Please check all required fields.";
+      } else if (e.toString().contains('No Internet')) {
+        errorMessage = "No internet connection. Please check your network.";
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = "Request timeout. Please try again.";
+      }
+
+      Utils.errorSnackBar("Error", errorMessage);
     } finally {
       loading.value = false;
     }
@@ -223,44 +244,18 @@ class UserAuthController extends GetxController {
     lastNameController.clear();
     emailController.clear();
     phoneController.clear();
-    passwordController.clear();
     ageController.clear();
     weightController.clear();
     selectedSex.value = '';
-
-
 
     firstnameError.value = null;
     lastnameError.value = null;
     emailError.value = null;
     phoneError.value = null;
-    passwordError.value = null;
     ageError.value = null;
     weightError.value = null;
     sexError.value = null;
 
     agreeTerms.value = false;
-    pickedImage.value = null;
   }
-
-
-
-  // ai ta jokon ek bar textfield use hoba orthand user jodi ekbar register kora ta hola ai text ar use korta parba ,  ai ta api call korar somoy handale kora diba , ar ai ta dila valo hoy
-  // @override
-  // void onClose() {
-  //   nameController.dispose();
-  //   emailController.dispose();
-  //   phoneController.dispose();
-  //   passwordController.dispose();
-  //   ageController.dispose();
-  //   weightController.dispose();
-  // firstNameFocus.dispose();
-  // lastNameFocus.dispose();
-  // emailFocus.dispose();
-  // phoneFocus.dispose();
-  // passwordFocus.dispose();
-  // ageFocus.dispose();
-  // weightFocus.dispose();
-  //   super.onClose();
-  // }
 }

@@ -6,6 +6,7 @@ class RouteName{
   static const String userHomeView="/User_HomeView";
   static const String emailView="/Email_View";
   static const String oTPView="/OTP_View";
+  static const String passwordView="/Password_View";
   static const String forgotPasswordView="/Forgot_PasswordView";
   static const String otpVeryficationForPassResetView="/Otp_Veryfication_For_PassResetView";
   static const String resetPasswordView="/Reset_PasswordView";

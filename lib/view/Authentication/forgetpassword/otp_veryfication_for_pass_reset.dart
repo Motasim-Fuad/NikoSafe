@@ -4,21 +4,18 @@ import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 import '../../../View_Model/Controller/authentication/_reset_otp_contoller.dart';
-
 import '../widgets/otp_input_filed.dart';
-
-
 
 class OtpVeryficationForPassResetView extends StatelessWidget {
   OtpVeryficationForPassResetView({super.key});
 
-   final ResetOtpController controller = Get.put(ResetOtpController());
+  final ResetOtpController controller = Get.put(ResetOtpController());
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColor.backGroundColor
+          gradient: AppColor.backGroundColor
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -46,15 +43,15 @@ class OtpVeryficationForPassResetView extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "We have just sent you 6 digit code via your email.",
+                  Text(
+                    "We have just sent you 4 digit code to ${controller.email}",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
+                    style: const TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(6, (index) {
+                    children: List.generate(4, (index) { // Fixed: Changed from 6 to 4
                       return OTPInputField(
                         controller: controller.controllers[index],
                         focusNode: controller.focusNodes[index],
@@ -65,17 +62,33 @@ class OtpVeryficationForPassResetView extends StatelessWidget {
                     }),
                   ),
                   const SizedBox(height: 24),
-                  RoundButton(
-                      title: "Verify",
-                      onPress: (){
-                    controller.veryfyOtpForResetPassword();
-                  }),
+
+                  // Verify Button with loading state
+                  Obx(() => controller.isLoading.value
+                      ? const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+                    ),
+                  )
+                      : RoundButton(
+                    title: "Verify",
+                    onPress: controller.verifyOtpForResetPassword,
+                  )
+                  ),
+
                   const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      // Resend OTP logic here
-                    },
-                    child: const Text.rich(
+
+                  // Resend OTP Button
+                  Obx(() => TextButton(
+                    onPressed: controller.isResendLoading.value
+                        ? null
+                        : controller.resendOtp,
+                    child: controller.isResendLoading.value
+                        ? const Text(
+                      "Sending...",
+                      style: TextStyle(color: Colors.grey),
+                    )
+                        : const Text.rich(
                       TextSpan(
                         text: "Didn't receive code? ",
                         children: [
@@ -86,54 +99,13 @@ class OtpVeryficationForPassResetView extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
+                  )),
                 ],
               ),
             ),
           ),
         ),
-
       ),
     );
   }
-
-
-
 }
-
-
-//
-// void resetPassword() async {
-//   final email = Get.arguments?['email'];
-//   final newPass = newPasswordController.text.trim();
-//   final confirmPass = confirmPasswordController.text.trim();
-//
-//   if (newPass.isEmpty || confirmPass.isEmpty) {
-//     Utils.tostMassage("Please fill all fields");
-//     return;
-//   }
-//
-//   if (newPass != confirmPass) {
-//     Utils.tostMassage("Passwords do not match");
-//     return;
-//   }
-//
-//   try {
-//     final response = await NetworkApiServices().postApi(
-//       {
-//         "email": email,
-//         "newPassword": newPass,
-//       },
-//       "http://115.127.156.131:2001/api/v1/auth/reset-password",
-//     );
-//
-//     if (response['success']) {
-//       Utils.snackBar("Success", "Password Reset Successfully");
-//       Get.offAllNamed(RouteName.loginView);
-//     } else {
-//       Utils.snackBar("Error", response['message']);
-//     }
-//   } catch (e) {
-//     Utils.snackBar("Error", e.toString());
-//   }
-// }

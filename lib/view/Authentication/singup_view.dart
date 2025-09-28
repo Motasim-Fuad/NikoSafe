@@ -150,26 +150,7 @@ class SignupView extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        // Role Dropdown
-        Obx(() => CustomPopupButton<String>(
-          items: controller.roleOptions,
-          selectedItem: controller.selectedRole.value,
-          backgroundColor: AppColor.topLinear,
-          hintTextColor: AppColor.primaryTextColor,
-          itemTextColor: AppColor.primaryTextColor,
-          selectedTextColor: AppColor.primaryTextColor,
-          onSelected: (value) {
-            controller.selectedRole.value = value;
-          },
-          hintText: "Select Role",
-          customItemBuilder: (item) => Row(
-            children: [
-               Icon(Icons.person_outline, color: AppColor.limeColor),
-              const SizedBox(width: 8),
-              Text(item.capitalizeFirst ?? item,style: TextStyle(color: AppColor.primaryTextColor),),
-            ],
-          ),
-        )),
+        // Removed role dropdown since backend handles it
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -178,50 +159,75 @@ class SignupView extends StatelessWidget {
               onTap: () {
                 Get.toNamed(RouteName.forgotPasswordView);
               },
-              child: const Text("Forget Password ?", style: TextStyle(color: Colors.red, fontSize: 15)),
+              child: const Text(
+                  "Forgot Password?",
+                  style: TextStyle(color: Colors.red, fontSize: 15)
+              ),
             ),
           ],
         ),
-        Obx(() => RoundButton(
-          loading:  controller.loading.value,
-          showLoader: true,
 
-          title: "Sign In",
-          onPress: () => controller.login(),
+        const SizedBox(height: 20),
+
+        Obx(() => RoundButton(
+          loading: controller.loading.value,
+          showLoader: true,
+          title: controller.loading.value ? "Signing In..." : "Sign In",
+          onPress: controller.loading.value
+              ? () {}
+              : () {
+            controller.login();
+            FocusScope.of(context).unfocus();
+          },
           width: double.infinity,
         )),
-        const SizedBox(height: 10),
+
+        const SizedBox(height: 20),
+
+        // Divider
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               width: MediaQuery.of(context).size.width * 0.4,
               decoration: const BoxDecoration(
-                border: Border.symmetric(horizontal: BorderSide(color: Colors.white)),
+                border: Border.symmetric(
+                    horizontal: BorderSide(color: Colors.white)
+                ),
               ),
             ),
-            SizedBox(width:  MediaQuery.of(context).size.width * 0.02,),
-             Text("or",style: TextStyle(color: AppColor.limeColor,fontWeight: FontWeight.bold),),
-            SizedBox(width:MediaQuery.of(context).size.width * 0.02,),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+            Text(
+              "or",
+              style: TextStyle(
+                  color: AppColor.limeColor,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.02),
             Container(
               width: MediaQuery.of(context).size.width * 0.4,
               decoration: const BoxDecoration(
-                border: Border.symmetric(horizontal: BorderSide(color: Colors.white, )),
+                border: Border.symmetric(
+                    horizontal: BorderSide(color: Colors.white)
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10), // <-- Add spacing here
 
+        const SizedBox(height: 20),
+
+        // Google Sign In
         GestureDetector(
-          onTap: (){
-            Utils.successSnackBar("Google", "Google Sign In.......");
+          onTap: () {
+            Utils.infoSnackBar("Coming Soon", "Google Sign In will be available soon");
           },
           child: Container(
             height: 50,
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.white,width: 1,strokeAlign: 1,),
+              border: Border.all(color: Colors.white, width: 1),
               color: AppColor.bottomLinear,
               borderRadius: BorderRadius.circular(20),
             ),
@@ -229,23 +235,29 @@ class SignupView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SvgPicture.asset(ImageAssets.googleIcon,width: 30,height: 30,),
-                SizedBox(width: 8,),
-                Text("Google",style: TextStyle(color: AppColor.primaryTextColor),)
+                SvgPicture.asset(ImageAssets.googleIcon, width: 30, height: 30),
+                const SizedBox(width: 8),
+                Text(
+                  "Continue with Google",
+                  style: TextStyle(color: AppColor.primaryTextColor),
+                )
               ],
             ),
           ),
         ),
-        SizedBox(height: 10,),
+
+        const SizedBox(height: 15),
+
+        // Apple Sign In
         GestureDetector(
-          onTap: (){
-            Utils.successSnackBar("Apple", "Apple Sign In.......");
+          onTap: () {
+            Utils.infoSnackBar("Coming Soon", "Apple Sign In will be available soon");
           },
           child: Container(
             height: 50,
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.white,width: 1,strokeAlign: 1,),
+              border: Border.all(color: Colors.white, width: 1),
               borderRadius: BorderRadius.circular(20),
               color: AppColor.bottomLinear,
             ),
@@ -253,9 +265,12 @@ class SignupView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SvgPicture.asset(ImageAssets.appleIcon,width: 30,height: 30,),
-                SizedBox(width: 8,),
-                Text("Apple",style: TextStyle(color: AppColor.primaryTextColor),)
+                SvgPicture.asset(ImageAssets.appleIcon, width: 30, height: 30),
+                const SizedBox(width: 8),
+                Text(
+                  "Continue with Apple",
+                  style: TextStyle(color: AppColor.primaryTextColor),
+                )
               ],
             ),
           ),

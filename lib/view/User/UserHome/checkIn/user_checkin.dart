@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_plus/flutter_neumorphic.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/user/userHome/post/checkIn/user_check_in_controller.dart' show UserCheckInController;
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/utils/utils.dart';
 
-import '../../../../View_Model/Controller/user/userHome/checkIn/user_check_in_controller.dart';
 
 class UserCheckInView extends StatelessWidget {
   final UserCheckInController controller = Get.put(UserCheckInController());

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/user/userHome/post/createPost/user_create_post_controller.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/widgets/privacy_puppup.dart';
-
-import '../../../../View_Model/Controller/user/userHome/createPost/user_create_post_controller.dart';
 import '../../../../resource/compunents/customBackButton.dart';
 
 

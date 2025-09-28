@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/utils/token_manager.dart';
 import 'package:nikosafe/utils/utils.dart';
-import 'package:nikosafe/view/vendor/vendorHome.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
+import '../../../Repositry/auth_repo/auth_repositry.dart';
+
 
 class LoginAuthController extends GetxController {
+  final _authRepository = AuthRepository();
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final selectedRole = 'user'.obs;
-
 
   //focus node
   final emailFocus = FocusNode();
   final passwordFocus = FocusNode();
-
 
   final emailError = Rxn<String>();
   final passwordError = Rxn<String>();
@@ -23,8 +23,14 @@ class LoginAuthController extends GetxController {
   final rememberMe = false.obs;
   final loading = false.obs;
 
-  // Role options for login
-  final List<String> roleOptions = ['user', 'service_provider', 'vendor'];
+  // @override
+  // void onClose() {
+  //   emailController.dispose();
+  //   passwordController.dispose();
+  //   emailFocus.dispose();
+  //   passwordFocus.dispose();
+  //   super.onClose();
+  // }
 
   bool validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
@@ -57,91 +63,123 @@ class LoginAuthController extends GetxController {
 
   Future<void> logout() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Clear all stored authentication data
+      await TokenManager.clearAll();
 
-      // Clear token and other user data
-      await prefs.clear();
-
-      // Optionally reset observable profile if needed
-      // profile.value = MyProfileModel(
-      //   name: "",
-      //   points: 0,
-      //   profileImage: ImageAssets.userHome_userProfile,
-      // );
+      Utils.successSnackBar("Success", "Logged out successfully");
 
       // Navigate to login screen
-      Get.offAllNamed(RouteName.authView); // Replace with your login route
+      Get.offAllNamed(RouteName.authView);
     } catch (e) {
       Utils.errorSnackBar("Error", "Logout failed: $e");
     }
   }
 
-
   Future<void> login() async {
     if (!validateForm()) {
-      Utils.infoSnackBar("Input Error", "Please correct the errors in the login form.");
+      Utils.errorSnackBar("Input Error", "Please correct the errors in the login form.");
       return;
     }
 
     loading.value = true;
 
     try {
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 2));
+      // Prepare login data matching your Postman request
+      final requestData = {
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+      };
 
-      // Hardcoded credentials for demonstration
-      final email = emailController.text.trim();
-      final password = passwordController.text;
-      final role = selectedRole.value;
+      print("🔐 Login Request:");
+      print("Email: ${requestData['email']}");
 
-      // Check credentials based on selected role
-      bool isValidCredentials = false;
-      if (role == 'user' && password == 'password123') {
-        isValidCredentials = true;
-      } else if (role == 'service_provider' && password == 'password123') {
-        isValidCredentials = true;
-      } else if (role == 'vendor' && password == 'password123') {
-        isValidCredentials = true;
-      }
+      // Call login API
+      final response = await _authRepository.loginUser(requestData);
 
-      if (isValidCredentials) {
-        // Save to SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', '${role}_token_${DateTime.now().millisecondsSinceEpoch}');
-        await prefs.setString('role', role);
-        await prefs.setBool('isVerified', true);
+      print("📡 Login Response: $response");
 
-        Utils.successSnackBar("Success", "Logged in successfully as $role");
+      if (response != null && response is Map) {
+        bool isSuccess = response['success'] == true;
 
-        // Navigate to appropriate screen based on role
-        switch (role) {
-          case 'user':
-            Get.offNamed(RouteName.userBottomNavView);
-            break;
-          case 'service_provider':
-            Get.offNamed(RouteName.providerBtmNavView);
-            break;
-          case 'vendor':
-            Get.off(Vendorhome());
-            // hare will be vendor screen
-            break;
+        if (isSuccess) {
+          // Extract data from response
+          final data = response['data'];
+
+          if (data != null) {
+            // Save authentication data using TokenManager
+            await TokenManager.saveAuthData(
+              accessToken: data['access'] ?? '',
+              refreshToken: data['refresh'] ?? '',
+              userId: data['user']?['id'] ?? 0,
+              email: data['user']?['email'] ?? emailController.text.trim(),
+              fullName: data['user']?['full_name'] ?? '',
+              additionalData: {
+                'timestamp': response['timestamp'],
+                'status_code': response['status_code'],
+              },
+            );
+
+            print("✅ Authentication data saved successfully");
+            print("User ID: ${data['user']?['id']}");
+            print("Email: ${data['user']?['email']}");
+            print("Full Name: ${data['user']?['full_name']}");
+
+            Utils.successSnackBar("Success",
+                response['message'] ?? "Login successful!");
+
+            // Since backend manages role, navigate to appropriate screen
+            // You can add role-based navigation logic here if needed
+            Get.offAllNamed(RouteName.userBottomNavView); // Default navigation
+
+          } else {
+            Utils.errorSnackBar("Error", "Invalid response data");
+          }
+
+        } else {
+          String errorMessage = "Login failed";
+          if (response['message'] != null) {
+            errorMessage = response['message'].toString();
+          }
+          Utils.errorSnackBar("Login Failed", errorMessage);
         }
       } else {
-        Utils.errorSnackBar("Error", "Invalid credentials for selected role. Try password: password123");
+        Utils.errorSnackBar("Error", "Invalid response from server");
       }
+
     } catch (e) {
-      Utils.errorSnackBar("Error", "Something went wrong: $e");
+      print("❌ Login Error: $e");
+
+      String errorMessage = "Something went wrong";
+
+      if (e.toString().contains('400')) {
+        errorMessage = "Invalid email or password";
+      } else if (e.toString().contains('401')) {
+        errorMessage = "Invalid credentials. Please check your email and password.";
+      } else if (e.toString().contains('403')) {
+        errorMessage = "Account access denied. Please contact support.";
+      } else if (e.toString().contains('404')) {
+        errorMessage = "User not found. Please check your email.";
+      } else if (e.toString().contains('422')) {
+        errorMessage = "Invalid input format.";
+      } else if (e.toString().contains('No Internet')) {
+        errorMessage = "No internet connection. Please check your network.";
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = "Request timeout. Please try again.";
+      }
+
+      Utils.errorSnackBar("Login Error", errorMessage);
     } finally {
       loading.value = false;
     }
   }
 
-  // @override
-  // void onClose() {
-  //   emailController.dispose();
-  //   passwordController.dispose();
-  // emailFocus.dispose();
-  // passwordFocus.dispose();
-  //   super.onClose();
-  // }
+  // Clear login form
+  void clearForm() {
+    emailController.clear();
+    passwordController.clear();
+    emailError.value = null;
+    passwordError.value = null;
+    isPasswordVisible.value = false;
+    rememberMe.value = false;
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/user/userHome/post/post_type_controller.dart';
 import 'package:nikosafe/View_Model/Controller/userEmargencyContuctContrller/emergency_contact_controller.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
@@ -12,76 +13,122 @@ import '../../../../View_Model/Controller/user/userHome/feedController.dart';
 import '../../../../models/userHome/post_model.dart';
 
 Widget topBar() {
-  final emargencycontroller = Get.put(EmergencyContactController());
+  final emergencyController = Get.put(EmergencyContactController());
+  final postTypeController = Get.put(PostTypeController());
+
   return Padding(
     padding: const EdgeInsets.all(16.0),
     child: Row(
       children: [
-        CircleAvatar(backgroundImage: AssetImage(ImageAssets.userHome_userProfile)),
+        CircleAvatar(
+          backgroundImage: AssetImage(ImageAssets.userHome_userProfile),
+          radius: 20,
+        ),
+        SizedBox(width: 10),
 
-        SizedBox(width: 10,),
+        // Simple PopupMenuButton without complex reactive widgets
         PopupMenuButton<String>(
-          color: AppColor.topLinear, // Your desired background color
+          color: AppColor.topLinear,
           onSelected: (value) {
-            if (value == 'create_post') {
-              // Navigate to create post screen
+            // Handle navigation based on API response
+            if (value == 'normal') {
+              Get.toNamed(RouteName.userCreatePostView);
+            } else if (value == 'poll') {
+              Get.toNamed(RouteName.createPollView);
+            } else if (value == 'checkin') {
+              Get.toNamed(RouteName.userCheckInView);
+            } else if (value == 'create_post') {
               Get.toNamed(RouteName.userCreatePostView);
             } else if (value == 'create_poll') {
-              // Navigate to create poll screen
               Get.toNamed(RouteName.createPollView);
-
             } else if (value == 'Check_In') {
-              // Navigate to check-in screen
               Get.toNamed(RouteName.userCheckInView);
             }
           },
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'create_post',
-              child: Text('Create Post', style: TextStyle(color: Colors.white)),
-            ),
-            const PopupMenuDivider(),
-            PopupMenuItem(
-              value: 'create_poll',
-              child: Text('Create Poll', style: TextStyle(color: Colors.white)),
-            ),
-            const PopupMenuDivider(),
-            PopupMenuItem(
-              value: 'Check_In',
-              child: Text('Check In', style: TextStyle(color: Colors.white)),
-            ),
-          ],
+          itemBuilder: (context) {
+            List<PopupMenuEntry<String>> menuItems = [];
+
+            // Check if we have post types from API
+            if (postTypeController.postTypes.isNotEmpty) {
+              for (int i = 0; i < postTypeController.postTypes.length; i++) {
+                final postType = postTypeController.postTypes[i];
+                menuItems.add(
+                  PopupMenuItem<String>(
+                    value: postType.slug,
+                    child: Text(postType.name, style: TextStyle(color: Colors.white)),
+                  ),
+                );
+
+                // Add divider between items (except last one)
+                if (i < postTypeController.postTypes.length - 1) {
+                  menuItems.add(const PopupMenuDivider());
+                }
+              }
+            } else {
+              // Show default items if no API data
+              menuItems.addAll([
+                PopupMenuItem<String>(
+                  value: 'create_post',
+                  child: Text('Create Post', style: TextStyle(color: Colors.white)),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<String>(
+                  value: 'create_poll',
+                  child: Text('Create Poll', style: TextStyle(color: Colors.white)),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<String>(
+                  value: 'Check_In',
+                  child: Text('Check In', style: TextStyle(color: Colors.white)),
+                ),
+              ]);
+            }
+
+            return menuItems;
+          },
           child: CircleAvatar(
             backgroundColor: AppColor.iconColor,
             maxRadius: 23,
             child: Icon(Icons.add, color: Colors.white),
           ),
         ),
+
         Spacer(),
+
         GestureDetector(
-          onTap: (){
-            emargencycontroller.sendSOSAlert();
+          onTap: () {
+            emergencyController.sendSOSAlert();
           },
           child: CircleAvatar(
             backgroundColor: Colors.red,
             maxRadius: 23,
-            child: Text("Alert",style: TextStyle(color: AppColor.primaryTextColor,fontSize: 13),),
+            child: Text(
+              "Alert",
+              style: TextStyle(
+                color: AppColor.primaryTextColor,
+                fontSize: 13,
+              ),
+            ),
           ),
         ),
+
         SizedBox(width: 16),
+
         GestureDetector(
-          onTap: (){
-        Get.toNamed(RouteName.chatListView);
+          onTap: () {
+            Get.toNamed(RouteName.chatListView);
           },
           child: CircleAvatar(
             backgroundColor: AppColor.iconColor,
             maxRadius: 20,
-            child:SvgPicture.asset(ImageAssets.userHome_chat),
+            child: SvgPicture.asset(ImageAssets.userHome_chat),
           ),
         ),
+
         SizedBox(width: 16),
+
         GestureDetector(
-          onTap: (){
+          onTap: () {
             Get.toNamed(RouteName.userNotificationView);
           },
           child: CircleAvatar(
@@ -146,7 +193,6 @@ Widget healthCard(FeedController controller) {
   );
 }
 
-
 Widget buildPostCard(PostModel post) {
   return Card(
     margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -162,24 +208,14 @@ Widget buildPostCard(PostModel post) {
           trailing: PopupMenuButton<String>(
             color: AppColor.topLinear,
             onSelected: (value) {
-              if (value == 'block') {
-              Utils.successSnackBar("Blocked",
-                "You have blocked this user.",);
-              }
               if (value == 'delete') {
-              Utils.successSnackBar("Delete",
-                "You have Delete this user.",);
+                Utils.successSnackBar("Delete", "You have Delete this user.");
               }
               if (value == 'hide') {
-              Utils.successSnackBar("Hide",
-                "You have Hide this user.",);
+                Utils.successSnackBar("Hide", "You have Hide this user.");
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'block',
-                child: Text('Block', style: TextStyle(color: Colors.white)),
-              ),
               PopupMenuItem(
                 value: 'delete',
                 child: Text('Delete', style: TextStyle(color: Colors.white)),
@@ -192,7 +228,6 @@ Widget buildPostCard(PostModel post) {
             icon: Icon(Icons.more_vert, color: Colors.white),
           ),
         ),
-
         if (post.isMap)
           Image.asset(post.imageUrl)
         else
@@ -203,14 +238,16 @@ Widget buildPostCard(PostModel post) {
         ),
         Row(
           children: [
-            IconButton(onPressed: () {
-
-            }, icon: Icon(Icons.thumb_up, color: Colors.cyan)),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.thumb_up, color: Colors.cyan),
+            ),
             Text('${post.likes}', style: TextStyle(color: Colors.white)),
             SizedBox(width: 16),
-            IconButton(onPressed: () {
-
-            }, icon: Icon(Icons.comment, color: Colors.white)),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.comment, color: Colors.white),
+            ),
             Text('${post.comments}', style: TextStyle(color: Colors.white)),
             Spacer(),
             if (post.location != null)

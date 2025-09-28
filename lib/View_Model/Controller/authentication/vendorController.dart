@@ -1,12 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nikosafe/Repositry/auth_repo/auth_repositry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../resource/App_routes/routes_name.dart';
 import '../../../utils/utils.dart';
 
 class VendorAuthController extends GetxController {
+  final _authRepository = AuthRepository();
+
   // Form Controllers
   final businessNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -60,6 +64,7 @@ class VendorAuthController extends GetxController {
     isValid = _validate(businessNameController.text, businessNameError, "Venue Name cannot be empty") && isValid;
     isValid = _validateEmail(emailController.text) && isValid;
     isValid = _validate(phoneController.text, phoneError, "Phone Number cannot be empty") && isValid;
+    isValid = _validate(passwordController.text, passwordError, "Password cannot be empty") && isValid;
     isValid = _validate(addressController.text, addressError, "Location cannot be empty") && isValid;
     isValid = _validate(descriptionController.text, descriptionError, "Description cannot be empty") && isValid;
     isValid = _validate(capacityController.text, capacityError, "Capacity cannot be empty") && isValid;
@@ -110,47 +115,121 @@ class VendorAuthController extends GetxController {
       pickedImage.value = File(picked.path);
     }
   }
-
+// VendorAuthController.dart - Updated signup method
   Future<void> signup() async {
     if (!validateForm()) return;
-
     loading.value = true;
+
     try {
-      final vendorData = {
-        'businessName': businessNameController.text.trim(),
+      // ✅ CORRECT STRUCTURE: Build proper field structure for multipart
+      final requestData = {
         'email': emailController.text.trim(),
-        'phone': phoneController.text.trim(),
-        'password': passwordController.text.trim(),
-        'address': addressController.text.trim(),
-        'description': descriptionController.text.trim(),
-        'hoursOfOperation': hoursController.text.trim(),
-        'capacity': int.tryParse(capacityController.text.trim()) ?? 0,
-        'displayQRCodes': selectedPermissions.contains('displayQRCodes'),
-        'inAppPromotion': selectedPermissions.contains('inAppPromotion'),
-        'allowRewards': selectedPermissions.contains('allowRewards'),
-        'allowEvents': selectedPermissions.contains('allowEvents'),
-        'venueTypes': selectedVenueTypes.toList(),
-        'role': 'vendor',
+        'password': passwordController.text,
+
+        'profileData': {
+          'phone': phoneController.text.trim(),
+          'location': addressController.text.trim(),
+          'venueName': businessNameController.text.trim(),
+          'hoursOfOperation': hoursController.text.trim(),
+          'capacity': capacityController.text.trim(),
+          'displayQrCodes': selectedPermissions.contains('displayQRCodes').toString(),
+          'inAppPromotion': selectedPermissions.contains('inAppPromotion').toString(),
+          'allowRewards': selectedPermissions.contains('allowRewards').toString(),
+          'allowEvents': selectedPermissions.contains('allowEvents').toString(),
+          'firstName': '',
+          'lastName': '',
+          'resumeUrl': '',
+        },
+        'profileData[venueTypes]': selectedVenueTypes, // This will be handled as an array
       };
 
-      await Future.delayed(const Duration(seconds: 2));
+      print("🚀 Vendor Registration Data:");
+      print("Email: ${requestData['email']}");
+      print("Role: ${requestData['role']}");
+      print("ProfileData: ${requestData['profileData']}");
+      print("VenueTypes: ${requestData['profileData[venueTypes]']}");
+      print("Has Image: ${pickedImage.value != null}");
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', 'vendor_token');
-      await prefs.setString('role', 'vendor');
+      final response = await _authRepository.registerUserMultipart(
+        data: requestData,
+        imageFile: pickedImage.value,
+      );
 
-      Utils.successSnackBar("Success", "Vendor signed up successfully");
-      Get.toNamed(RouteName.emailView, arguments: {
-        "role": "vendor",
-        "email": emailController.text.trim()
-      });
+      print("📡 API Response: $response");
 
-      clearForm();
+      if (response != null && response is Map) {
+        bool isSuccess = response['success'] == true || response['statusCode'] == 201;
+
+        if (isSuccess) {
+          final prefs = await SharedPreferences.getInstance();
+
+          // Save signup token
+          String? signupToken = response['data']?['signupToken'];
+          if (signupToken != null && signupToken.isNotEmpty) {
+            await prefs.setString('signupToken', signupToken);
+          }
+
+          // Save OTP if provided
+          final otp = response['data']?['otp'];
+          if (otp != null) {
+            await prefs.setString('pendingOtp', otp.toString());
+          }
+
+          // Save role
+          String backendRole = response['data']?['role'] ?? 'HOSPITALITY_VENUE';
+
+
+          await prefs.setString('pendingEmail', emailController.text.trim());
+
+          Utils.successSnackBar("Success", response['message'] ?? "Venue registered successfully");
+
+          // Navigate to email verification
+          Get.toNamed(RouteName.emailView, arguments: {
+
+            "email": emailController.text.trim(),
+            "signupToken": signupToken,
+            "otp": otp,
+          });
+
+          clearForm();
+        } else {
+          String errorMessage = _extractErrorMessage(response);
+          Utils.errorSnackBar("Registration Failed", errorMessage);
+        }
+      } else {
+        Utils.errorSnackBar("Error", "Invalid response from server");
+      }
     } catch (e) {
-      Utils.errorSnackBar("Error", e.toString());
+      print("❌ Registration Error: $e");
+      String errorMessage = _handleRegistrationError(e);
+      Utils.errorSnackBar("Error", errorMessage);
     } finally {
       loading.value = false;
     }
+  }
+
+// Add these helper methods to VendorAuthController
+  String _extractErrorMessage(Map response) {
+    if (response['message'] != null) {
+      return response['message'].toString();
+    }
+    return "Registration failed. Please try again.";
+  }
+
+  String _handleRegistrationError(dynamic error) {
+    String errorString = error.toString();
+    if (errorString.contains('400')) {
+      return "Invalid input data. Please check your information.";
+    } else if (errorString.contains('409')) {
+      return "Email already exists. Please use a different email.";
+    } else if (errorString.contains('422')) {
+      return "Validation failed. Please check all required fields.";
+    } else if (errorString.contains('No Internet')) {
+      return "No internet connection. Please check your network.";
+    } else if (errorString.contains('timeout')) {
+      return "Request timeout. Please try again.";
+    }
+    return "Something went wrong. Please try again.";
   }
 
   void clearForm() {
@@ -167,24 +246,4 @@ class VendorAuthController extends GetxController {
     selectedPermissions.clear();
     agreeTerms.value = false;
   }
-
-  // @override
-  // void onClose() {
-  //   businessNameController.dispose();
-  //   emailController.dispose();
-  //   phoneController.dispose();
-  //   passwordController.dispose();
-  //   addressController.dispose();
-  //   descriptionController.dispose();
-  //   hoursController.dispose();
-  //   capacityController.dispose();
-
-  // businessNameFocus.dispose();
-  // emailFocus.dispose();
-  // phoneFocus.dispose();
-  // addressFocus.dispose();
-  // descriptionFocus.dispose();
-  // capacityFocus.dispose();
-  //   super.onClose();
-  // }
 }
