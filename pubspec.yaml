@@ -57,6 +57,7 @@ dependencies:
   emoji_picker_flutter: ^4.3.0
   smooth_page_indicator: ^1.1.0
   flutter_launcher_icons: ^0.14.4
+  google_maps_flutter: ^2.13.1
 
 flutter_icons:
   android: true

@@ -23,12 +23,12 @@ class ForgotPasswordController extends GetxController {
 
     // Validation
     if (email.isEmpty) {
-      Utils.tostMassage("Please enter your email.");
+      Utils.toastMessage("Please enter your email.");
       return;
     }
 
     if (!GetUtils.isEmail(email)) {
-      Utils.tostMassage("Please enter a valid email address.");
+      Utils.toastMessage("Please enter a valid email address.");
       return;
     }
 
@@ -47,7 +47,7 @@ class ForgotPasswordController extends GetxController {
 
       // Handle success response
       if (response['success'] == true) {
-        Utils.tostMassage(response['message'] ?? "Password reset instructions sent to your email!");
+        Utils.toastMessage(response['message'] ?? "Password reset instructions sent to your email!");
 
         // Navigate to OTP verification screen
         Get.toNamed(
@@ -55,12 +55,12 @@ class ForgotPasswordController extends GetxController {
             arguments: {"email": email}
         );
       } else {
-        Utils.tostMassage(response['message'] ?? "Failed to send reset instructions");
+        Utils.toastMessage(response['message'] ?? "Failed to send reset instructions");
       }
 
     } catch (error) {
       print("Forgot password error: $error");
-      Utils.tostMassage("Something went wrong. Please try again.");
+      Utils.toastMessage("Something went wrong. Please try again.");
     } finally {
       isLoading.value = false;
     }

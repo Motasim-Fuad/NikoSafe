@@ -11,7 +11,7 @@ class Utils {
   }
 
   /// Basic toast message
-  static void tostMassage(String massage) {
+  static void toastMessage(String massage) {
     Fluttertoast.showToast(
       msg: massage,
       backgroundColor: AppColor.iconColor,

@@ -23,7 +23,7 @@ class CreatePollView extends StatelessWidget {
           style: TextStyle(color: AppColor.primaryTextColor),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white), // Back button color
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -52,57 +52,157 @@ class CreatePollView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 10),
+
+                          // Poll Title
                           TextField(
                             controller: controller.titleController,
                             style: const TextStyle(color: Colors.white),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               labelText: "Poll Title",
                               labelStyle: TextStyle(color: Colors.grey),
-                              border: OutlineInputBorder(),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.cyan),
+                              ),
                             ),
+                            maxLength: 200,
                           ),
                           const SizedBox(height: 16),
-                          const Text("Options", style: TextStyle(color: Colors.white)),
+
+                          // Optional Description
+                          TextField(
+                            controller: controller.textController,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                              labelText: "Description (Optional)",
+                              labelStyle: TextStyle(color: Colors.grey),
+                              hintText: "Add context to your poll...",
+                              hintStyle: TextStyle(color: Colors.grey.shade600),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.white),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.cyan),
+                              ),
+                            ),
+                            maxLines: 3,
+                            maxLength: 500,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Options Section
+                          Row(
+                            children: [
+                              Text(
+                                "Poll Options",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Spacer(),
+                              Text(
+                                "${controller.options.length}/6",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 8),
+
+                          // Dynamic Options List
                           ...List.generate(controller.options.length, (index) {
-                            return Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: controller.options[index],
-                                    style: const TextStyle(color: Colors.white),
-                                    decoration: InputDecoration(
-                                      hintText: "Option ${index + 1}",
-                                      hintStyle: const TextStyle(color: Colors.grey),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: controller.options[index],
+                                      style: const TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        hintText: "Option ${index + 1}",
+                                        hintStyle: const TextStyle(color: Colors.grey),
+                                        prefixIcon: Icon(
+                                          Icons.radio_button_unchecked,
+                                          color: Colors.cyan,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide(color: Colors.grey),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                          borderSide: BorderSide(color: Colors.cyan),
+                                        ),
+                                      ),
+                                      maxLength: 100,
                                     ),
                                   ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => controller.removeOption(index),
-                                ),
-                              ],
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: controller.options.length > 2
+                                        ? () => controller.removeOption(index)
+                                        : null,
+                                    tooltip: controller.options.length > 2
+                                        ? "Remove option"
+                                        : "Minimum 2 options required",
+                                  ),
+                                ],
+                              ),
                             );
                           }),
+
                           const SizedBox(height: 8),
+
+                          // Add Option Button
                           TextButton.icon(
-                            onPressed: controller.addOption,
-                            icon: const Icon(Icons.add, color: Colors.cyan),
-                            label: const Text("Add Option", style: TextStyle(color: Colors.cyan)),
+                            onPressed: controller.options.length < 6
+                                ? controller.addOption
+                                : null,
+                            icon: Icon(
+                              Icons.add,
+                              color: controller.options.length < 6
+                                  ? Colors.cyan
+                                  : Colors.grey,
+                            ),
+                            label: Text(
+                              "Add Option",
+                              style: TextStyle(
+                                color: controller.options.length < 6
+                                    ? Colors.cyan
+                                    : Colors.grey,
+                              ),
+                            ),
                           ),
 
-                          Obx((){
-                            return   RoundButton(
-                              width: double.infinity,
-                              loading: controller.isLoading.value,
-                              title: "Submit Poll",
-                              onPress: () {
-                                controller.submitPoll();
-                              },
-                            );
-                          }),
+                          const SizedBox(height: 20),
 
-                          const SizedBox(height: 5),
+                          // Submit Button
+                          RoundButton(
+                            width: double.infinity,
+                            loading: controller.isLoading.value,
+                            title: "Create Poll",
+                            onPress: controller.isLoading.value
+                                ? () {}
+                                : () async {
+                              await controller.submitPoll();
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

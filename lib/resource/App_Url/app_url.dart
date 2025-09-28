@@ -14,4 +14,8 @@ class AppUrl{
             ///---------------------user-----------------///
                      ///------home-----------///
   static const String socialPostTypes = '$base_url/api/social/post-types/';
+  static const String socialPrivacyOptions = '$base_url/api/social/privacy-options/';
+  static const String socialCreatePosts = '$base_url/api/social/posts/';
+  static const String socialCreatePolls = '$base_url/api/social/posts/';
+  static const String socialCreateCheckIn = "$base_url/api/social/posts/";
 }

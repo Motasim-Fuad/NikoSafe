@@ -48,22 +48,22 @@ class ResetPasswordController extends GetxController {
 
     // Validation
     if (newPassword.isEmpty) {
-      Utils.tostMassage("Please enter new password");
+      Utils.toastMessage("Please enter new password");
       return;
     }
 
     if (confirmPassword.isEmpty) {
-      Utils.tostMassage("Please confirm your password");
+      Utils.toastMessage("Please confirm your password");
       return;
     }
 
     if (newPassword.length < 6) {
-      Utils.tostMassage("Password must be at least 6 characters long");
+      Utils.toastMessage("Password must be at least 6 characters long");
       return;
     }
 
     if (newPassword != confirmPassword) {
-      Utils.tostMassage("Passwords do not match");
+      Utils.toastMessage("Passwords do not match");
       return;
     }
 
@@ -89,12 +89,12 @@ class ResetPasswordController extends GetxController {
         // Navigate back to login
         Get.offAllNamed(RouteName.authView);
       } else {
-        Utils.tostMassage(response['message'] ?? "Failed to update password");
+        Utils.toastMessage(response['message'] ?? "Failed to update password");
       }
 
     } catch (error) {
       print("Password reset error: $error");
-      Utils.tostMassage("Something went wrong. Please try again.");
+      Utils.toastMessage("Something went wrong. Please try again.");
     } finally {
       isLoading.value = false;
     }

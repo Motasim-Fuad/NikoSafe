@@ -1,92 +1,178 @@
+// view/User/UserHome/CreatePost/widgets/privacy_popup.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/user/userHome/post/createPost/user_create_post_controller.dart';
+import 'package:nikosafe/models/userHome/privacy_options_model.dart';
 
-class PrivacyPuppup extends StatefulWidget {
+class PrivacyPopup extends StatelessWidget {
   @override
-  _PrivacyPuppupState createState() => _PrivacyPuppupState();
-}
+  Widget build(BuildContext context) {
+    final controller = Get.find<UserCreatePostController>();
 
-class _PrivacyPuppupState extends State<PrivacyPuppup> {
-  String selectedOption = 'Public';
+    return Obx(() {
+      if (controller.isLoadingPrivacy.value) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              ),
+              SizedBox(width: 10),
+              Text('Loading privacy options...', style: TextStyle(color: Colors.white)),
+            ],
+          ),
+        );
+      }
 
-  IconData getIcon(String option) {
-    switch (option) {
-      case 'Connect':
+      if (controller.privacyOptions.isEmpty) {
+        // Fallback to default options if API fails
+        return _buildDefaultPrivacyPopup(controller);
+      }
+
+      return PopupMenuButton<PrivacyOption>(
+        color: Color(0xFF1E2A33),
+        onSelected: (PrivacyOption option) {
+          controller.selectedPrivacyOption.value = option;
+        },
+        itemBuilder: (context) => controller.privacyOptions.map((option) {
+          return PopupMenuItem<PrivacyOption>(
+            value: option,
+            child: Row(
+              children: [
+                Icon(_getIcon(option.name), color: _getIconColor(option.name)),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(option.name, style: TextStyle(color: Colors.white)),
+                      if (option.description.isNotEmpty)
+                        Text(
+                          option.description,
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _getIcon(controller.selectedPrivacyOption.value?.name ?? 'Public'),
+              color: _getIconColor(controller.selectedPrivacyOption.value?.name ?? 'Public'),
+            ),
+            SizedBox(width: 8),
+            Text(
+              controller.selectedPrivacyOption.value?.name ?? 'Public',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            Icon(Icons.arrow_drop_down, color: Colors.white),
+          ],
+        ),
+      );
+    });
+  }
+
+  // Fallback default privacy popup
+  Widget _buildDefaultPrivacyPopup(UserCreatePostController controller) {
+    final defaultOptions = [
+      PrivacyOption(id: 1, name: 'Public', description: 'Anyone can see this post'),
+      PrivacyOption(id: 2, name: 'Friends', description: 'Only your friends can see this post'),
+      PrivacyOption(id: 3, name: 'Private', description: 'Only you can see this post'),
+    ];
+
+    // Set default if not already set
+    if (controller.selectedPrivacyOption.value == null) {
+      controller.selectedPrivacyOption.value = defaultOptions.first;
+    }
+
+    return PopupMenuButton<PrivacyOption>(
+      color: Color(0xFF1E2A33),
+      onSelected: (PrivacyOption option) {
+        controller.selectedPrivacyOption.value = option;
+      },
+      itemBuilder: (context) => defaultOptions.map((option) {
+        return PopupMenuItem<PrivacyOption>(
+          value: option,
+          child: Row(
+            children: [
+              Icon(_getIcon(option.name), color: _getIconColor(option.name)),
+              SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(option.name, style: TextStyle(color: Colors.white)),
+                    Text(
+                      option.description,
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            _getIcon(controller.selectedPrivacyOption.value?.name ?? 'Public'),
+            color: _getIconColor(controller.selectedPrivacyOption.value?.name ?? 'Public'),
+          ),
+          SizedBox(width: 8),
+          Text(
+            controller.selectedPrivacyOption.value?.name ?? 'Public',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          Icon(Icons.arrow_drop_down, color: Colors.white),
+        ],
+      ),
+    );
+  }
+
+  IconData _getIcon(String option) {
+    switch (option.toLowerCase()) {
+      case 'friends':
+      case 'connect':
         return Icons.group;
-      case 'Only Me':
+      case 'private':
+      case 'only me':
         return Icons.lock;
-      case 'Public':
+      case 'public':
       default:
         return Icons.public;
     }
   }
 
-  Color getIconColor(String option) {
-    switch (option) {
-      case 'Connect':
+  Color _getIconColor(String option) {
+    switch (option.toLowerCase()) {
+      case 'friends':
+      case 'connect':
         return Colors.blue;
-      case 'Only Me':
+      case 'private':
+      case 'only me':
         return Colors.red;
-      case 'Public':
+      case 'public':
       default:
         return Colors.green;
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      color: Color(0xFF1E2A33), // Background color
-      onSelected: (value) {
-        setState(() {
-          selectedOption = value;
-        });
-      },
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: 'Public',
-          child: Row(
-            children: const [
-              Icon(Icons.public, color: Colors.green),
-              SizedBox(width: 8),
-              Text('Public', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem(
-          value: 'Connect',
-          child: Row(
-            children: const [
-              Icon(Icons.group, color: Colors.blue),
-              SizedBox(width: 8),
-              Text('Connect', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem(
-          value: 'Only Me',
-          child: Row(
-            children: const [
-              Icon(Icons.lock, color: Colors.red),
-              SizedBox(width: 8),
-              Text('Only Me', style: TextStyle(color: Colors.white)),
-            ],
-          ),
-        ),
-      ],
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(getIcon(selectedOption), color: getIconColor(selectedOption)),
-          const SizedBox(width: 8),
-          Text(
-            selectedOption,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          const Icon(Icons.arrow_drop_down, color: Colors.white),
-        ],
-      ),
-    );
   }
 }

@@ -8,6 +8,8 @@ ss
         android:label="nikosafe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBq7u43FmYOrJtRG8ka5DJNiilC3XdOAbU"/>
 
         <activity
 

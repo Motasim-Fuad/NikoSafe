@@ -95,10 +95,10 @@ class UserDeleteAccauuntview extends StatelessWidget {
                                 final password = passwordController.text.trim();
 
                                 if (email.isEmpty || password.isEmpty) {
-                                  Utils.tostMassage("Email and password are required.");
+                                  Utils.toastMessage("Email and password are required.");
                                 } else {
                                   // TODO: Call delete account method here
-                                  Utils.tostMassage("Account deletion logic goes here.");
+                                  Utils.toastMessage("Account deletion logic goes here.");
                                 }
                               },
                               child: const Text("Delete",style: TextStyle(color: Colors.white)),

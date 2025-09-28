@@ -53,12 +53,12 @@ class OTPController extends GetxController {
 
     // ✅ Check for 4 digit OTP
     if (otp.length != 4) {
-      Utils.tostMassage("Please enter 4-digit OTP");
+      Utils.toastMessage("Please enter 4-digit OTP");
       return;
     }
 
     if (email.isEmpty) {
-      Utils.tostMassage("Email not found");
+      Utils.toastMessage("Email not found");
       return;
     }
 
@@ -145,7 +145,7 @@ class OTPController extends GetxController {
   // ✅ Resend OTP functionality
   Future<void> resendOtp() async {
     if (email.isEmpty) {
-      Utils.tostMassage("Email not found");
+      Utils.toastMessage("Email not found");
       return;
     }
 

@@ -51,7 +51,7 @@ class ResetOtpController extends GetxController {
   Future<void> verifyOtpForResetPassword() async {
     final otp = getOtp();
     if (otp.length != 4) {
-      Utils.tostMassage("Enter 4 digit OTP");
+      Utils.toastMessage("Enter 4 digit OTP");
       return;
     }
 
@@ -70,7 +70,7 @@ class ResetOtpController extends GetxController {
       print("Password reset OTP verification response: $response");
 
       if (response['success'] == true) {
-        Utils.tostMassage(response['message'] ?? "OTP verified successfully!");
+        Utils.toastMessage(response['message'] ?? "OTP verified successfully!");
 
         // Navigate to reset password screen with email and OTP
         Get.toNamed(
@@ -81,12 +81,12 @@ class ResetOtpController extends GetxController {
             }
         );
       } else {
-        Utils.tostMassage(response['message'] ?? "Invalid OTP. Please try again.");
+        Utils.toastMessage(response['message'] ?? "Invalid OTP. Please try again.");
       }
 
     } catch (error) {
       print("Password reset OTP verification error: $error");
-      Utils.tostMassage("Something went wrong. Please try again.");
+      Utils.toastMessage("Something went wrong. Please try again.");
     } finally {
       isLoading.value = false;
     }
@@ -108,7 +108,7 @@ class ResetOtpController extends GetxController {
       print("Resend password reset OTP response: $response");
 
       if (response['success'] == true) {
-        Utils.tostMassage(response['message'] ?? "OTP sent successfully!");
+        Utils.toastMessage(response['message'] ?? "OTP sent successfully!");
 
         // Clear previous OTP
         for (var controller in controllers) {
@@ -120,12 +120,12 @@ class ResetOtpController extends GetxController {
           focusNodes[0].requestFocus();
         }
       } else {
-        Utils.tostMassage(response['message'] ?? "Failed to resend OTP");
+        Utils.toastMessage(response['message'] ?? "Failed to resend OTP");
       }
 
     } catch (error) {
       print("Resend password reset OTP error: $error");
-      Utils.tostMassage("Something went wrong. Please try again.");
+      Utils.toastMessage("Something went wrong. Please try again.");
     } finally {
       isResendLoading.value = false;
     }
