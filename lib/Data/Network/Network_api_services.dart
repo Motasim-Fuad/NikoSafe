@@ -47,6 +47,102 @@ class NetworkApiServices extends BaseApiServices {
     return responceJson;
   }
 
+
+  // Add these methods to your NetworkApiServices class
+
+  @override
+  Future<dynamic> putApi(var data, String url, {bool requireAuth = false}) async {
+    if (kDebugMode) {
+      print("PUT URL: $url");
+      print("PUT Data: $data");
+    }
+
+    dynamic responseJson;
+
+    try {
+      final stopwatch = Stopwatch()..start();
+      final headers = await _getHeaders(requireAuth: requireAuth);
+
+      final response = await http
+          .put(
+        Uri.parse(url),
+        headers: headers,
+        body: jsonEncode(data),
+      )
+          .timeout(const Duration(seconds: 45));
+
+      stopwatch.stop();
+
+      if (kDebugMode) {
+        print("⏱ Backend response time: ${stopwatch.elapsedMilliseconds} ms");
+      }
+
+      responseJson = returnResponce(response);
+    } on SocketException {
+      throw InternetException("No Internet");
+    } on RequestTimeOut {
+      throw RequestTimeOut("Request timed out");
+    }
+
+    if (kDebugMode) {
+      print("PUT Response: $responseJson");
+    }
+
+    return responseJson;
+  }
+
+  @override
+  Future<dynamic> deleteApi(String url, {bool requireAuth = false, var data}) async {
+    if (kDebugMode) {
+      print("DELETE URL: $url");
+      if (data != null) {
+        print("DELETE Data: $data");
+      }
+    }
+
+    dynamic responseJson;
+
+    try {
+      final stopwatch = Stopwatch()..start();
+      final headers = await _getHeaders(requireAuth: requireAuth);
+
+      final response = await http
+          .delete(
+        Uri.parse(url),
+        headers: headers,
+        body: data != null ? jsonEncode(data) : null,
+      )
+          .timeout(const Duration(seconds: 45));
+
+      stopwatch.stop();
+
+      if (kDebugMode) {
+        print("⏱ Backend response time: ${stopwatch.elapsedMilliseconds} ms");
+      }
+
+      // Handle 204 No Content response
+      if (response.statusCode == 204) {
+        responseJson = {
+          'success': true,
+          'message': 'Deleted successfully',
+          'status_code': 204,
+        };
+      } else {
+        responseJson = returnResponce(response);
+      }
+    } on SocketException {
+      throw InternetException("No Internet");
+    } on RequestTimeOut {
+      throw RequestTimeOut("Request timed out");
+    }
+
+    if (kDebugMode) {
+      print("DELETE Response: $responseJson");
+    }
+
+    return responseJson;
+  }
+
   // Update postMultipartApi method with optional auth
   Future<dynamic> postMultipartApi({
     required String url,
@@ -159,6 +255,8 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+
+
   dynamic returnResponce(http.Response response) {
     if (kDebugMode) {
       print('Response Status Code: ${response.statusCode}');
@@ -168,6 +266,7 @@ class NetworkApiServices extends BaseApiServices {
     switch (response.statusCode) {
       case 200:
       case 201:
+      case 204:
       case 400:
       case 401:
       case 403:

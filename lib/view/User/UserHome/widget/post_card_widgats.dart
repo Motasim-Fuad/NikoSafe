@@ -11,6 +11,8 @@ import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
+import 'comment_btmSheed.dart';
+
 class PostCardWidget extends StatelessWidget {
   final Data post;
   final FeedController controller;
@@ -798,8 +800,10 @@ class PostCardWidget extends StatelessWidget {
   }
 
   void _navigateToComments() {
-    // Navigate to comments screen
-    // Get.toNamed(RouteName.postCommentsView, arguments: post.id);
+    Get.bottomSheet(
+      CommentBottomSheet(postId: post.id!),
+      isScrollControlled: true,
+    );
   }
 
   void _sharePost() {

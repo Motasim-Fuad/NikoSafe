@@ -68,10 +68,6 @@ class FeedTabView extends StatelessWidget {
           itemCount: controller.posts.length +
               (controller.showHealthCard.value ? 1 : 0),
           itemBuilder: (context, index) {
-            // Show health card at the top if enabled
-            if (controller.showHealthCard.value && index == 0) {
-              return healthCard(controller);
-            }
 
             // Adjust index if health card is shown
             final postIndex =
