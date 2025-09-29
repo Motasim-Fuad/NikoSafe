@@ -1,56 +1,144 @@
-import 'package:nikosafe/resource/asseets/image_assets.dart';
+// Repository/userHome_repo/feed_repository.dart
 
-import '../../models/userHome/post_model.dart';
-
+import 'package:nikosafe/data/network/network_api_services.dart';
+import 'package:nikosafe/resource/App_Url/app_url.dart';
 
 class FeedRepository {
-  Future<List<PostModel>> fetchFeedPosts() async {
-    await Future.delayed(Duration(seconds: 1)); // simulate delay
-    return [
-      PostModel(
-        username: 'John Doe',
-        userImage: ImageAssets.userHome_userProfile,
-        content: 'Nam posuere elit a facilisis hendrerit...',
-        imageUrl: ImageAssets.userHome_peoplePostImage1,
-        date: DateTime.now(),
-        likes: 100,
-        comments: 100,
-      ),
-      PostModel(
-        username: 'Lukas Wagner Is In Barx',
-        userImage: ImageAssets.userHome_peopleProfile1,
-        content: 'Try the Mojito! 🔥',
-        imageUrl: ImageAssets.userHome_peoplePostImage2,
-        date: DateTime(2024, 4, 1),
-        likes: 10,
-        comments: 2,
-        location: 'View Bar',
-        isMap: true,
-      ),
+  final NetworkApiServices _apiServices = NetworkApiServices();
 
-      PostModel(
-        username: 'Josef',
-        userImage: ImageAssets.userHome_peopleProfile2,
-        content: 'Try the Mojito! 🔥',
-        imageUrl: ImageAssets.userHome_peoplePostImage3,
-        date: DateTime(2024, 4, 1),
-        likes: 10,
-        comments: 2,
-        location: 'View Bar',
-        isMap: true,
-      ),
+  // Get Timeline/Feed Posts
+  Future<Map<String, dynamic>> fetchFeedPosts() async {
+    try {
+      final response = await _apiServices.getApi(
+        AppUrl.socialFeedTimeline,
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-      PostModel(
-        username: 'Michal',
-        userImage: ImageAssets.userHome_peopleProfile3,
-        content: 'Try the Mojito! 🔥',
-        imageUrl: ImageAssets.userHome_peoplePostImage4,
-        date: DateTime(2024, 4, 1),
-        likes: 10,
-        comments: 2,
-        location: 'View Bar',
-        isMap: true,
-      ),
-    ];
+  // Add/Update Reaction to Post
+  Future<Map<String, dynamic>> addPostReaction({
+    required int postId,
+    required String reactionType,
+  }) async {
+    try {
+      final response = await _apiServices.postApi(
+        {'type': reactionType},
+        '${AppUrl.socialPostReactions}$postId/react/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Remove Reaction from Post
+  Future<Map<String, dynamic>> removePostReaction({
+    required int postId,
+  }) async {
+    try {
+      final response = await _apiServices.postApi(
+        {'type': 'like'}, // Send any type for deletion
+        '${AppUrl.socialPostReactions}$postId/react/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Hide Post
+  Future<Map<String, dynamic>> hidePost({required int postId}) async {
+    try {
+      final response = await _apiServices.postApi(
+        {},
+        '${AppUrl.socialHidePost}$postId/hide/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Unhide Post
+  Future<Map<String, dynamic>> unhidePost({required int postId}) async {
+    try {
+      final response = await _apiServices.postApi(
+        {},
+        '${AppUrl.socialUnhidePost}$postId/unhide/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Vote on Poll
+  Future<Map<String, dynamic>> voteOnPoll({
+    required int postId,
+    required int pollOptionId,
+  }) async {
+    try {
+      final response = await _apiServices.postApi(
+        {'poll_option_id': pollOptionId},
+        '${AppUrl.socialPollVoting}$postId/vote/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Remove Vote from Poll
+  Future<Map<String, dynamic>> removeVoteFromPoll({
+    required int postId,
+    required int pollOptionId,
+  }) async {
+    try {
+      final response = await _apiServices.postApi(
+        {'poll_option_id': pollOptionId},
+        '${AppUrl.socialRemovePollVote}$postId/vote/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Get Poll Results
+  Future<Map<String, dynamic>> getPollResults({required int postId}) async {
+    try {
+      final response = await _apiServices.getApi(
+        '${AppUrl.socialPollVotingResult}$postId/poll-results/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // Delete Post
+  Future<Map<String, dynamic>> deletePost({required int postId}) async {
+    try {
+      // Note: Need to add DELETE method to NetworkApiServices
+      final response = await _apiServices.postApi(
+        {},
+        '${AppUrl.socialDeletePosts}$postId/',
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

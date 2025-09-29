@@ -25,7 +25,7 @@ class UserHomeView extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-               topBar(),
+              topBar(),
               Obx(() =>
               feedController.showHealthCard.value && tabController.currentTab.value == 0
                   ? healthCard(feedController)

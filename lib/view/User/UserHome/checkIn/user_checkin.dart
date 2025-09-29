@@ -147,15 +147,7 @@ class UserCheckInView extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // Open in Google Maps Button
-                RoundButton(
-                  title: "Open in Google Maps",
-                  onPress: controller.openInGoogleMaps,
-                ),
                 const SizedBox(height: 30),
-
                 // Post Form
                 Text(
                   "Create Post",

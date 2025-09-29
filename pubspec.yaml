@@ -58,6 +58,8 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   flutter_launcher_icons: ^0.14.4
   google_maps_flutter: ^2.13.1
+  cached_network_image: ^3.4.1
+  sqflite: ^2.3.0
 
 flutter_icons:
   android: true
