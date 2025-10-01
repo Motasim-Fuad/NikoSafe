@@ -1,102 +1,85 @@
+// Path: Repositry/userHome_repo/connect_user_repo.dart
+// Copy this ENTIRE file
+
+import 'package:nikosafe/Data/Network/Network_api_services.dart';
+import 'package:nikosafe/resource/App_Url/app_url.dart';
 import '../../models/userHome/connect_user_model.dart';
-import '../../resource/asseets/image_assets.dart';
 
 class ConnectUserRepo {
-  static Map<String, dynamic> userJson = {
-    "1": {
-      "name": "Danny",
-      "imageUrl": ImageAssets.userHome_peopleProfile4,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile1,
-        ImageAssets.userHome_peopleProfile2,
-        ImageAssets.userHome_peopleProfile3,
-      ],
-      "postCount": 3,
-      "connectCount": 45
-    },
-    "2": {
-      "name": "Luise",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
-    "3": {
-      "name": "Michal",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
+  final _apiService = NetworkApiServices();
 
-    "4": {
-      "name": "Murad",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
-    "5": {
-      "name": "Kashif Ali",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
-    "6": {
-      "name": "Disha",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
-    "7": {
-      "name": "saba",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
-    },
-    "8": {
-      "name": "Rakib",
-      "imageUrl": ImageAssets.userHome_peopleProfile2,
-      "type": "User",
-      "postedImage": [
-        ImageAssets.userHome_peopleProfile4,
-        ImageAssets.userHome_userProfile,
-      ],
-      "postCount": 7,
-      "connectCount": 60
+  Future<Map<String, dynamic>> searchUsers({
+    required String search,
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    try {
+      final url = '${AppUrl.socialSearchUsers}?search=$search&page=$page&page_size=$pageSize';
+
+      final response = await _apiService.getApi(url, requireAuth: true);
+      return response;
+    } catch (e) {
+      rethrow;
     }
-  };
+  }
 
+  Future<ConnectUser> getUserProfile(int userId) async {
+    try {
+      final url = AppUrl.getUserProfileUrl(userId);
+      final response = await _apiService.getApi(url, requireAuth: true);
 
-  List<ConnectUser> getUsers() {
-    return userJson.entries.map((e) => ConnectUser.fromJson(e.value)).toList();
+      if (response['success'] == true && response['data'] != null) {
+        return ConnectUser.fromJson(response['data']);
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> sendFriendRequest(int receiverId) async {
+    try {
+      final response = await _apiService.postApi(
+        {'receiver_id': receiverId},
+        AppUrl.socialMakeFriends,
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserFriends() async {
+    try {
+      final response = await _apiService.getApi(
+        AppUrl.socialUserFriends,
+        requireAuth: true,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> acceptFriendRequest(int requestId) async {
+    try {
+      final url = AppUrl.getAcceptFriendRequestUrl(requestId);
+      final response = await _apiService.postApi({}, url, requireAuth: true);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> declineFriendRequest(int requestId) async {
+    try {
+      final url = AppUrl.getDeclineFriendRequestUrl(requestId);
+      final response = await _apiService.postApi({}, url, requireAuth: true);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

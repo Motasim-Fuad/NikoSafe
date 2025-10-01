@@ -84,7 +84,9 @@ class UserNotificationCard extends StatelessWidget {
                 if (model.action3 != null)
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         foregroundColor: AppColor.primaryTextColor,
