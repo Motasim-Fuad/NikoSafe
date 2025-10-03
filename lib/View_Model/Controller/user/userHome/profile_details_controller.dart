@@ -3,8 +3,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import '../../../../Repositry/userHome_repo/feed_repository.dart';
-import '../../../../models/userHome/post_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/feed_repository.dart';
+import '../../../../models/User/userHome/post_model.dart';
 import '../../../../utils/utils.dart';
 
 class ProfileDetailsController extends GetxController {

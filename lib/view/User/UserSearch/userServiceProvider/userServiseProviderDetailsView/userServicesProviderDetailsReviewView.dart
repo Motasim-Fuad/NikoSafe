@@ -1,12 +1,9 @@
 // Fixed UserServicesProviderDetailsReviewView
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:nikosafe/resource/App_routes/routes_name.dart';
-import 'package:nikosafe/resource/compunents/RoundButton.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/booking_page_view.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
+
+import '../../../../../models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import '../../../../../resource/Colors/app_colors.dart';
-import '../../../../../models/userSearch/userServiceProviderModel/user_services_provider.dart'; // Added missing import
+
 
 class Userservicesproviderdetailsreviewview extends StatelessWidget {
   final UserServiceProvider item;

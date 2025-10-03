@@ -60,6 +60,7 @@ dependencies:
   google_maps_flutter: ^2.13.1
   cached_network_image: ^3.4.1
   sqflite: ^2.3.0
+  web_socket_channel: ^3.0.3
 
 flutter_icons:
   android: true

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../../../models/userSearch/explore_item_model.dart';
-import '../explore_detail_page.dart';
-
+import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
 import 'explore_card_list.dart'; // ✅ Import your custom ExploreCard
 
 class ExploreCardCarousel extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/Repositry/user_repo/userSearch/UserServiceProviderRepo/user_services_provider_repo.dart';
+import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:nikosafe/utils/utils.dart';
-import '../../../../../Repositry/userSearch/UserServiceProviderRepo/user_services_provider_repo.dart';
-import '../../../../../models/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 class UserServiceProviderController extends GetxController {

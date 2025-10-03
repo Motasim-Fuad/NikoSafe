@@ -1,7 +1,7 @@
 // controllers/event_controller.dart
 import 'package:get/get.dart';
-import '../../../../Repositry/userSearch/banner_repo.dart';
-import '../../../../models/userSearch/bannerModel.dart';
+import 'package:nikosafe/Repositry/user_repo/userSearch/banner_repo.dart';
+import 'package:nikosafe/models/User/userSearch/bannerModel.dart';
 
 
 class BannerController extends GetxController {

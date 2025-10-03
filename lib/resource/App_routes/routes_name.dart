@@ -19,6 +19,7 @@ class RouteName{
   static const String chatListView="/Chat_ListView";
   static const String chatDetailView="/Chat_DetailView";
   static const String profileDetailsPage="/Profile_DetailsPage";
+  static const String acceptConnectRequestView="/Accept_Connect_RequestView";
   static const String userAboutUs="/User_AboutUs";
   static const String userEmergencyContactsView="/User_EmergencyContactsView";
   static const String userPrivacyPolicy="/User_PrivacyPolicy";

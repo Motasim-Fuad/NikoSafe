@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/models/User/UserData/drink_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/view/User/UserData/widgets/add_drink_dialog.dart';
 import 'package:nikosafe/view/User/UserData/widgets/weekly_drink_plan_dialog.dart';
 import '../../../View_Model/Controller/user/userData/drink_controller.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../../../models/UserData/drink_model.dart';
 
 class UserDataView extends StatelessWidget {
   final DrinkController controller = Get.put(DrinkController());

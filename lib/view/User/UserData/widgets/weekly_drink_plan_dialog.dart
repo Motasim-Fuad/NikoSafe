@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../View_Model/Controller/user/userData/drink_controller.dart';
+import 'package:nikosafe/View_Model/Controller/user/userData/drink_controller.dart';
+
 
 class WeeklyDrinkPlanDialog extends StatelessWidget {
   final DrinkController controller = Get.find<DrinkController>();
@@ -96,9 +97,9 @@ class WeeklyDrinkPlanDialog extends StatelessWidget {
                   onPressed: () {
                     // Update the weekly plan with the values from the TextFields
                     controller.weeklyPlan.forEach((day, plan) {
-                      int maxDrinks = int.tryParse(maxDrinksControllers[day]!.text) ?? plan.maxDrinks;
-                      int maxVolume = int.tryParse(maxVolumeControllers[day]!.text) ?? plan.maxVolume;
-                      controller.updateWeeklyPlan(day, maxDrinks, maxVolume);
+                      // int maxDrinks = int.tryParse(maxDrinksControllers[day]!.text) ?? plan?.maxDrinks;
+                      // int maxVolume = int.tryParse(maxVolumeControllers[day]!.text) ?? plan?.maxVolume;
+                      // controller.updateWeeklyPlan(day, maxDrinks, maxVolume);
                     });
                     Get.back();
                   },

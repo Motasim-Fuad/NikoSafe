@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nikosafe/View_Model/Controller/user/userHome/feedController.dart';
-import 'package:nikosafe/models/userHome/post_model.dart';
+import 'package:nikosafe/models/User/userHome/post_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:url_launcher/url_launcher.dart';

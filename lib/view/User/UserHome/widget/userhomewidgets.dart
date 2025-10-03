@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userHome/post/post_type_controller.dart';
 import 'package:nikosafe/View_Model/Controller/userEmargencyContuctContrller/emergency_contact_controller.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
-import 'package:nikosafe/utils/utils.dart';
-
 import '../../../../View_Model/Controller/user/userHome/feedController.dart';
-import '../../../../models/userHome/post_model.dart';
+
 
 Widget topBar() {
   final emergencyController = Get.put(EmergencyContactController());

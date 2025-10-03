@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:nikosafe/binding/userLocation/user_location_binding.dart';
+import 'package:nikosafe/binding/user_chat_binding/user_chat_binding.dart';
 import 'package:nikosafe/binding/user_createPost/user_create_post_binding.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/view/Authentication/authentication.dart';
@@ -10,13 +11,15 @@ import 'package:nikosafe/view/Authentication/verification/password_view.dart';
 import 'package:nikosafe/view/User/UserHome/ProfileDetails.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePoll/create_poll_view.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/userCreatePostView.dart';
+import 'package:nikosafe/view/User/UserHome/accept_connect_request_view.dart';
 import 'package:nikosafe/view/User/UserProfile/Screen/user_about_us.dart';
+import 'package:nikosafe/view/User/chat/chat_detail_view.dart';
+import 'package:nikosafe/view/User/chat/chat_list_view.dart';
 
 import 'package:nikosafe/view/User/userNotification/user_notification_view.dart';
 import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view.dart';
 import 'package:nikosafe/view/User/user_btn_nav.dart';
-import 'package:nikosafe/view/chat/chat_detail_view.dart';
-import 'package:nikosafe/view/chat/chat_list_view.dart';
+
 import '../../view/AllPayment/User/user_verification_view.dart';
 import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
 import '../../view/Authentication/forgetpassword/otp_veryfication_for_pass_reset.dart';
@@ -91,6 +94,12 @@ class AppRouts {
       transitionDuration: Duration(microseconds: 250),
     ),
     GetPage(
+      name: RouteName.acceptConnectRequestView,
+      page: () => AcceptConnectRequestView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
       name: RouteName.forgotPasswordView,
       page: () => ForgetpasswordView(),
       transition: Transition.leftToRightWithFade,
@@ -150,12 +159,14 @@ class AppRouts {
     GetPage(
       name: RouteName.chatListView,
       page: () => ChatListView(),
+      binding: UserChatListBinding(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),
     GetPage(
       name: RouteName.chatDetailView,
       page: () => ChatDetailView(),
+      binding: UserChatBinding(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

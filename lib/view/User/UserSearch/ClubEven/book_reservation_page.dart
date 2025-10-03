@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/models/userSearch/explore_item_model.dart';
+import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/coustomTextField.dart';

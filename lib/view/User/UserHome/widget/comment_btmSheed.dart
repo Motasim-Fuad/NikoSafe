@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userHome/comment_controller.dart';
-import 'package:nikosafe/models/userHome/comment_model.dart';
+import 'package:nikosafe/models/User/userHome/comment_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 
 class CommentBottomSheet extends StatelessWidget {

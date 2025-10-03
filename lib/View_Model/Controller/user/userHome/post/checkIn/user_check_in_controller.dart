@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:nikosafe/Repositry/checkInRepo/checkInRepository.dart';
-import 'package:nikosafe/models/chackin/checkInModel.dart';
+import 'package:nikosafe/Repositry/user_repo/checkInRepo/checkInRepository.dart';
+import 'package:nikosafe/models/User/chackin/checkInModel.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nikosafe/utils/utils.dart';
 

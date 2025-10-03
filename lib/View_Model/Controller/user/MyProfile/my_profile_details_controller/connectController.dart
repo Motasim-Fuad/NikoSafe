@@ -3,8 +3,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/Repositry/userHome_repo/connect_user_repo.dart';
-import 'package:nikosafe/models/userHome/connect_user_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/connect_user_repo.dart';
+import 'package:nikosafe/models/User/userHome/connect_user_model.dart';
 import 'package:nikosafe/utils/utils.dart';
 
 

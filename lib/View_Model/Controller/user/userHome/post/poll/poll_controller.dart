@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/poll_repositry.dart';
+import 'package:nikosafe/models/User/userHome/poll/create_poll_model.dart';
 import 'package:nikosafe/utils/utils.dart';
-import '../../../../../../Repositry/userHome_repo/poll_repositry.dart';
-import '../../../../../../models/userHome/poll/create_poll_model.dart';
+
 
 class PollController extends GetxController {
   final titleController = TextEditingController();

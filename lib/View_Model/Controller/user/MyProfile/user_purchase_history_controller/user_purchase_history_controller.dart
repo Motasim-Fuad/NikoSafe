@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:nikosafe/models/myProfileModel/user_history_purchase_model.dart';
+import 'package:nikosafe/models/User/myProfileModel/user_history_purchase_model.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 
 

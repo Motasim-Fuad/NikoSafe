@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart'; // For date formatting
+import 'package:nikosafe/models/User/myProfileModel/user_purchase_datails.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 
 import '../../../../../../View_Model/Controller/user/MyProfile/user_parchase_details_veiw_model/user_parchase_details_view_model.dart';
-import '../../../../../../models/myProfileModel/user_purchase_datails.dart';
 
 
 class UserParchaseReceiptDetailsPage extends StatelessWidget {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/utils/utils.dart';
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
-import '../../../models/userSearch/explore_item_model.dart';
 import '../../../resource/Colors/app_colors.dart';
 import '../../../resource/compunents/customBackButton.dart';
 

@@ -1,0 +1,414 @@
+// Path: View/user/chat/widgets/chat_bubble.dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:nikosafe/models/User/ChatModel/message_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class ChatBubble extends StatelessWidget {
+  final ChatMessage message;
+  final VoidCallback? onRetry;
+
+  const ChatBubble({
+    required this.message,
+    this.onRetry,
+    super.key,
+  });
+
+  void _copyText(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Copied to clipboard'),
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  void _showOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (message.text != null && message.text!.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.copy, color: Colors.white),
+                title: const Text('Copy Text', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  _copyText(context, message.text!);
+                  Navigator.pop(context);
+                },
+              ),
+            if (message.type == MessageType.location)
+              ListTile(
+                leading: const Icon(Icons.location_on, color: Colors.white),
+                title: const Text('Copy Location', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  if (message.locationUrl != null) {
+                    _copyText(context, message.locationUrl!);
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            if (message.status == MessageStatus.failed)
+              ListTile(
+                leading: const Icon(Icons.refresh, color: Colors.white),
+                title: const Text('Retry', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  onRetry?.call();
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isMe = message.isSentByMe;
+
+    return GestureDetector(
+      onLongPress: () => _showOptions(context),
+      child: Align(
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          constraints: const BoxConstraints(maxWidth: 300),
+          child: Column(
+            crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isMe ? Colors.teal : Colors.grey[700],
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(12),
+                    topRight: const Radius.circular(12),
+                    bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
+                    bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    _buildMessageContent(),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _formatTime(message.timestamp),
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 10,
+                          ),
+                        ),
+                        if (isMe) ...[
+                          const SizedBox(width: 4),
+                          _buildStatusIcon(),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              if (message.status == MessageStatus.failed) ...[
+                const SizedBox(height: 4),
+                GestureDetector(
+                  onTap: onRetry,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(Icons.error_outline, color: Colors.red, size: 14),
+                        SizedBox(width: 4),
+                        Text(
+                          'Failed to send. Tap to retry',
+                          style: TextStyle(color: Colors.red, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageContent() {
+    switch (message.type) {
+      case MessageType.text:
+        return SelectableText(
+          message.text ?? '',
+          style: const TextStyle(color: Colors.white, fontSize: 15),
+        );
+
+      case MessageType.image:
+        return Column(
+          crossAxisAlignment: message.isSentByMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            if (message.localFile != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  message.localFile!,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else if (message.fileUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  message.fileUrl!,
+                  height: 200,
+                  width: 200,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 200,
+                      width: 200,
+                      color: Colors.grey[800],
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                              : null,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      width: 200,
+                      color: Colors.grey[800],
+                      child: const Center(
+                        child: Icon(Icons.error, color: Colors.white),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            if (message.text != null && message.text!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              SelectableText(
+                message.text!,
+                style: const TextStyle(color: Colors.white, fontSize: 15),
+              ),
+            ],
+          ],
+        );
+
+      case MessageType.video:
+        return Column(
+          crossAxisAlignment: message.isSentByMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(Icons.play_circle_filled,
+                      size: 50, color: Colors.white70),
+                  if (message.fileName != null)
+                    Positioned(
+                      bottom: 8,
+                      left: 8,
+                      right: 8,
+                      child: Text(
+                        message.fileName!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            if (message.text != null && message.text!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              SelectableText(
+                message.text!,
+                style: const TextStyle(color: Colors.white, fontSize: 15),
+              ),
+            ],
+          ],
+        );
+
+      case MessageType.location:
+        return GestureDetector(
+          onTap: () => _openLocation(),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.black26,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.white24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on, color: Colors.red, size: 24),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Location',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                if (message.locationName != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    message.locationName!,
+                    style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                ],
+                const SizedBox(height: 6),
+                Text(
+                  'Tap to open in maps',
+                  style: TextStyle(
+                    color: Colors.blue[300],
+                    fontSize: 12,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+      case MessageType.file:
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.black26,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.insert_drive_file, color: Colors.white70, size: 32),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      message.fileName ?? 'File',
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (message.fileSize != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatFileSize(message.fileSize!),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  Widget _buildStatusIcon() {
+    switch (message.status) {
+      case MessageStatus.sending:
+        return const SizedBox(
+          width: 12,
+          height: 12,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Colors.white70,
+          ),
+        );
+      case MessageStatus.sent:
+        return const Icon(Icons.check, color: Colors.white70, size: 14);
+      case MessageStatus.delivered:
+        return const Icon(Icons.done_all, color: Colors.white70, size: 14);
+      case MessageStatus.read:
+        return const Icon(Icons.done_all, color: Colors.blue, size: 14);
+      case MessageStatus.failed:
+        return const Icon(Icons.error, color: Colors.red, size: 14);
+    }
+  }
+
+  String _formatTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 0) {
+      return '${timestamp.day}/${timestamp.month} ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
+    } else {
+      return '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
+    }
+  }
+
+  String _formatFileSize(int bytes) {
+    if (bytes < 1024) return '$bytes B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+
+  void _openLocation() async {
+    final url = message.locationUrl;
+    if (url != null) {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
+  }
+}

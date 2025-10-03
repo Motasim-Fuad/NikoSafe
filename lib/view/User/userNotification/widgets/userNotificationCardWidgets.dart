@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/models/Notification/userNotification_model.dart';
+import 'package:nikosafe/models/User/Notification/userNotification_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/view/User/userNotification/QutationReviewview.dart';

@@ -1,7 +1,8 @@
 // View_Model/Controller/post_type_controller.dart
 import 'package:get/get.dart';
-import 'package:nikosafe/Repositry/home_repositry/home_repositry.dart';
-import 'package:nikosafe/models/userHome/postType_model.dart';
+import 'package:nikosafe/Repositry/user_repo/home_repositry/home_repositry.dart';
+import 'package:nikosafe/models/User/userHome/postType_model.dart';
+
 
 
 class PostTypeController extends GetxController {

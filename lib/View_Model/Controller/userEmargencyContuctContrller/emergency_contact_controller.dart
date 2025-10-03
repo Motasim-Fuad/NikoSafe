@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:nikosafe/utils/utils.dart';
-import '../../../models/EmargencyContucts.dart';
+import '../../../models/User/EmargencyContucts.dart';
 class EmergencyContactController extends GetxController {
   var contactList = <EmergencyContact>[].obs;
 

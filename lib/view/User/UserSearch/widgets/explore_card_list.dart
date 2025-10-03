@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
-import '../../../../models/userSearch/explore_item_model.dart';
 import '../explore_detail_page.dart';
 
 class ExploreCard extends StatelessWidget {

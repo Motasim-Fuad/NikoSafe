@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:nikosafe/Repositry/userHome_repo/user_location_repo.dart';
-import '../../../../../models/userCreatePost/UserLocation/user_location_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/user_location_repo.dart';
+import 'package:nikosafe/models/User/userCreatePost/UserLocation/user_location_model.dart';
 
 
 class UserLocationContoller extends GetxController {

@@ -3,9 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userHome/profile_details_controller.dart';
+import 'package:nikosafe/models/User/userHome/connect_user_model.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import '../../../View_Model/Controller/user/userHome/connectController.dart';
-import '../../../models/userHome/connect_user_model.dart';
+
 import '../../../resource/Colors/app_colors.dart';
 import '../../../resource/compunents/RoundButton.dart';
 

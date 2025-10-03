@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:nikosafe/models/myProfileModel/my_profile_model.dart';
+import 'package:nikosafe/models/User/myProfileModel/my_profile_model.dart';
+
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customSearchBar.dart';
@@ -45,9 +46,26 @@ class _ConnectTabViewState extends State<ConnectTabView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CustomSearchBar(
-          controller: searchFieldController,
-          onChanged: (value) => controller.updateSearch(value),
+
+        Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width *0.7,
+              child: CustomSearchBar(
+                controller: searchFieldController,
+                onChanged: (value) => controller.updateSearch(value),
+              ),
+            ),
+
+            Container(
+                width: MediaQuery.of(context).size.width *0.3,
+                child: TextButton(onPressed: (){
+                  Get.toNamed(RouteName.acceptConnectRequestView);
+                }, child: Text("Connect request",textAlign: TextAlign.center,style: TextStyle(color: AppColor.primaryTextColor),),)
+            )
+          ],
         ),
 
         Expanded(

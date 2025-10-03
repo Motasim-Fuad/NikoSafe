@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import '../../../../Repositry/userSearch/explore_repository.dart';
-import '../../../../models/userSearch/explore_item_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userSearch/explore_repository.dart';
+import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
 
 class ExploreController extends GetxController {
   final repository = ExploreRepository();

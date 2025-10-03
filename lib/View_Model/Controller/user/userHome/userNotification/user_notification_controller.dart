@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
-import '../../../../../Repositry/Notification/user_notification_repositry.dart';
-import '../../../../../models/Notification/userNotification_model.dart';
+import 'package:nikosafe/Repositry/user_repo/Notification/user_notification_repositry.dart';
+import 'package:nikosafe/models/User/Notification/userNotification_model.dart';
+
 
 class UserNotificationController extends GetxController {
   final notifications = <UsernotificationModel>[].obs;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../View_Model/Controller/user/userData/drink_controller.dart';
-import '../../../../models/UserData/drink_model.dart';
+import 'package:nikosafe/View_Model/Controller/user/userData/drink_controller.dart';
+import 'package:nikosafe/models/User/UserData/drink_model.dart';
+
 
 class AddDrinkDialog extends StatelessWidget {
   final DrinkController controller;

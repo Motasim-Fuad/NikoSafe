@@ -3,10 +3,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import '../../../../Repositry/userHome_repo/connect_user_repo.dart';
-import '../../../../resource/App_routes/routes_name.dart';
-import '../../../../utils/utils.dart';
-import '../../../../models/userHome/connect_user_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/connect_user_repo.dart';
+import 'package:nikosafe/models/User/userHome/connect_user_model.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
+import 'package:nikosafe/utils/utils.dart';
+
 
 class ConnectController extends GetxController {
   final userRepo = ConnectUserRepo();

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nikosafe/models/User/myProfileModel/user_history_booking_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
-
-import '../../../../../../../models/myProfileModel/user_history_booking_model.dart';
 
 class UserHistoryBookingCard extends StatelessWidget {
   final UserHistoryBookingModel booking;

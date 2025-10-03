@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userSearch/userServiceProviderController/user_service_provider_controller.dart';
+import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 
-import '../../../../../models/userSearch/userServiceProviderModel/user_services_provider.dart';
 
 class ProviderFavoriteView extends StatelessWidget {
   const ProviderFavoriteView({super.key});

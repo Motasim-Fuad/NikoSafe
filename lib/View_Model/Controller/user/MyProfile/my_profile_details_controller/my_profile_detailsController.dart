@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
-import '../../../../../Repositry/userProfile/user_my_profile_details.dart';
-import '../../../../../models/myProfileModel/my_profile_details_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userProfile/user_my_profile_details.dart';
+import 'package:nikosafe/models/User/myProfileModel/my_profile_details_model.dart';
+
 
 
 class MyProfileDetailsController extends GetxController {

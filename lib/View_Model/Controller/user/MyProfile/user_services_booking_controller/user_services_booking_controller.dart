@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/models/User/myProfileModel/user_history_booking_model.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
-
-import '../../../../../models/myProfileModel/user_history_booking_model.dart';
 
 class UserServicesBookingController extends GetxController {
   RxList<UserHistoryBookingModel> bookings = <UserHistoryBookingModel>[

@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userHome/post/createPost/user_create_post_controller.dart';
-import 'package:nikosafe/models/userHome/privacy_options_model.dart';
+import 'package:nikosafe/models/User/userHome/privacy_options_model.dart';
+
 
 class PrivacyPopup extends StatelessWidget {
   @override

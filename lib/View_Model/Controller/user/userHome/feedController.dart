@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/Repositry/userHome_repo/feed_repository.dart';
-import 'package:nikosafe/models/userHome/post_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/feed_repository.dart';
 import 'package:nikosafe/utils/utils.dart';
+
+import '../../../../models/User/userHome/post_model.dart';
 
 class FeedController extends GetxController {
   final FeedRepository _repository = FeedRepository();

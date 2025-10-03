@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userSearch/userServiceProviderController/user_service_provider_controller.dart';
+import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
@@ -9,7 +10,6 @@ import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServisePro
 import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
 import '../../../../../View_Model/Controller/user/userSearch/userServiceProviderController/booking_controller.dart';
 import '../../../../../View_Model/toggle_tab_controller.dart';
-import '../../../../../models/userSearch/userServiceProviderModel/user_services_provider.dart';
 import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/compunents/toggle_tab_button.dart';
 

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import '../../../../models/UserData/drink_model.dart';
+import 'package:nikosafe/models/User/UserData/drink_model.dart';
+
 
 class DrinkController extends GetxController {
   // Map to store drinks by day

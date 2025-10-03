@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nikosafe/Repositry/userHome_repo/comment_repo.dart';
-import 'package:nikosafe/models/userHome/comment_model.dart';
+import 'package:nikosafe/Repositry/user_repo/userHome_repo/comment_repo.dart';
+import 'package:nikosafe/models/User/userHome/comment_model.dart';
+
 import 'package:nikosafe/utils/utils.dart';
 
 class CommentController extends GetxController {

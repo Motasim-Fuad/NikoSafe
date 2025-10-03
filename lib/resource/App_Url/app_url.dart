@@ -2,7 +2,8 @@
 // Copy this ENTIRE file
 
 class AppUrl {
-  static const String base_url = 'https://resolutions-responded-stages-prepare.trycloudflare.com';
+  static const String base_url = 'https://card-bold-prescription-karen.trycloudflare.com';
+  static const String ws_base_url = 'wss://card-bold-prescription-karen.trycloudflare.com';
 
   // Auth URLs
   static const String userRegisterUrl = '$base_url/api/basicuser/register/';
