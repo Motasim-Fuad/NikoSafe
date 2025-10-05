@@ -7,8 +7,11 @@ import 'package:nikosafe/utils/utils.dart';
 class ResetPasswordController extends GetxController {
   final _authRepository = AuthRepository();
 
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  final newPasswordError = Rxn<String>();
+  final confirmPasswordError = Rxn<String>();
 
   RxBool newPasswordVisible = false.obs;
   RxBool confirmPasswordVisible = false.obs;
@@ -23,15 +26,8 @@ class ResetPasswordController extends GetxController {
     final arguments = Get.arguments;
     email = arguments?['email'] ?? '';
     otp = arguments?['otp'] ?? '';
-    print("Reset Password Controller initialized with email: $email, otp: $otp");
+    print("Reset Password - Email: $email");
   }
-
-  // @override
-  // void onClose() {
-  //   newPasswordController.dispose();
-  //   confirmPasswordController.dispose();
-  //   super.onClose();
-  // }
 
   void toggleNewPasswordVisibility() {
     newPasswordVisible.value = !newPasswordVisible.value;
@@ -41,29 +37,52 @@ class ResetPasswordController extends GetxController {
     confirmPasswordVisible.value = !confirmPasswordVisible.value;
   }
 
-  // ✅ NEW: API integration for password reset
+  bool validateNewPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      newPasswordError.value = "Password cannot be empty";
+      return false;
+    }
+    if (value.length < 8) {
+      newPasswordError.value = "Password must be at least 8 characters";
+      return false;
+    }
+    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+      newPasswordError.value = "Password must contain uppercase, lowercase and number";
+      return false;
+    }
+    newPasswordError.value = null;
+    return true;
+  }
+
+  bool validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      confirmPasswordError.value = "Please confirm your password";
+      return false;
+    }
+    if (value != newPasswordController.text) {
+      confirmPasswordError.value = "Passwords do not match";
+      return false;
+    }
+    confirmPasswordError.value = null;
+    return true;
+  }
+
+  bool validateForm() {
+    bool isValid = true;
+    isValid = validateNewPassword(newPasswordController.text) && isValid;
+    isValid = validateConfirmPassword(confirmPasswordController.text) && isValid;
+    return isValid;
+  }
+
   Future<void> updatePassword() async {
-    final newPassword = newPasswordController.text.trim();
-    final confirmPassword = confirmPasswordController.text.trim();
-
-    // Validation
-    if (newPassword.isEmpty) {
-      Utils.toastMessage("Please enter new password");
+    if (!validateForm()) {
+      Utils.errorSnackBar("Validation Error", "Please fix the errors above");
       return;
     }
 
-    if (confirmPassword.isEmpty) {
-      Utils.toastMessage("Please confirm your password");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Utils.toastMessage("Password must be at least 6 characters long");
-      return;
-    }
-
-    if (newPassword != confirmPassword) {
-      Utils.toastMessage("Passwords do not match");
+    if (email.isEmpty || otp.isEmpty) {
+      Utils.errorSnackBar("Error", "Session expired. Please try again.");
+      Get.offAllNamed(RouteName.forgotPasswordView);
       return;
     }
 
@@ -73,28 +92,41 @@ class ResetPasswordController extends GetxController {
       final requestData = {
         "email": email,
         "otp": otp,
-        "new_password": newPassword,
-        "new_password2": confirmPassword,
+        "new_password": newPasswordController.text.trim(),
+        "new_password2": confirmPasswordController.text.trim(),
       };
 
-      print("Updating password: ${requestData.keys}"); // Don't log passwords
+      print("Updating password for: $email");
 
       final response = await _authRepository.confirmPasswordReset(requestData);
 
       print("Password reset response: $response");
 
-      if (response['success'] == true) {
+      if (response != null && response is Map && response['success'] == true) {
         Utils.successSnackBar("Success", response['message'] ?? "Password updated successfully!");
 
-        // Navigate back to login
+        newPasswordController.clear();
+        confirmPasswordController.clear();
+
         Get.offAllNamed(RouteName.authView);
       } else {
-        Utils.toastMessage(response['message'] ?? "Failed to update password");
+        String errorMessage = response?['message'] ?? "Failed to update password";
+        Utils.errorSnackBar("Error", errorMessage);
       }
 
     } catch (error) {
       print("Password reset error: $error");
-      Utils.toastMessage("Something went wrong. Please try again.");
+
+      String errorMessage = "Something went wrong";
+      if (error.toString().contains('400')) {
+        errorMessage = "Invalid password format";
+      } else if (error.toString().contains('401')) {
+        errorMessage = "OTP expired. Please request a new one.";
+      } else if (error.toString().contains('No Internet')) {
+        errorMessage = "No internet connection";
+      }
+
+      Utils.errorSnackBar("Error", errorMessage);
     } finally {
       isLoading.value = false;
     }

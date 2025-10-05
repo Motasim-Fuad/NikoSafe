@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,7 +28,7 @@ class VendorAuthController extends GetxController {
   final descriptionFocus = FocusNode();
   final capacityFocus = FocusNode();
 
-  // Permissions as Multi-Select
+  // Permissions & Venue Types
   final availablePermissions = [
     'displayQRCodes',
     'inAppPromotion',
@@ -38,9 +37,11 @@ class VendorAuthController extends GetxController {
   ].obs;
   final selectedPermissions = <String>[].obs;
 
-  // Venue Types as Multi-Select
-  final availableVenueTypes = ['Restaurant', 'Bar', 'Night life'].obs;
-  final selectedVenueTypes = <String>[].obs;
+  // Venue Types from API - Store BOTH name and slug
+  final availableVenueTypes = <String>[].obs; // Display names for UI
+  final venueTypeMap = <String, String>{}.obs; // name -> slug mapping
+  final selectedVenueTypes = <String>[].obs; // Selected names
+  final isLoadingVenueTypes = false.obs;
 
   // UI State
   final agreeTerms = false.obs;
@@ -57,6 +58,52 @@ class VendorAuthController extends GetxController {
   final hoursError = Rxn<String>();
   final capacityError = Rxn<String>();
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchVenueTypes();
+  }
+
+  // Fetch Venue Types from API and build name->slug mapping
+  Future<void> fetchVenueTypes() async {
+    try {
+      isLoadingVenueTypes.value = true;
+      final response = await _authRepository.getVenueTypes();
+
+      print("Venue Types Response: $response");
+
+      if (response != null && response is Map && response['success'] == true) {
+        final data = response['data'] as List?;
+        if (data != null) {
+          availableVenueTypes.clear();
+          venueTypeMap.clear();
+
+          for (var item in data) {
+            String name = item['name'].toString();
+            String slug = item['slug'].toString();
+
+            availableVenueTypes.add(name); // For UI display
+            venueTypeMap[name] = slug; // Map name to slug for API
+          }
+
+          print("Loaded ${availableVenueTypes.length} venue types");
+          print("Venue type mapping: $venueTypeMap");
+        }
+      }
+    } catch (e) {
+      print("Error loading venue types: $e");
+      // Fallback with proper mapping
+      availableVenueTypes.value = ['Restaurant', 'Bar', 'Cafe'];
+      venueTypeMap.value = {
+        'Restaurant': 'restaurant',
+        'Bar': 'bar',
+        'Cafe': 'cafe',
+      };
+    } finally {
+      isLoadingVenueTypes.value = false;
+    }
+  }
+
   // Validation
   bool validateForm() {
     bool isValid = true;
@@ -64,18 +111,12 @@ class VendorAuthController extends GetxController {
     isValid = _validate(businessNameController.text, businessNameError, "Venue Name cannot be empty") && isValid;
     isValid = _validateEmail(emailController.text) && isValid;
     isValid = _validate(phoneController.text, phoneError, "Phone Number cannot be empty") && isValid;
-    isValid = _validate(passwordController.text, passwordError, "Password cannot be empty") && isValid;
     isValid = _validate(addressController.text, addressError, "Location cannot be empty") && isValid;
-    isValid = _validate(descriptionController.text, descriptionError, "Description cannot be empty") && isValid;
+    isValid = _validate(descriptionController.text, descriptionError, "Hours of Operation cannot be empty") && isValid;
     isValid = _validate(capacityController.text, capacityError, "Capacity cannot be empty") && isValid;
 
     if (selectedVenueTypes.isEmpty) {
       Utils.infoSnackBar("Venue Type Required", "Please select at least one venue type");
-      isValid = false;
-    }
-
-    if (selectedPermissions.isEmpty) {
-      Utils.infoSnackBar("Permissions Required", "Please select at least one permission option");
       isValid = false;
     }
 
@@ -110,97 +151,79 @@ class VendorAuthController extends GetxController {
   }
 
   Future<void> pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      pickedImage.value = File(picked.path);
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked != null) {
+        pickedImage.value = File(picked.path);
+        Utils.successSnackBar("Success", "Image selected");
+      }
+    } catch (e) {
+      Utils.errorSnackBar("Error", "Failed to pick image");
     }
   }
-// VendorAuthController.dart - Updated signup method
+
   Future<void> signup() async {
     if (!validateForm()) return;
     loading.value = true;
 
     try {
-      // ✅ CORRECT STRUCTURE: Build proper field structure for multipart
       final requestData = {
         'email': emailController.text.trim(),
-        'password': passwordController.text,
-
-        'profileData': {
-          'phone': phoneController.text.trim(),
-          'location': addressController.text.trim(),
-          'venueName': businessNameController.text.trim(),
-          'hoursOfOperation': hoursController.text.trim(),
-          'capacity': capacityController.text.trim(),
-          'displayQrCodes': selectedPermissions.contains('displayQRCodes').toString(),
-          'inAppPromotion': selectedPermissions.contains('inAppPromotion').toString(),
-          'allowRewards': selectedPermissions.contains('allowRewards').toString(),
-          'allowEvents': selectedPermissions.contains('allowEvents').toString(),
-          'firstName': '',
-          'lastName': '',
-          'resumeUrl': '',
-        },
-        'profileData[venueTypes]': selectedVenueTypes, // This will be handled as an array
+        'venue_name': businessNameController.text.trim(),
+        'mobile_number': phoneController.text.trim(),
+        'location': addressController.text.trim(),
+        'hours_of_operation': descriptionController.text.trim(),
+        'capacity': capacityController.text.trim(),
       };
 
-      print("🚀 Vendor Registration Data:");
-      print("Email: ${requestData['email']}");
-      print("Role: ${requestData['role']}");
-      print("ProfileData: ${requestData['profileData']}");
-      print("VenueTypes: ${requestData['profileData[venueTypes]']}");
-      print("Has Image: ${pickedImage.value != null}");
+      // CRITICAL: Convert display names to slugs for API
+      for (int i = 0; i < selectedVenueTypes.length; i++) {
+        String selectedName = selectedVenueTypes[i];
+        // Get slug from map, fallback to lowercase with dashes if not found
+        String slug = venueTypeMap[selectedName] ?? selectedName.toLowerCase().replaceAll(' ', '-');
+        requestData['hospitality_venue_type[$i]'] = slug;
+      }
 
-      final response = await _authRepository.registerUserMultipart(
+      print("VENDOR Registration Data (with slugs): $requestData");
+
+      final response = await _authRepository.registerVendor(
         data: requestData,
         imageFile: pickedImage.value,
       );
 
-      print("📡 API Response: $response");
+      print("Response: $response");
 
-      if (response != null && response is Map) {
-        bool isSuccess = response['success'] == true || response['statusCode'] == 201;
+      if (response != null && response is Map && (response['success'] == true || response['statusCode'] == 201)) {
+        final prefs = await SharedPreferences.getInstance();
 
-        if (isSuccess) {
-          final prefs = await SharedPreferences.getInstance();
+        String? signupToken = response['data']?['signupToken'];
+        if (signupToken != null) await prefs.setString('signupToken', signupToken);
 
-          // Save signup token
-          String? signupToken = response['data']?['signupToken'];
-          if (signupToken != null && signupToken.isNotEmpty) {
-            await prefs.setString('signupToken', signupToken);
-          }
+        final otp = response['data']?['otp'];
+        if (otp != null) await prefs.setString('pendingOtp', otp.toString());
 
-          // Save OTP if provided
-          final otp = response['data']?['otp'];
-          if (otp != null) {
-            await prefs.setString('pendingOtp', otp.toString());
-          }
+        await prefs.setString('pendingEmail', emailController.text.trim());
 
-          // Save role
-          String backendRole = response['data']?['role'] ?? 'HOSPITALITY_VENUE';
+        Utils.successSnackBar("Success", response['message'] ?? "Venue registered successfully");
 
+        Get.toNamed(RouteName.emailView, arguments: {
+          "email": emailController.text.trim(),
+          "signupToken": signupToken,
+          "otp": otp,
+        });
 
-          await prefs.setString('pendingEmail', emailController.text.trim());
-
-          Utils.successSnackBar("Success", response['message'] ?? "Venue registered successfully");
-
-          // Navigate to email verification
-          Get.toNamed(RouteName.emailView, arguments: {
-
-            "email": emailController.text.trim(),
-            "signupToken": signupToken,
-            "otp": otp,
-          });
-
-          clearForm();
-        } else {
-          String errorMessage = _extractErrorMessage(response);
-          Utils.errorSnackBar("Registration Failed", errorMessage);
-        }
+        clearForm();
       } else {
-        Utils.errorSnackBar("Error", "Invalid response from server");
+        String errorMessage = _extractErrorMessage(response);
+        Utils.errorSnackBar("Registration Failed", errorMessage);
       }
     } catch (e) {
-      print("❌ Registration Error: $e");
+      print("Error: $e");
       String errorMessage = _handleRegistrationError(e);
       Utils.errorSnackBar("Error", errorMessage);
     } finally {
@@ -208,28 +231,19 @@ class VendorAuthController extends GetxController {
     }
   }
 
-// Add these helper methods to VendorAuthController
-  String _extractErrorMessage(Map response) {
-    if (response['message'] != null) {
-      return response['message'].toString();
-    }
-    return "Registration failed. Please try again.";
+  String _extractErrorMessage(Map? response) {
+    if (response?['message'] != null) return response!['message'].toString();
+    return "Registration failed";
   }
 
   String _handleRegistrationError(dynamic error) {
     String errorString = error.toString();
-    if (errorString.contains('400')) {
-      return "Invalid input data. Please check your information.";
-    } else if (errorString.contains('409')) {
-      return "Email already exists. Please use a different email.";
-    } else if (errorString.contains('422')) {
-      return "Validation failed. Please check all required fields.";
-    } else if (errorString.contains('No Internet')) {
-      return "No internet connection. Please check your network.";
-    } else if (errorString.contains('timeout')) {
-      return "Request timeout. Please try again.";
-    }
-    return "Something went wrong. Please try again.";
+    if (errorString.contains('400')) return "Invalid input data";
+    if (errorString.contains('409')) return "Email already exists";
+    if (errorString.contains('422')) return "Validation failed";
+    if (errorString.contains('No Internet')) return "No internet connection";
+    if (errorString.contains('timeout')) return "Request timeout";
+    return "Something went wrong";
   }
 
   void clearForm() {

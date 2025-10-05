@@ -7,10 +7,7 @@ import '../../../utils/utils.dart';
 class ResetOtpController extends GetxController {
   final _authRepository = AuthRepository();
 
-  final List<TextEditingController> controllers = List.generate(
-    4, // Changed from 6 to 4 as per your requirement
-        (_) => TextEditingController(),
-  );
+  final List<TextEditingController> controllers = List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
 
   RxBool isLoading = false.obs;
@@ -22,19 +19,8 @@ class ResetOtpController extends GetxController {
   void onInit() {
     super.onInit();
     email = Get.arguments?['email'] ?? '';
-    print("Reset OTP Controller initialized with email: $email");
+    print("Reset OTP Controller - Email: $email");
   }
-
-  // @override
-  // void onClose() {
-  //   for (var controller in controllers) {
-  //     controller.dispose();
-  //   }
-  //   for (var focusNode in focusNodes) {
-  //     focusNode.dispose();
-  //   }
-  //   super.onClose();
-  // }
 
   void onOTPChange(int index, String value, BuildContext context) {
     if (value.isNotEmpty && index < focusNodes.length - 1) {
@@ -47,11 +33,16 @@ class ResetOtpController extends GetxController {
 
   String getOtp() => controllers.map((e) => e.text).join();
 
-  // ✅ NEW: API integration for OTP verification
   Future<void> verifyOtpForResetPassword() async {
     final otp = getOtp();
+
     if (otp.length != 4) {
-      Utils.toastMessage("Enter 4 digit OTP");
+      Utils.toastMessage("Please enter 4-digit OTP");
+      return;
+    }
+
+    if (email.isEmpty) {
+      Utils.toastMessage("Email not found");
       return;
     }
 
@@ -63,16 +54,15 @@ class ResetOtpController extends GetxController {
         "otp": otp,
       };
 
-      print("Verifying password reset OTP: $requestData");
+      print("Verifying password reset OTP: $email");
 
       final response = await _authRepository.verifyPasswordResetOtp(requestData);
 
-      print("Password reset OTP verification response: $response");
+      print("OTP verification response: $response");
 
-      if (response['success'] == true) {
-        Utils.toastMessage(response['message'] ?? "OTP verified successfully!");
+      if (response != null && response is Map && response['success'] == true) {
+        Utils.successSnackBar("Success", response['message'] ?? "OTP verified successfully!");
 
-        // Navigate to reset password screen with email and OTP
         Get.toNamed(
             RouteName.resetPasswordView,
             arguments: {
@@ -81,19 +71,32 @@ class ResetOtpController extends GetxController {
             }
         );
       } else {
-        Utils.toastMessage(response['message'] ?? "Invalid OTP. Please try again.");
+        String errorMessage = response?['message'] ?? "Invalid OTP";
+        Utils.errorSnackBar("Verification Failed", errorMessage);
       }
 
     } catch (error) {
-      print("Password reset OTP verification error: $error");
-      Utils.toastMessage("Something went wrong. Please try again.");
+      print("OTP verification error: $error");
+
+      String errorMessage = "Something went wrong";
+      if (error.toString().contains('401')) {
+        errorMessage = "Invalid or expired OTP";
+      } else if (error.toString().contains('No Internet')) {
+        errorMessage = "No internet connection";
+      }
+
+      Utils.errorSnackBar("Error", errorMessage);
     } finally {
       isLoading.value = false;
     }
   }
 
-  // ✅ NEW: Resend OTP functionality
   Future<void> resendOtp() async {
+    if (email.isEmpty) {
+      Utils.toastMessage("Email not found");
+      return;
+    }
+
     try {
       isResendLoading.value = true;
 
@@ -105,29 +108,35 @@ class ResetOtpController extends GetxController {
 
       final response = await _authRepository.resendPasswordResetOtp(requestData);
 
-      print("Resend password reset OTP response: $response");
+      print("Resend OTP response: $response");
 
-      if (response['success'] == true) {
-        Utils.toastMessage(response['message'] ?? "OTP sent successfully!");
+      if (response != null && response is Map && response['success'] == true) {
+        Utils.successSnackBar("Success", "OTP sent to your email");
 
-        // Clear previous OTP
         for (var controller in controllers) {
           controller.clear();
         }
-
-        // Focus on first field
         if (focusNodes.isNotEmpty) {
           focusNodes[0].requestFocus();
         }
       } else {
-        Utils.toastMessage(response['message'] ?? "Failed to resend OTP");
+        Utils.errorSnackBar("Error", "Failed to resend OTP");
       }
 
     } catch (error) {
-      print("Resend password reset OTP error: $error");
-      Utils.toastMessage("Something went wrong. Please try again.");
+      print("Resend OTP error: $error");
+      Utils.errorSnackBar("Error", "Failed to resend OTP");
     } finally {
       isResendLoading.value = false;
+    }
+  }
+
+  void clearOtp() {
+    for (var controller in controllers) {
+      controller.clear();
+    }
+    if (focusNodes.isNotEmpty) {
+      focusNodes[0].requestFocus();
     }
   }
 }

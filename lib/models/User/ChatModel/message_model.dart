@@ -65,11 +65,16 @@ class ChatMessage {
   });
 
   // From WebSocket/API JSON
-  factory ChatMessage.fromJson(Map<String, dynamic> json, int currentUserId) {
+  factory ChatMessage.fromJson(Map<String, dynamic> json, int currentUserId, {String? baseUrl}) {
     MessageType messageType = MessageType.text;
 
-    // Check for location first
-    if (json['latitude'] != null && json['longitude'] != null) {
+    // ✅ Check text for location URL first
+    final textContent = json['text'] ?? json['message'];
+    if (textContent != null && textContent.toString().contains('maps.google.com')) {
+      messageType = MessageType.location;
+    }
+    // Check for location coordinates
+    else if (json['latitude'] != null && json['longitude'] != null) {
       messageType = MessageType.location;
     }
     // Then check file type
@@ -86,11 +91,11 @@ class ChatMessage {
     // Check if file URL exists
     else if (json['file'] != null || json['file_url'] != null) {
       final fileUrl = (json['file'] ?? json['file_url']).toString().toLowerCase();
-      if (fileUrl.contains('.jpg') || fileUrl.contains('.png') || fileUrl.contains('.jpeg')) {
+      if (fileUrl.contains('.jpg') || fileUrl.contains('.png') || fileUrl.contains('.jpeg') || fileUrl.contains('.webp') || fileUrl.contains('.gif')) {
         messageType = MessageType.image;
-      } else if (fileUrl.contains('.mp4') || fileUrl.contains('.mov')) {
+      } else if (fileUrl.contains('.mp4') || fileUrl.contains('.mov') || fileUrl.contains('.avi')) {
         messageType = MessageType.video;
-      } else {
+      } else if (fileUrl.isNotEmpty && fileUrl != 'null') {
         messageType = MessageType.file;
       }
     }
@@ -108,22 +113,67 @@ class ChatMessage {
       parsedTime = DateTime.now();
     }
 
+    // Fix file URL - convert relative path to full URL
+    String? fixedFileUrl;
+    final rawFileUrl = json['file'] ?? json['file_url'];
+    if (rawFileUrl != null && rawFileUrl.toString().isNotEmpty && rawFileUrl.toString() != 'null') {
+      final fileUrlStr = rawFileUrl.toString();
+      if (fileUrlStr.startsWith('http://') || fileUrlStr.startsWith('https://')) {
+        fixedFileUrl = fileUrlStr;
+      } else if (fileUrlStr.startsWith('/')) {
+        if (baseUrl != null) {
+          fixedFileUrl = '$baseUrl$fileUrlStr';
+        } else {
+          fixedFileUrl = fileUrlStr;
+        }
+      } else {
+        fixedFileUrl = fileUrlStr;
+      }
+    }
+
+    // ✅ Extract location data from text if exists
+    double? lat;
+    double? lng;
+    String? locName;
+
+    if (messageType == MessageType.location && textContent != null) {
+      final text = textContent.toString();
+      if (text.contains('maps.google.com/?q=')) {
+        final parts = text.split('\n');
+        if (parts.isNotEmpty) {
+          locName = parts[0]; // First line is location name
+        }
+        // Try to extract coordinates from URL
+        final urlPart = text.substring(text.indexOf('maps.google.com'));
+        final coordMatch = RegExp(r'q=(-?\d+\.?\d*),(-?\d+\.?\d*)').firstMatch(urlPart);
+        if (coordMatch != null) {
+          lat = double.tryParse(coordMatch.group(1) ?? '');
+          lng = double.tryParse(coordMatch.group(2) ?? '');
+        }
+      }
+    }
+
+    // Use provided coordinates if not extracted from text
+    lat ??= json['latitude'] != null ? double.tryParse(json['latitude'].toString()) : null;
+    lng ??= json['longitude'] != null ? double.tryParse(json['longitude'].toString()) : null;
+    locName ??= json['location_name'];
+
     return ChatMessage(
       id: json['id'],
       senderId: json['sender']?['id'] ?? json['sender_id'],
       receiverId: json['receiver']?['id'] ?? json['receiver_id'],
-      text: json['text'] ?? json['message'],
+      text: textContent,
       type: messageType,
       status: MessageStatus.delivered,
       timestamp: parsedTime,
       isSentByMe: (json['sender']?['id'] ?? json['sender_id']) == currentUserId,
-      fileUrl: json['file'] ?? json['file_url'],
+      fileUrl: fixedFileUrl,
       fileName: json['file_name'],
       fileType: json['file_type'] ?? json['message_type'],
       fileSize: json['file_size'],
-      latitude: json['latitude'] != null ? double.tryParse(json['latitude'].toString()) : null,
-      longitude: json['longitude'] != null ? double.tryParse(json['longitude'].toString()) : null,
-      locationName: json['location_name'],
+      latitude: lat,
+      longitude: lng,
+      locationName: locName,
     );
   }
 

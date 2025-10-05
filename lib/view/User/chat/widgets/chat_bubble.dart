@@ -1,5 +1,6 @@
 // Path: View/user/chat/widgets/chat_bubble.dart
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nikosafe/models/User/ChatModel/message_model.dart';
@@ -274,8 +275,26 @@ class ChatBubble extends StatelessWidget {
         );
 
       case MessageType.location:
+      // ✅ Extract URL from text if exists
+        String? displayText = message.text;
+        String? extractedUrl;
+
+        if (displayText != null && displayText.contains('maps.google.com')) {
+          final parts = displayText.split('\n');
+          if (parts.length > 1) {
+            displayText = parts[0]; // Location name
+            extractedUrl = parts[1]; // URL
+          }
+        }
+
         return GestureDetector(
-          onTap: () => _openLocation(),
+          onTap: () {
+            if (extractedUrl != null) {
+              _openUrl(extractedUrl);
+            } else {
+              _openLocation();
+            }
+          },
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -291,31 +310,36 @@ class ChatBubble extends StatelessWidget {
                   children: [
                     const Icon(Icons.location_on, color: Colors.red, size: 24),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Location',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                    Expanded(
+                      child: Text(
+                        displayText ?? message.locationName ?? 'Location',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-                if (message.locationName != null) ...[
-                  const SizedBox(height: 6),
-                  Text(
-                    message.locationName!,
-                    style: const TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                ],
-                const SizedBox(height: 6),
-                Text(
-                  'Tap to open in maps',
-                  style: TextStyle(
-                    color: Colors.blue[300],
-                    fontSize: 12,
-                    decoration: TextDecoration.underline,
-                  ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.map, color: Colors.white70, size: 16),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Tap to open in maps',
+                        style: TextStyle(
+                          color: Colors.blue[300],
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -405,10 +429,18 @@ class ChatBubble extends StatelessWidget {
   void _openLocation() async {
     final url = message.locationUrl;
     if (url != null) {
+      await _openUrl(url);
+    }
+  }
+
+  Future<void> _openUrl(String url) async {
+    try {
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
+    } catch (e) {
+      if (kDebugMode) print('Error opening URL: $e');
     }
   }
 }

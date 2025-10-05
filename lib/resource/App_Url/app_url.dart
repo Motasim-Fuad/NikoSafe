@@ -2,19 +2,38 @@
 // Copy this ENTIRE file
 
 class AppUrl {
-  static const String base_url = 'https://card-bold-prescription-karen.trycloudflare.com';
-  static const String ws_base_url = 'wss://card-bold-prescription-karen.trycloudflare.com';
+  static const String base_url = 'https://measurements-cricket-cup-thin.trycloudflare.com';
+  static const String ws_base_url = 'wss://measurements-cricket-cup-thin.trycloudflare.com';
 
-  // Auth URLs
-  static const String userRegisterUrl = '$base_url/api/basicuser/register/';
-  static const String verifyEmailUrl = '$base_url/api/basicuser/verify-otp/';
-  static const String resendOtpUrl = '$base_url/api/basicuser/resend-otp/';
-  static const String setPasswordUrl = '$base_url/api/basicuser/set-password/';
-  static const String loginUrl = '$base_url/api/basicuser/login/';
-  static const String forgotPasswordUrl = '$base_url/api/basicuser/password/reset-request/';
-  static const String verifyPasswordResetOtpUrl = '$base_url/api/basicuser/password/reset-verify-otp/';
-  static const String confirmPasswordResetUrl = '$base_url/api/basicuser/password/reset-confirm/';
-  static const String resendPasswordResetOtpUrl = '$base_url/api/basicuser/password/reset-request/';
+  // ====== REGISTRATION ENDPOINTS (3 Different) ======
+  static const String userRegisterUrl = "$base_url/api/basicuser/register/";
+  static const String providerRegisterUrl = "$base_url/api/provider/register/";
+  static const String vendorRegisterUrl = "$base_url/api/hospitality/register/";
+
+  // ====== LOGIN ENDPOINTS ======
+  static const String LoginUrl = "$base_url/api/basicuser/login/";
+
+
+  // ====== GET ENDPOINTS ======
+  static const String getDesignationsUrl = "$base_url/api/provider/designations/";
+  static const String getVenueTypesUrl = "$base_url/api/hospitality/types/";
+
+  // ====== EMAIL VERIFICATION (Same for all) ======
+  static const String verifyEmailUrl = "$base_url/api/basicuser/verify-otp/";
+  static const String resendOtpUrl = "$base_url/api/basicuser/resend-otp/";
+  static const String setPasswordUrl = "$base_url/api/basicuser/set-password/";
+
+  // ====== FORGOT PASSWORD (Same for all) ======
+  static const String forgotPasswordUrl = "$base_url/api/basicuser/forgot-password/";
+  static const String verifyPasswordResetOtpUrl = "$base_url/api/basicuser/verify-password-reset-otp/";
+  static const String resendPasswordResetOtpUrl = "$base_url/api/basicuser/resend-password-reset-otp/";
+  static const String confirmPasswordResetUrl = "$base_url/api/basicuser/confirm-password-reset/";
+
+
+
+
+
+
 
   // Social/Post URLs
   static const String socialPostTypes = '$base_url/api/social/post-types/';

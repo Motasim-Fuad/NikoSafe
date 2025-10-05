@@ -8,11 +8,7 @@ import '../../../Repositry/auth_repo/auth_repositry.dart';
 class OTPController extends GetxController {
   final _authRepository = AuthRepository();
 
-  // ✅ 4 digit OTP controllers (not 6)
-  final List<TextEditingController> controllers = List.generate(
-    4, // Changed from 6 to 4
-        (_) => TextEditingController(),
-  );
+  final List<TextEditingController> controllers = List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
 
   RxBool isLoading = false.obs;
@@ -22,20 +18,8 @@ class OTPController extends GetxController {
   void onInit() {
     super.onInit();
     email = Get.arguments?['email'] ?? '';
-    print("📧 Email for OTP verification: $email");
+    print("Email for OTP verification: $email");
   }
-
-  // @override
-  // void onClose() {
-  //   // Clean up controllers and focus nodes
-  //   for (var controller in controllers) {
-  //     controller.dispose();
-  //   }
-  //   for (var focusNode in focusNodes) {
-  //     focusNode.dispose();
-  //   }
-  //   super.onClose();
-  // }
 
   void onOTPChange(int index, String value, BuildContext context) {
     if (value.isNotEmpty && index < focusNodes.length - 1) {
@@ -51,7 +35,6 @@ class OTPController extends GetxController {
   Future<void> verifyOtp() async {
     final otp = getOtp();
 
-    // ✅ Check for 4 digit OTP
     if (otp.length != 4) {
       Utils.toastMessage("Please enter 4-digit OTP");
       return;
@@ -65,20 +48,16 @@ class OTPController extends GetxController {
     isLoading.value = true;
 
     try {
-      // ✅ Prepare data for OTP verification API
       final requestData = {
         "email": email,
         "otp": otp,
       };
 
-      print("🔐 Verifying OTP:");
-      print("Email: $email");
-      print("OTP: $otp");
+      print("Verifying OTP - Email: $email, OTP: $otp");
 
-      // ✅ Call your verify email API
       final response = await _authRepository.verifyEmailOtp(requestData);
 
-      print("📡 OTP Verification Response: $response");
+      print("OTP Verification Response: $response");
 
       if (response != null && response is Map) {
         bool isSuccess = response['success'] == true;
@@ -86,11 +65,9 @@ class OTPController extends GetxController {
         if (isSuccess) {
           final prefs = await SharedPreferences.getInstance();
 
-          // ✅ Save verification status
           await prefs.setBool('isVerified', true);
           await prefs.setString('verified_email', email);
 
-          // ✅ If backend returns tokens, save them
           if (response['data']?['token'] != null) {
             await prefs.setString('auth_token', response['data']['token']);
           }
@@ -99,9 +76,7 @@ class OTPController extends GetxController {
             await prefs.setString('refresh_token', response['data']['refreshToken']);
           }
 
-          Utils.successSnackBar("Success",
-              response['message'] ?? "Email verified successfully!");
-
+          Utils.successSnackBar("Success", response['message'] ?? "Email verified successfully!");
 
           Get.toNamed(
             RouteName.passwordView,
@@ -109,10 +84,7 @@ class OTPController extends GetxController {
           );
 
         } else {
-          String errorMessage = "OTP verification failed";
-          if (response['message'] != null) {
-            errorMessage = response['message'].toString();
-          }
+          String errorMessage = response['message']?.toString() ?? "OTP verification failed";
           Utils.errorSnackBar("Verification Failed", errorMessage);
         }
       } else {
@@ -120,7 +92,7 @@ class OTPController extends GetxController {
       }
 
     } catch (e) {
-      print("❌ OTP Verification Error: $e");
+      print("OTP Verification Error: $e");
 
       String errorMessage = "Something went wrong";
 
@@ -142,7 +114,6 @@ class OTPController extends GetxController {
     }
   }
 
-  // ✅ Resend OTP functionality
   Future<void> resendOtp() async {
     if (email.isEmpty) {
       Utils.toastMessage("Email not found");
@@ -154,12 +125,11 @@ class OTPController extends GetxController {
 
       final requestData = {"email": email};
 
-      // ✅ Call resend OTP API (you might need to create this in repository)
       final response = await _authRepository.resendOtp(requestData);
 
       if (response != null && response is Map && response['success'] == true) {
         Utils.successSnackBar("Success", "OTP sent to your email");
-        clearOtp(); // Clear current OTP input
+        clearOtp();
       } else {
         Utils.errorSnackBar("Error", "Failed to resend OTP");
       }
@@ -171,7 +141,6 @@ class OTPController extends GetxController {
     }
   }
 
-  // ✅ Clear OTP fields
   void clearOtp() {
     for (var controller in controllers) {
       controller.clear();
@@ -180,6 +149,4 @@ class OTPController extends GetxController {
       focusNodes[0].requestFocus();
     }
   }
-
-
 }

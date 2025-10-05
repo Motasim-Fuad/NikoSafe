@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +15,6 @@ class ServiceProviderAuthController extends GetxController {
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  final passwordController = TextEditingController();
   final locationController = TextEditingController();
   final selectedJob = RxString('');
 
@@ -43,11 +41,62 @@ class ServiceProviderAuthController extends GetxController {
   final agreeTerms = false.obs;
   final loading = false.obs;
   final pickedImage = Rx<File?>(null);
-  final rememberMe = false.obs;
   final isImageUploading = false.obs;
 
-  // Options
-  final List<String> jobList = ["Plumber", "Electrician", "Cleaner", "Carpenter", "Painter", "Trainer", "Therapist"];
+  // Options - Store BOTH name and slug
+  final jobList = <String>[].obs; // Display names for UI
+  final jobSlugMap = <String, String>{}.obs; // name -> slug mapping
+  final isLoadingDesignations = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDesignations();
+  }
+
+  // Fetch Designations from API and build name->slug mapping
+  Future<void> fetchDesignations() async {
+    try {
+      isLoadingDesignations.value = true;
+      final response = await _authRepository.getDesignations();
+
+      print("Designations Response: $response");
+
+      if (response != null && response is Map && response['success'] == true) {
+        final data = response['data'] as List?;
+        if (data != null) {
+          jobList.clear();
+          jobSlugMap.clear();
+
+          for (var item in data) {
+            String name = item['name'].toString();
+            String slug = item['slug'].toString();
+
+            jobList.add(name); // For UI display
+            jobSlugMap[name] = slug; // Map name to slug for API
+          }
+
+          print("Loaded ${jobList.length} designations");
+          print("Designation mapping: $jobSlugMap");
+        }
+      }
+    } catch (e) {
+      print("Error loading designations: $e");
+      // Fallback with proper mapping
+      jobList.value = ["Plumber", "Electrician", "Cleaner", "Carpenter", "Painter", "Trainer", "Therapist"];
+      jobSlugMap.value = {
+        "Plumber": "plumber",
+        "Electrician": "electrician",
+        "Cleaner": "cleaner",
+        "Carpenter": "carpenter",
+        "Painter": "painter",
+        "Trainer": "trainer",
+        "Therapist": "therapist",
+      };
+    } finally {
+      isLoadingDesignations.value = false;
+    }
+  }
 
   // Validation Methods
   bool validateFirstName(String? value) {
@@ -87,23 +136,10 @@ class ServiceProviderAuthController extends GetxController {
       return false;
     }
     if (!RegExp(r'^[0-9]{10,15}$').hasMatch(value.trim())) {
-      phoneError.value = "Enter a valid mobile number (10-15 digits)";
+      phoneError.value = "Enter a valid mobile number";
       return false;
     }
     phoneError.value = null;
-    return true;
-  }
-
-  bool validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      passwordError.value = "Password cannot be empty";
-      return false;
-    }
-    if (value.length < 6) {
-      passwordError.value = "Password must be at least 6 characters";
-      return false;
-    }
-    passwordError.value = null;
     return true;
   }
 
@@ -125,22 +161,17 @@ class ServiceProviderAuthController extends GetxController {
     return true;
   }
 
-  // ✅ Enhanced image validation
   bool validateImage() {
     if (pickedImage.value == null) {
       imageError.value = "Please select a profile image";
       return false;
     }
-
-    // Check file size (limit to 5MB)
     final fileSizeInBytes = pickedImage.value!.lengthSync();
     final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
     if (fileSizeInMB > 5) {
       imageError.value = "Image size should be less than 5MB";
       return false;
     }
-
     imageError.value = null;
     return true;
   }
@@ -151,18 +182,14 @@ class ServiceProviderAuthController extends GetxController {
     isValid = validateLastName(lastNameController.text) && isValid;
     isValid = validateEmail(emailController.text) && isValid;
     isValid = validatePhone(phoneController.text) && isValid;
-    isValid = validatePassword(passwordController.text) && isValid;
     isValid = validateLocation(locationController.text) && isValid;
     isValid = validateJob(selectedJob.value) && isValid;
-    // ✅ Add image validation to form validation
     isValid = validateImage() && isValid;
     return isValid;
   }
 
-  // ✅ Enhanced Image Picker with multiple options
   Future<void> pickImage() async {
     try {
-      // Show bottom sheet for image selection options
       final ImageSource? source = await Get.bottomSheet<ImageSource>(
         Container(
           padding: const EdgeInsets.all(20),
@@ -176,10 +203,7 @@ class ServiceProviderAuthController extends GetxController {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Select Image Source',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              const Text('Select Image Source', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.photo_library),
@@ -191,7 +215,6 @@ class ServiceProviderAuthController extends GetxController {
                 title: const Text('Camera'),
                 onTap: () => Get.back(result: ImageSource.camera),
               ),
-              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -201,43 +224,32 @@ class ServiceProviderAuthController extends GetxController {
       if (source == null) return;
 
       isImageUploading.value = true;
-
       final picker = ImagePicker();
       final picked = await picker.pickImage(
         source: source,
-        maxWidth: 1024, // Limit image resolution for better performance
+        maxWidth: 1024,
         maxHeight: 1024,
-        imageQuality: 85, // Compress image quality
+        imageQuality: 85,
       );
 
       if (picked != null) {
         final file = File(picked.path);
-
-        // Validate file size
-        final fileSizeInBytes = file.lengthSync();
-        final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
+        final fileSizeInMB = file.lengthSync() / (1024 * 1024);
         if (fileSizeInMB > 5) {
           Utils.errorSnackBar("Image Too Large", "Please select an image smaller than 5MB");
           return;
         }
-
         pickedImage.value = file;
-        imageError.value = null; // Clear any previous error
+        imageError.value = null;
         Utils.successSnackBar("Success", "Image selected successfully");
-      } else {
-        Utils.infoSnackBar("No Image", "No image selected");
       }
     } catch (e) {
-      Utils.errorSnackBar("Error", "Failed to pick image: ${e.toString()}");
+      Utils.errorSnackBar("Error", "Failed to pick image");
     } finally {
       isImageUploading.value = false;
     }
   }
 
-  // ✅ Enhanced signup method with better error handling
-// ServiceProviderAuthController.dart - Updated signup method
-// ServiceProviderAuthController.dart - Update the signup method
   Future<void> signup() async {
     if (!agreeTerms.value) {
       Utils.infoSnackBar("Terms Required", "Please agree to the Terms & Conditions");
@@ -245,142 +257,63 @@ class ServiceProviderAuthController extends GetxController {
     }
 
     if (!validateForm()) {
-      Utils.infoSnackBar("Input Error", "Please correct the errors in the form.");
+      Utils.errorSnackBar("Input Error", "Please correct the errors");
       return;
     }
 
     loading.value = true;
 
     try {
-      // ✅ CORRECT STRUCTURE: Build proper field structure for multipart
+      // CRITICAL: Convert display name to slug for API
+      String jobSlug = jobSlugMap[selectedJob.value] ?? selectedJob.value.toLowerCase().replaceAll(' ', '-');
+
       final requestData = {
         'email': emailController.text.trim(),
-        'password': passwordController.text,
-
-        'profileData': {
-          'firstName': firstNameController.text.trim(),
-          'lastName': lastNameController.text.trim(),
-          'phone': phoneController.text.trim(),
-          'location': locationController.text.trim(),
-          'designation': selectedJob.value,
-          'resumeUrl': '',
-        },
+        'full_name': '${firstNameController.text.trim()} ${lastNameController.text.trim()}',
+        'service_provider_designation': jobSlug, // Send slug, not name
+        'phone_number': phoneController.text.trim(),
+        'location': locationController.text.trim(),
       };
 
-      print("🚀 Service Provider Registration Data:");
-      print("Email: ${requestData['email']}");
-      print("Role: ${requestData['role']}");
-      print("ProfileData: ${requestData['profileData']}");
-      print("Has Image: ${pickedImage.value != null}");
+      print("SERVICE PROVIDER Registration Data (with slug): $requestData");
 
-      final response = await _authRepository.registerUserMultipart(
+      final response = await _authRepository.registerServiceProvider(
         data: requestData,
         imageFile: pickedImage.value,
       );
 
-      print("📡 API Response: $response");
+      print("Response: $response");
 
-      if (response != null && response is Map) {
-        bool isSuccess = response['success'] == true || response['statusCode'] == 201;
-
-        if (isSuccess) {
-          await _handleSuccessfulRegistration(response);
-        } else {
-          String errorMessage = _extractErrorMessage(response);
-          Utils.errorSnackBar("Registration Failed", errorMessage);
-        }
+      if (response != null && response is Map && (response['success'] == true || response['statusCode'] == 201)) {
+        await _handleSuccessfulRegistration(response);
       } else {
-        Utils.errorSnackBar("Error", "Invalid response from server");
+        String errorMessage = _extractErrorMessage(response);
+        Utils.errorSnackBar("Registration Failed", errorMessage);
       }
     } catch (e) {
-      print("❌ Registration Error: $e");
-      String errorMessage = _handleRegistrationError(e);
+      print("Error: $e");
+      String errorMessage = _handleError(e);
       Utils.errorSnackBar("Error", errorMessage);
     } finally {
       loading.value = false;
     }
   }
 
-
-
-  String _extractErrorMessage(Map response) {
-    if (response['message'] != null) {
-      return response['message'].toString();
-    }
-
-    if (response['error'] != null) {
-      if (response['error'] is List && response['error'].isNotEmpty) {
-        return response['error'][0]['message']?.toString() ?? "Registration failed";
-      } else if (response['error'] is String) {
-        return response['error'].toString();
-      }
-    }
-
-    if (response['errors'] != null && response['errors'] is Map) {
-      Map errors = response['errors'];
-      String errorMsg = "Validation errors: ";
-      errors.forEach((key, value) {
-        if (value is List && value.isNotEmpty) {
-          errorMsg += "$key: ${value[0]}, ";
-        }
-      });
-      return errorMsg.substring(0, errorMsg.length - 2);
-    }
-
-    return "Registration failed. Please try again.";
-  }
-
-  String _handleRegistrationError(dynamic error) {
-    String errorString = error.toString();
-
-    if (errorString.contains('400')) {
-      return "Invalid input data. Please check your information.";
-    } else if (errorString.contains('409')) {
-      return "Email already exists. Please use a different email.";
-    } else if (errorString.contains('422')) {
-      return "Validation failed. Please check all required fields.";
-    } else if (errorString.contains('413')) {
-      return "File too large. Please select a smaller image.";
-    } else if (errorString.contains('No Internet')) {
-      return "No internet connection. Please check your network.";
-    } else if (errorString.contains('timeout')) {
-      return "Request timeout. Please try again.";
-    } else if (errorString.contains('SocketException')) {
-      return "Network error. Please check your internet connection.";
-    }
-
-    return "Something went wrong. Please try again.";
-  }
-
-  // ✅ Helper method to handle different error types
-// ✅ Separate method to handle successful registration
   Future<void> _handleSuccessfulRegistration(Map response) async {
     final prefs = await SharedPreferences.getInstance();
     final responseData = response['data'] ?? response;
 
-    // Save signup token
     String? signupToken = responseData['signupToken'] ?? responseData['token'];
-    if (signupToken != null && signupToken.isNotEmpty) {
-      await prefs.setString('signupToken', signupToken);
-      print("💾 Signup token saved");
-    }
+    if (signupToken != null) await prefs.setString('signupToken', signupToken);
 
-    // Save OTP if provided
     final otp = responseData['otp'];
-    if (otp != null) {
-      await prefs.setString('pendingOtp', otp.toString());
-      print("💾 OTP saved for verification: $otp");
-    }
-
+    if (otp != null) await prefs.setString('pendingOtp', otp.toString());
 
     await prefs.setString('pendingEmail', emailController.text.trim());
 
-    String successMessage = response['message'] ?? "Service Provider account created successfully";
-    Utils.successSnackBar("Success", successMessage);
+    Utils.successSnackBar("Success", response['message'] ?? "Registration successful");
 
-    // Navigate to email verification
     Get.toNamed(RouteName.emailView, arguments: {
-
       "email": emailController.text.trim(),
       "signupToken": signupToken,
       "otp": otp,
@@ -389,52 +322,44 @@ class ServiceProviderAuthController extends GetxController {
     clearForm();
   }
 
-  // ✅ Enhanced clear form method
+  String _extractErrorMessage(Map? response) {
+    if (response?['message'] != null) return response!['message'].toString();
+    if (response?['error'] != null) {
+      if (response!['error'] is List && response['error'].isNotEmpty) {
+        return response['error'][0]['message']?.toString() ?? "Registration failed";
+      }
+      if (response['error'] is String) return response['error'].toString();
+    }
+    return "Registration failed";
+  }
+
+  String _handleError(dynamic error) {
+    String errorString = error.toString();
+    if (errorString.contains('400')) return "Invalid input data";
+    if (errorString.contains('409')) return "Email already exists";
+    if (errorString.contains('422')) return "Validation failed";
+    if (errorString.contains('413')) return "File too large";
+    if (errorString.contains('No Internet')) return "No internet connection";
+    if (errorString.contains('timeout')) return "Request timeout";
+    return "Something went wrong";
+  }
+
   void clearForm() {
     firstNameController.clear();
     lastNameController.clear();
     emailController.clear();
     phoneController.clear();
-    passwordController.clear();
     locationController.clear();
     selectedJob.value = '';
-
-    // Clear all error messages
     firstNameError.value = null;
     lastNameError.value = null;
     emailError.value = null;
     phoneError.value = null;
-    passwordError.value = null;
     locationError.value = null;
     jobError.value = null;
     imageError.value = null;
-
-    // Reset UI state
     agreeTerms.value = false;
     pickedImage.value = null;
     isPasswordVisible.value = false;
-
-    print("✅ Form cleared successfully");
   }
-
-  // @override
-  // void onClose() {
-  //   // Dispose controllers to prevent memory leaks
-  //   firstNameController.dispose();
-  //   lastNameController.dispose();
-  //   emailController.dispose();
-  //   phoneController.dispose();
-  //   passwordController.dispose();
-  //   locationController.dispose();
-  //
-  //   // Dispose focus nodes
-  //   firstNameFocus.dispose();
-  //   lastNameFocus.dispose();
-  //   emailFocus.dispose();
-  //   phoneFocus.dispose();
-  //   passwordFocus.dispose();
-  //   locationFocus.dispose();
-  //
-  //   super.onClose();
-  // }
 }

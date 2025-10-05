@@ -8,6 +8,7 @@ import 'package:nikosafe/View_Model/Services/user/chat/chat_storage_services.dar
 import 'package:nikosafe/View_Model/Services/user/chat/websocket_service.dart';
 import 'package:nikosafe/models/User/ChatModel/message_model.dart';
 import 'package:nikosafe/models/User/userHome/connect_user_model.dart';
+import 'package:nikosafe/resource/App_Url/app_url.dart'; // ✅ Add this import
 import 'package:nikosafe/utils/token_manager.dart';
 import 'package:nikosafe/utils/utils.dart';
 
@@ -91,7 +92,12 @@ class ChatController extends GetxController {
       // Extract the message data - might be nested
       final messageData = data['message'] ?? data;
 
-      final message = ChatMessage.fromJson(messageData, currentUserId!);
+      // ✅ Pass base URL here too
+      final message = ChatMessage.fromJson(
+        messageData,
+        currentUserId!,
+        baseUrl: AppUrl.base_url,
+      );
 
       // Check if message belongs to current chat
       final isFromCurrentChat = (message.senderId == selectedFriend.value?.id &&
@@ -180,11 +186,25 @@ class ChatController extends GetxController {
       if (response['success'] == true && response['data'] != null) {
         List<dynamic> messagesJson = response['data'] as List;
 
+        // ✅ Pass base URL to fix relative paths
         messages.value = messagesJson
-            .map((json) => ChatMessage.fromJson(json, currentUserId!))
+            .map((json) => ChatMessage.fromJson(
+          json,
+          currentUserId!,
+          baseUrl: AppUrl.base_url, // ✅ Add this
+        ))
             .toList();
 
-        if (kDebugMode) print('✅ Loaded ${messages.length} messages');
+        if (kDebugMode) {
+          print('✅ Loaded ${messages.length} messages');
+          // Print first message to debug
+          if (messages.isNotEmpty) {
+            final firstMsg = messages.first;
+            print('First message type: ${firstMsg.type}');
+            print('First message fileUrl: ${firstMsg.fileUrl}');
+            print('First message text: ${firstMsg.text}');
+          }
+        }
       }
     } catch (e) {
       if (kDebugMode) print('⚠️ Could not load chat history: $e');
@@ -283,26 +303,27 @@ class ChatController extends GetxController {
         if (uploadResponse['success'] == true && uploadResponse['data'] != null) {
           final fileData = uploadResponse['data'];
 
-          final updatedMessage = message.copyWith(
-            fileUrl: fileData['file'],
-          );
+          if (kDebugMode) {
+            print('✅ File uploaded successfully');
+            print('File data: $fileData');
+          }
 
-          // ✅ Fix: Simpler WebSocket payload
-          final wsPayload = {
-            'type': 'send_message',
-            'receiver_id': selectedFriend.value!.id,
-            'message': text?.trim() ?? '📎 Attachment',
-            'file_url': fileData['file'],
-            'file_name': fileData['file_name'] ?? 'file',
-            'file_type': fileData['message_type'] ?? 'image',
-          };
-
-          _wsService.sendMessage(wsPayload);
-
+          // ✅ Update local message with proper parsing
           final index = messages.indexWhere((m) => m.id == tempId);
           if (index != -1) {
-            messages[index] = updatedMessage.copyWith(status: MessageStatus.sent);
+            messages[index] = ChatMessage.fromJson(
+              fileData,
+              currentUserId!,
+              baseUrl: AppUrl.base_url, // ✅ Fix URL
+            );
           }
+
+          // Send notification via WebSocket
+          _wsService.sendMessage({
+            'type': 'file_uploaded',
+            'receiver_id': selectedFriend.value!.id,
+            'message_id': fileData['id'],
+          });
         } else {
           throw Exception('File upload failed');
         }
@@ -339,10 +360,17 @@ class ChatController extends GetxController {
 
     final tempId = DateTime.now().millisecondsSinceEpoch;
 
+    // ✅ Create Google Maps URL
+    final locationUrl = 'https://maps.google.com/?q=$latitude,$longitude';
+
+    // ✅ Text message with location name and URL
+    final messageText = '${locationName ?? 'Shared Location'}\n$locationUrl';
+
     final message = ChatMessage(
       id: tempId,
       senderId: currentUserId!,
       receiverId: selectedFriend.value!.id,
+      text: messageText, // ✅ Include URL in text
       type: MessageType.location,
       status: MessageStatus.sending,
       timestamp: DateTime.now(),
@@ -355,10 +383,11 @@ class ChatController extends GetxController {
     messages.add(message);
 
     try {
+      // ✅ Send with URL in message text
       final wsPayload = {
         'type': 'send_message',
         'receiver_id': selectedFriend.value!.id,
-        'message': locationName ?? 'Shared Location',
+        'message': messageText, // ✅ Send full text with URL
         'latitude': latitude.toString(),
         'longitude': longitude.toString(),
         'location_name': locationName ?? 'Shared Location',

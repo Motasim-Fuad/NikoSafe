@@ -4,19 +4,17 @@ import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/utils/token_manager.dart';
 import '../../../utils/utils.dart';
 import '../../../Repositry/auth_repo/auth_repositry.dart';
+
 class PasswordController extends GetxController {
   final _authRepository = AuthRepository();
 
-  // Form Controllers
   final newPasswordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  // UI State
   final newPasswordVisible = false.obs;
   final confirmPasswordVisible = false.obs;
   final loading = false.obs;
 
-  // Error handling
   final newPasswordError = Rxn<String>();
   final confirmPasswordError = Rxn<String>();
 
@@ -26,17 +24,9 @@ class PasswordController extends GetxController {
   void onInit() {
     super.onInit();
     email = Get.arguments?['email'] ?? '';
-    print("📧 Email for password setup: $email");
+    print("Email for password setup: $email");
   }
 
-  // @override
-  // void onClose() {
-  //   newPasswordController.dispose();
-  //   confirmPasswordController.dispose();
-  //   super.onClose();
-  // }
-
-  // Toggle password visibility
   void toggleNewPasswordVisibility() {
     newPasswordVisible.value = !newPasswordVisible.value;
   }
@@ -45,7 +35,6 @@ class PasswordController extends GetxController {
     confirmPasswordVisible.value = !confirmPasswordVisible.value;
   }
 
-  // Validation methods
   bool validateNewPassword(String? value) {
     if (value == null || value.isEmpty) {
       newPasswordError.value = "Password cannot be empty";
@@ -83,7 +72,6 @@ class PasswordController extends GetxController {
     return isValid;
   }
 
-  // Set Password API call
   Future<void> setPassword() async {
     if (!validateForm()) {
       Utils.errorSnackBar("Validation Error", "Please fix the errors above");
@@ -98,31 +86,25 @@ class PasswordController extends GetxController {
     loading.value = true;
 
     try {
-      // Prepare data matching your Postman request
       final requestData = {
         "email": email,
         "password": newPasswordController.text.trim(),
         "password2": confirmPasswordController.text.trim(),
       };
 
-      print("🔐 Setting Password:");
-      print("Email: $email");
-      print("Password length: ${newPasswordController.text.length}");
+      print("Setting Password for: $email");
 
-      // Call set password API
       final response = await _authRepository.setPassword(requestData);
 
-      print("📡 Set Password Response: $response");
+      print("Set Password Response: $response");
 
       if (response != null && response is Map) {
         bool isSuccess = response['success'] == true;
 
         if (isSuccess) {
-          // Extract tokens and user data from response
           final data = response['data'];
 
           if (data != null) {
-            // Save authentication data using TokenManager
             await TokenManager.saveAuthData(
               accessToken: data['access'] ?? '',
               refreshToken: data['refresh'] ?? '',
@@ -135,23 +117,16 @@ class PasswordController extends GetxController {
               },
             );
 
-            print("✅ Authentication data saved successfully");
+            print("Authentication data saved successfully");
             print("User ID: ${data['user']?['id']}");
-            print("Email: ${data['user']?['email']}");
-            print("Full Name: ${data['user']?['full_name']}");
           }
 
-          Utils.successSnackBar("Success",
-              response['message'] ?? "Password set successfully!");
+          Utils.successSnackBar("Success", response['message'] ?? "Password set successfully!");
 
-          // Navigate to main app
-          Get.offAllNamed(RouteName.authView); // or your dashboard route
+          Get.offAllNamed(RouteName.authView);
 
         } else {
-          String errorMessage = "Failed to set password";
-          if (response['message'] != null) {
-            errorMessage = response['message'].toString();
-          }
+          String errorMessage = response['message']?.toString() ?? "Failed to set password";
           Utils.errorSnackBar("Error", errorMessage);
         }
       } else {
@@ -159,12 +134,12 @@ class PasswordController extends GetxController {
       }
 
     } catch (e) {
-      print("❌ Set Password Error: $e");
+      print("Set Password Error: $e");
 
       String errorMessage = "Something went wrong";
 
       if (e.toString().contains('400')) {
-        errorMessage = "Invalid password format. Please check requirements.";
+        errorMessage = "Invalid password format";
       } else if (e.toString().contains('401')) {
         errorMessage = "Unauthorized. Please try registering again.";
       } else if (e.toString().contains('422')) {
@@ -181,7 +156,6 @@ class PasswordController extends GetxController {
     }
   }
 
-  // Clear form
   void clearForm() {
     newPasswordController.clear();
     confirmPasswordController.clear();

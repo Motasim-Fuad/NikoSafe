@@ -66,16 +66,6 @@ class SignupProviderView extends StatelessWidget {
             errorText: controller.phoneError,
           ),
           buildInput(
-            controller.passwordController,
-            "Password",
-            isPassword: true,
-            isPasswordVisible: controller.isPasswordVisible,
-            focusNode: controller.passwordFocus,
-            nextFocusNode: controller.locationFocus,
-            textInputAction: TextInputAction.next,
-            errorText: controller.passwordError,
-          ),
-          buildInput(
             controller.locationController,
             "Location",
             focusNode: controller.locationFocus,

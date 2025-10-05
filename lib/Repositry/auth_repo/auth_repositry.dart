@@ -1,38 +1,74 @@
-// AuthRepository.dart
 import 'dart:io';
 import 'package:nikosafe/resource/App_Url/app_url.dart';
 import '../../Data/Network/Network_api_services.dart';
 
 class AuthRepository {
-  final _apiService = NetworkApiServices(); // Fixed: _ instead of *
+  final _apiService = NetworkApiServices();
 
-  // ✅ User Registration - JSON only (No token needed)
-  Future<dynamic> registerUserJson(Map<String, dynamic> data) async {
-    return await _apiService.postApi(data, AppUrl.userRegisterUrl, requireAuth: false);
+  // ====== REGISTRATION APIs (3 Different) ======
+
+  // USER Registration - JSON only (Raw data)
+  Future<dynamic> registerUser(Map<String, dynamic> data) async {
+    return await _apiService.postApi(
+        data,
+        AppUrl.userRegisterUrl,
+        requireAuth: false
+    );
   }
 
-  // ✅ For SERVICE_PROVIDER & HOSPITALITY_VENUE role (Image + Multipart) (No token needed)
-  Future<dynamic> registerUserMultipart({
+  // SERVICE PROVIDER Registration - Multipart (Form data with image)
+  Future<dynamic> registerServiceProvider({
     required Map<String, dynamic> data,
     File? imageFile,
   }) async {
     return await _apiService.postMultipartApi(
-      url: AppUrl.userRegisterUrl,
+      url: AppUrl.providerRegisterUrl,
       data: data,
       imageFile: imageFile,
       imageFieldName: "image",
-      requireAuth: false, // No token needed for registration
+      requireAuth: false,
     );
   }
 
-  // ✅ Email OTP Verification (No token needed)
+  // VENDOR/HOSPITALITY Registration - Multipart (Form data with image)
+  Future<dynamic> registerVendor({
+    required Map<String, dynamic> data,
+    File? imageFile,
+  }) async {
+    return await _apiService.postMultipartApi(
+      url: AppUrl.vendorRegisterUrl,
+      data: data,
+      imageFile: imageFile,
+      imageFieldName: "image",
+      requireAuth: false,
+    );
+  }
+
+  // ====== LOGIN APIs (3 Different) ======
+
+  Future<dynamic> login(Map<String, dynamic> data) async {
+    return await _apiService.postApi(data, AppUrl.LoginUrl, requireAuth: false);
+  }
+
+
+
+  // ====== GET APIs ======
+
+  Future<dynamic> getDesignations() async {
+    return await _apiService.getApi(AppUrl.getDesignationsUrl, requireAuth: false);
+  }
+
+  Future<dynamic> getVenueTypes() async {
+    return await _apiService.getApi(AppUrl.getVenueTypesUrl, requireAuth: false);
+  }
+
+  // ====== EMAIL VERIFICATION (Same for all) ======
+
   Future<dynamic> verifyEmailOtp(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.verifyEmailUrl, requireAuth: false);
   }
 
-  // ✅ Resend OTP (No token needed)
   Future<dynamic> resendOtp(Map<String, dynamic> data) async {
-    // Add purpose field as required by your API
     final requestData = {
       ...data,
       "purpose": "verification"
@@ -40,32 +76,24 @@ class AuthRepository {
     return await _apiService.postApi(requestData, AppUrl.resendOtpUrl, requireAuth: false);
   }
 
-  // ✅ Set Password API (No token needed)
   Future<dynamic> setPassword(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.setPasswordUrl, requireAuth: false);
   }
 
-  // ✅ User Login API (No token needed)
-  Future<dynamic> loginUser(Map<String, dynamic> data) async {
-    return await _apiService.postApi(data, AppUrl.loginUrl, requireAuth: false);
-  }
+  // ====== FORGOT PASSWORD (Same for all) ======
 
-  // ✅ Forgot Password API (No token needed)
   Future<dynamic> forgotPassword(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.forgotPasswordUrl, requireAuth: false);
   }
 
-  // ✅ Verify Password Reset OTP (No token needed)
   Future<dynamic> verifyPasswordResetOtp(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.verifyPasswordResetOtpUrl, requireAuth: false);
   }
 
-  // ✅ Resend Password Reset OTP (No token needed)
   Future<dynamic> resendPasswordResetOtp(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.resendPasswordResetOtpUrl, requireAuth: false);
   }
 
-  // ✅ Confirm Password Reset - Set New Password (No token needed)
   Future<dynamic> confirmPasswordReset(Map<String, dynamic> data) async {
     return await _apiService.postApi(data, AppUrl.confirmPasswordResetUrl, requireAuth: false);
   }

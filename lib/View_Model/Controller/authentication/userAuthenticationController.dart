@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nikosafe/Repositry/auth_repo/auth_repositry.dart';
 import 'package:nikosafe/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +9,7 @@ import '../../../resource/App_routes/routes_name.dart';
 class UserAuthController extends GetxController {
   final _authRepository = AuthRepository();
 
-  // Form Controllers - Only required fields
+  // Form Controllers
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -138,7 +136,6 @@ class UserAuthController extends GetxController {
     return isValid;
   }
 
-  // ✅ CLEAN SIGNUP METHOD - Only sends required data matching Postman
   Future<void> signup() async {
     if (!agreeTerms.value) {
       Utils.infoSnackBar("Terms Required", "Please agree to the Terms & Conditions");
@@ -153,7 +150,6 @@ class UserAuthController extends GetxController {
     loading.value = true;
 
     try {
-      // ✅ CLEAN: Only send data that matches your Postman request
       final requestData = {
         "first_name": firstNameController.text.trim(),
         "last_name": lastNameController.text.trim(),
@@ -164,81 +160,44 @@ class UserAuthController extends GetxController {
         "email": emailController.text.trim(),
       };
 
-      print("🚀 Clean Registration Data:");
-      print(jsonEncode(requestData));
+      print("USER Registration: ${jsonEncode(requestData)}");
 
-      // ✅ Use clean JSON method
-      final response = await _authRepository.registerUserJson(requestData);
+      final response = await _authRepository.registerUser(requestData);
 
-      print("📡 API Response: $response");
+      print("USER Registration Response: $response");
 
-      if (response != null && response is Map) {
-        // Check if registration was successful
-        bool isSuccess = response['success'] == true;
+      if (response != null && response is Map && response['success'] == true) {
+        final prefs = await SharedPreferences.getInstance();
+        String email = response['data']?['email'] ?? emailController.text.trim();
+        await prefs.setString('pending_email', email);
 
-        if (isSuccess) {
-          final prefs = await SharedPreferences.getInstance();
+        Utils.successSnackBar("Success", response['message'] ?? "Registration successful!");
 
-          // Save email for verification process
-          String email = response['data']?['email'] ?? emailController.text.trim();
-          await prefs.setString('pending_email', email);
-
-          // Check if OTP was sent and save it
-          if (response['data']?['is_sent'] == true) {
-            print("📧 OTP sent successfully to email");
-          }
-
-          Utils.successSnackBar("Success",
-              response['message'] ?? "Registration successful. Please check your email for verification code.");
-
-          // Navigate to email verification
-          Get.toNamed(RouteName.emailView, arguments: {
-            "email": email,
-          });
-
-          clearForm();
-        } else {
-          // Handle API error response
-          String errorMessage = "Registration failed";
-          if (response['message'] != null) {
-            errorMessage = response['message'].toString();
-          } else if (response['error'] != null) {
-            if (response['error'] is List && response['error'].isNotEmpty) {
-              errorMessage = response['error'][0]['message']?.toString() ?? errorMessage;
-            } else if (response['error'] is String) {
-              errorMessage = response['error'].toString();
-            }
-          }
-          Utils.errorSnackBar("Registration Failed", errorMessage);
-        }
+        Get.toNamed(RouteName.emailView, arguments: {"email": email});
+        clearForm();
       } else {
-        Utils.errorSnackBar("Error", "Invalid response from server");
+        String errorMessage = response?['message']?.toString() ?? "Registration failed";
+        Utils.errorSnackBar("Registration Failed", errorMessage);
       }
     } catch (e) {
-      print("❌ Registration Error: $e");
-
-      String errorMessage = "Something went wrong";
-
-      // Handle specific error responses
-      if (e.toString().contains('400')) {
-        errorMessage = "Invalid input data. Please check your information.";
-      } else if (e.toString().contains('409')) {
-        errorMessage = "Email already exists. Please use a different email.";
-      } else if (e.toString().contains('422')) {
-        errorMessage = "Validation failed. Please check all required fields.";
-      } else if (e.toString().contains('No Internet')) {
-        errorMessage = "No internet connection. Please check your network.";
-      } else if (e.toString().contains('timeout')) {
-        errorMessage = "Request timeout. Please try again.";
-      }
-
+      print("USER Registration Error: $e");
+      String errorMessage = _handleError(e);
       Utils.errorSnackBar("Error", errorMessage);
     } finally {
       loading.value = false;
     }
   }
 
-  // Clear Form
+  String _handleError(dynamic error) {
+    String errorString = error.toString();
+    if (errorString.contains('400')) return "Invalid input data";
+    if (errorString.contains('409')) return "Email already exists";
+    if (errorString.contains('422')) return "Validation failed";
+    if (errorString.contains('No Internet')) return "No internet connection";
+    if (errorString.contains('timeout')) return "Request timeout";
+    return "Something went wrong";
+  }
+
   void clearForm() {
     firstNameController.clear();
     lastNameController.clear();
@@ -247,7 +206,6 @@ class UserAuthController extends GetxController {
     ageController.clear();
     weightController.clear();
     selectedSex.value = '';
-
     firstnameError.value = null;
     lastnameError.value = null;
     emailError.value = null;
@@ -255,7 +213,6 @@ class UserAuthController extends GetxController {
     ageError.value = null;
     weightError.value = null;
     sexError.value = null;
-
     agreeTerms.value = false;
   }
 }
