@@ -1,7 +1,9 @@
+// Path: view/User/UserSearch/explore_main_page.dart
+// COMPLETE FILE - Replace entire file
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
@@ -30,64 +32,78 @@ class ExploreMainPage extends StatelessWidget {
           automaticallyImplyLeading: false,
           centerTitle: true,
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 12),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomSectionButton(
-                        title: "Find a Ride",
-                        icon: SvgPicture.asset(ImageAssets.car),
-                        onPress: () {},
-                        height: size.height * 0.07, // 7% of screen height
-                        width: size.width * 0.4, // 40% of screen width
-                        loading: false,
-                        textColor: Colors.white,
-                      ),
+        body: Obx(() {
+          // Show loading indicator while fetching data
+          if (controller.isLoading.value && controller.allItems.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: AppColor.limeColor,
+              ),
+            );
+          }
 
-                      SizedBox(width: 20),
-                      CustomSectionButton(
-                        title: "Service Provider",
-                        icon: SvgPicture.asset(ImageAssets.services),
-                        onPress: () {
-                          Get.toNamed(RouteName.userserviceproviderlistview);
-                        },
-                        height: size.height * 0.07, // 7% of screen height
-                        width: size.width * 0.5, // 40% of screen width
-                        loading: false,
-                        textColor: Colors.white,
+          return RefreshIndicator(
+            onRefresh: controller.refreshData,
+            color: AppColor.limeColor,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  SizedBox(height: 12),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomSectionButton(
+                            title: "Find a Ride",
+                            icon: SvgPicture.asset(ImageAssets.car),
+                            onPress: () {},
+                            height: size.height * 0.07,
+                            width: size.width * 0.4,
+                            loading: false,
+                            textColor: Colors.white,
+                          ),
+                          SizedBox(width: 20),
+                          CustomSectionButton(
+                            title: "Service Provider",
+                            icon: SvgPicture.asset(ImageAssets.services),
+                            onPress: () {
+                              Get.toNamed(RouteName.userserviceproviderlistview);
+                            },
+                            height: size.height * 0.07,
+                            width: size.width * 0.5,
+                            loading: false,
+                            textColor: Colors.white,
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 20),
-                  Text(
-                    "Trending This Week",
-                    style: TextStyle(
-                      color: AppColor.primaryTextColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(width: 20),
+                      Text(
+                        "Trending This Week",
+                        style: TextStyle(
+                          color: AppColor.primaryTextColor,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
+                  section("Nearby Restaurant", 'restaurant'),
+                  section("Nearby Bars", 'bar'),
+                  section("Nearby Club events", 'club_event'),
                 ],
               ),
-
-              section("Nearby Restaurant", 'restaurant'),
-              section("Nearby Bars", 'bar'),
-              section("Nearby Club events", 'club_event'),
-            ],
-          ),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -131,12 +147,27 @@ class ExploreMainPage extends StatelessWidget {
           ),
         ),
         Obx(
-          () => ExploreCardCarousel(
-            items:
-                controller.allItems
-                    .where((e) => e.category == category)
-                    .toList(),
-          ),
+              () {
+            final items = controller.allItems
+                .where((e) => e.category == category)
+                .toList();
+
+            if (items.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Text(
+                    'No venues available',
+                    style: TextStyle(
+                      color: AppColor.primaryTextColor.withOpacity(0.6),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return ExploreCardCarousel(items: items);
+          },
         ),
       ],
     );

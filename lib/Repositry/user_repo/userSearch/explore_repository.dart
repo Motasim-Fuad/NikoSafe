@@ -1,414 +1,265 @@
+// Path: Repositry/user_repo/userSearch/explore_repository.dart
+// COMPLETE FILE - Replace entire file
+import 'package:flutter/foundation.dart';
+import 'package:nikosafe/Data/Network/Network_api_services.dart';
+import 'package:nikosafe/models/User/userSearch/allVenueModel.dart';
 import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
-import 'package:nikosafe/resource/asseets/image_assets.dart';
-
+import 'package:nikosafe/resource/App_Url/app_url.dart';
 
 class ExploreRepository {
+  final _apiService = NetworkApiServices();
+
+  // FIXED: Only 3 slugs needed for filtering
+  final Map<String, String> _categorySlugMap = {
+    'restaurant': 'restaurant',
+    'bar': 'bar-lounge',
+    'club_event': 'event-venue',
+  };
+
+  // Fetch all explore items from API
   Future<List<ExploreItemModel>> fetchExploreItems() async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
-    return [
-      ExploreItemModel(
-        id: '1',
-        title: 'Urban Palate', // Changed to match the image
-        subtitle: 'Modern American Cuisine',
-        imageUrl: ImageAssets.restaurant1, // Use an appropriate image for Urban Palate
-        location: 'Downtown LA',
-        date: 'May 10', // Still kept, though not directly shown in the new UI
-        time: '8:00 PM - 1:00 AM', // Still kept
-        rating: 4.8,
-        category: 'restaurant',
-        phoneNumber: '(608) 555-1234',
-        email: 'gmail.com',
-        happyHour: 'Happy Hour 5:00 - 7:00 PM | 2-for-1 Cocktails',
-        happyHourTime: '8:00 PM - 1:00 AM', // This is for general operating hours
-        safeEntryInfo: 'NikoSafe Verified: Scan QR for Safe Entry',
-        healthDeptCertified: 'Certified by xxxx Health Dept, 2025',
-        cateringInfo: 'Catering: Book us for your next event!',
-        totalRatings: 1002,
-        totalReviews: 922,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Arlene McCoy',
-            rating: 1.0,
-            reviewText: 'Great.',
-            reviewDate: 'April 2024',
-          ),
-          ReviewModel(
-            reviewerName: 'Arlene McCoy',
-            rating: 1.0,
-            reviewText: 'Great.',
-            reviewDate: 'April 2024',
-          ),
-          ReviewModel(
-            reviewerName: 'Arlene McCoy',
-            rating: 1.0,
-            reviewText: 'Great.',
-            reviewDate: 'April 2024',
-          ),
-          // Add more reviews as needed for testing the scroll
-          ReviewModel(
-            reviewerName: 'Jane Doe',
-            rating: 1.0,
-            reviewText: 'Good food, nice ambiance.',
-            reviewDate: 'March 2024',
-          ),
-          ReviewModel(
-            reviewerName: 'John Smith',
-            rating: 3.5,
-            reviewText: 'Service was a bit slow, but overall okay.',
-            reviewDate: 'February 2024',
-          ),
-        ],
-      ),
+    try {
+      List<ExploreItemModel> allItems = [];
 
-      // Keep your existing items, but you might want to add similar detailed data
-      // for them if you plan to show their detail screens as well.
-      ExploreItemModel(
-        id: '2',
-        title: 'A Bar',
-        subtitle: 'Cozy Atmosphere',
-        imageUrl: ImageAssets.bar1,
-        location: 'Downtown LA',
-        date: 'May 10',
-        time: '8:00 PM - 1:00 AM',
-        rating: 4.5,
-        category: 'bar',
-        phoneNumber: '(608) 555-1235',
-        email: 'abar@example.com',
-        happyHour: 'Happy Hour 4:00 - 6:00 PM | Half-price beers',
-        happyHourTime: '7:00 PM - 12:00 AM',
-        safeEntryInfo: 'NikoSafe Verified',
-        healthDeptCertified: 'Certified by ABC Health',
-        cateringInfo: 'Private event bookings available.',
-        totalRatings: 500,
-        totalReviews: 450,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Bar Fan',
-            rating: 4.5,
-            reviewText: 'Great drinks and good music.',
-            reviewDate: 'May 2024',
-          ),
-        ],
-      ),
+      // Fetch venues for each category
+      for (var category in _categorySlugMap.keys) {
+        final items = await fetchVenuesByCategory(category);
+        allItems.addAll(items);
+      }
 
-      ExploreItemModel(
-        id: '3',
-        title: 'B Bistro',
-        subtitle: 'French Delights',
-        imageUrl: ImageAssets.restaurant2,
-        location: 'Hollywood',
-        date: 'May 10',
-        time: '7:00 PM - 11:00 PM',
-        rating: 4.2,
-        category: 'restaurant',
-        phoneNumber: '(608) 555-1236',
-        email: 'bistro@example.com',
-        happyHour: 'No Happy Hour',
-        happyHourTime: '7:00 PM - 11:00 PM',
-        safeEntryInfo: 'NikoSafe Verified',
-        healthDeptCertified: 'Certified by XYZ Food Safety',
-        cateringInfo: 'Accepting reservations for private dinners.',
-        totalRatings: 700,
-        totalReviews: 650,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Foodie Lover',
-            rating: 4.0,
-            reviewText: 'Authentic French cuisine, a bit pricey.',
-            reviewDate: 'April 2024',
-          ),
-        ],
-      ),
-      // ... continue with your other ExploreItemModel instances,
-      // adding the new detailed fields for them as well.
-      // For simplicity, I'm only detailing the 'Urban Palate' fully.
-      ExploreItemModel(
-        id: '4',
-        title: 'C Club Event',
-        subtitle: 'Weekend EDM Party',
-        imageUrl: ImageAssets.club_even1,
-        location: 'Arts District',
-        date: 'June 15',
-        time: '9:00 PM - 3:00 AM',
-        rating: 4.7,
-        category: 'club_event',
-        phoneNumber: '(608) 555-1237',
-        email: 'clubc@example.com',
-        happyHour: 'Drink specials all night!',
-        happyHourTime: '9:00 PM - 3:00 AM',
-        safeEntryInfo: 'ID required at entry',
-        healthDeptCertified: 'Licensed Venue',
-        cateringInfo: 'N/A',
-        totalRatings: 1200,
-        totalReviews: 1100,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Party Goer',
-            rating: 5.0,
-            reviewText: 'Best club in town! Amazing music.',
-            reviewDate: 'June 2024',
-          ),
-        ],
-      ),
+      if (kDebugMode) {
+        print('✅ Total venues fetched: ${allItems.length}');
+      }
 
-      ExploreItemModel(
-        id: '5',
-        title: 'D Nightclub',
-        subtitle: 'Live DJ Set',
-        imageUrl: ImageAssets.club_even2,
-        location: 'Santa Monica',
-        date: 'May 25',
-        time: '10:00 PM - 4:00 AM',
-        rating: 4.6,
-        category: 'club_event',
-        phoneNumber: '(608) 555-1238',
-        email: 'dnightclub@example.com',
-        happyHour: 'Special cocktails until midnight',
-        happyHourTime: '10:00 PM - 4:00 AM',
-        safeEntryInfo: 'Strict dress code enforced',
-        healthDeptCertified: 'Licensed Venue',
-        cateringInfo: 'N/A',
-        totalRatings: 900,
-        totalReviews: 850,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Night Owl',
-            rating: 4.5,
-            reviewText: 'Great vibe, good place to dance.',
-            reviewDate: 'May 2024',
-          ),
-        ],
-      ),
+      return allItems;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error fetching explore items: $e');
+      }
+      return [];
+    }
+  }
 
-      ExploreItemModel(
-        id: '6',
-        title: 'F Underground',
-        subtitle: 'Indie Music Venue',
-        imageUrl: ImageAssets.club_even3,
-        location: 'Echo Park',
-        date: 'July 5',
-        time: '7:00 PM - 1:00 AM',
-        rating: 4.3,
-        category: 'club_event',
-        phoneNumber: '(608) 555-1239',
-        email: 'funderground@example.com',
-        happyHour: 'Local beer discounts 7-8 PM',
-        happyHourTime: '7:00 PM - 1:00 AM',
-        safeEntryInfo: 'All ages welcome (with adult)',
-        healthDeptCertified: 'Concert Hall Certified',
-        cateringInfo: 'Snack bar available',
-        totalRatings: 600,
-        totalReviews: 550,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Indie Fan',
-            rating: 4.0,
-            reviewText: 'Cool spot for new bands.',
-            reviewDate: 'July 2024',
-          ),
-        ],
-      ),
+  // FIXED: Fetch venues and FILTER by slug
+  Future<List<ExploreItemModel>> fetchVenuesByCategory(String category) async {
+    try {
+      final targetSlug = _categorySlugMap[category];
+      if (targetSlug == null) {
+        if (kDebugMode) {
+          print('❌ Invalid category: $category');
+        }
+        return [];
+      }
 
-      ExploreItemModel(
-        id: '7',
-        title: 'G Speakeasy',
-        subtitle: 'Hidden Gem',
-        imageUrl: ImageAssets.bar2,
-        location: 'Koreatown',
-        date: 'May 10',
-        time: '6:00 PM - 2:00 AM',
-        rating: 4.9,
-        category: 'bar',
-        phoneNumber: '(608) 555-1240',
-        email: 'gspeakeasy@example.com',
-        happyHour: 'Craft cocktail specials until 8 PM',
-        happyHourTime: '6:00 PM - 2:00 AM',
-        safeEntryInfo: 'Password required at door',
-        healthDeptCertified: 'Secret Certification',
-        cateringInfo: 'Private tastings available',
-        totalRatings: 1500,
-        totalReviews: 1400,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Secret Drinker',
-            rating: 5.0,
-            reviewText: 'The best cocktails in LA, hands down.',
-            reviewDate: 'June 2024',
-          ),
-        ],
-      ),
+      // Fetch ALL venues (without slug parameter)
+      final url = AppUrl.getAllVenuesUrl;
 
-      ExploreItemModel(
-        id: '8',
-        title: 'K Pub',
-        subtitle: 'Classic British Pub',
-        imageUrl: ImageAssets.bar3,
-        location: 'Pasadena',
-        date: 'May 10',
-        time: '12:00 PM - 11:00 PM',
-        rating: 4.0,
-        category: 'bar',
-        phoneNumber: '(608) 555-1241',
-        email: 'kpub@example.com',
-        happyHour: 'Daily pint deals',
-        happyHourTime: '12:00 PM - 11:00 PM',
-        safeEntryInfo: 'Family friendly until 9 PM',
-        healthDeptCertified: 'Certified by Pub Authority',
-        cateringInfo: 'Group bookings for events',
-        totalRatings: 800,
-        totalReviews: 750,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Pub Regular',
-            rating: 4.0,
-            reviewText: 'Great selection of beers and good pub grub.',
-            reviewDate: 'May 2024',
-          ),
-        ],
-      ),
+      if (kDebugMode) {
+        print('🔍 Fetching venues for category: $category');
+        print('📍 Target slug: $targetSlug');
+        print('📍 URL: $url');
+      }
 
-      ExploreItemModel(
-        id: '9',
-        title: 'H Restaurant',
-        subtitle: 'Mediterranean Fusion',
-        imageUrl: ImageAssets.restaurant3,
-        location: 'Beverly Hills',
-        date: 'May 10',
-        time: '6:00 PM - 10:00 PM',
-        rating: 4.7,
-        category: 'restaurant',
-        phoneNumber: '(608) 555-1242',
-        email: 'hrestaurant@example.com',
-        happyHour: 'Early bird specials 5-6 PM',
-        happyHourTime: '6:00 PM - 10:00 PM',
-        safeEntryInfo: 'Reservations recommended',
-        healthDeptCertified: 'Awarded 5 Stars',
-        cateringInfo: 'Exclusive catering services',
-        totalRatings: 1100,
-        totalReviews: 1050,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Chef Critic',
-            rating: 4.8,
-            reviewText: 'Exquisite flavors and presentation.',
-            reviewDate: 'April 2024',
-          ),
-        ],
-      ),
+      // Make API call
+      final response = await _apiService.getApi(url, requireAuth: true);
 
-      ExploreItemModel(
-        id: '10',
-        title: 'KWK Cafe',
-        subtitle: 'Cozy Coffee Shop',
-        imageUrl: ImageAssets.restaurant4,
-        location: 'Silver Lake',
-        date: 'May 10',
-        time: '7:00 AM - 6:00 PM',
-        rating: 4.5,
-        category: 'restaurant', // Can be 'cafe' or 'restaurant' depending on classification
-        phoneNumber: '(608) 555-1243',
-        email: 'kwkcafe@example.com',
-        happyHour: 'Discount on pastries after 4 PM',
-        happyHourTime: '7:00 AM - 6:00 PM',
-        safeEntryInfo: 'WiFi available',
-        healthDeptCertified: 'Local Business Certified',
-        cateringInfo: 'Coffee and pastry catering for events',
-        totalRatings: 950,
-        totalReviews: 900,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Coffee Lover',
-            rating: 4.5,
-            reviewText: 'Best coffee in the neighborhood.',
-            reviewDate: 'May 2024',
-          ),
-        ],
-      ),
-      ExploreItemModel(
-        id: '11',
-        title: 'Like Lounge',
-        subtitle: 'Vibrant Cocktail Bar',
-        imageUrl: ImageAssets.bar4,
-        location: 'Downtown LA',
-        date: 'May 10',
-        time: '5:00 PM - 1:00 AM',
-        rating: 4.6,
-        category: 'bar',
-        phoneNumber: '(608) 555-1244',
-        email: 'likelounge@example.com',
-        happyHour: 'Buy one get one free cocktails 5-7 PM',
-        happyHourTime: '5:00 PM - 1:00 AM',
-        safeEntryInfo: '21+ after 9 PM',
-        healthDeptCertified: 'Beverage Service Certified',
-        cateringInfo: 'Private bar setup for parties',
-        totalRatings: 700,
-        totalReviews: 680,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Bar Hopper',
-            rating: 4.7,
-            reviewText: 'Lively atmosphere and great bartenders.',
-            reviewDate: 'June 2024',
-          ),
-        ],
-      ),
-      ExploreItemModel(
-        id: '12',
-        title: 'Eid Eatery',
-        subtitle: 'Authentic Middle Eastern Food',
-        imageUrl: ImageAssets.bar5, // Assuming this image is suitable for an eatery
-        location: 'Culver City',
-        date: 'May 10',
-        time: '11:00 AM - 10:00 PM',
-        rating: 4.4,
-        category: 'restaurant',
-        phoneNumber: '(608) 555-1245',
-        email: 'eideatery@example.com',
-        happyHour: 'Lunch specials daily',
-        happyHourTime: '11:00 AM - 10:00 PM',
-        safeEntryInfo: 'Vegetarian and Halal options available',
-        healthDeptCertified: 'Halal Certified',
-        cateringInfo: 'Large orders for events and gatherings',
-        totalRatings: 850,
-        totalReviews: 800,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Taste Explorer',
-            rating: 4.5,
-            reviewText: 'Delicious and authentic dishes, a must-try!',
-            reviewDate: 'May 2024',
-          ),
-        ],
-      ),
+      if (response == null) {
+        if (kDebugMode) {
+          print('❌ No response from API for $category');
+        }
+        return [];
+      }
 
-      ExploreItemModel(
-        id: '13',
-        title: 'Hey Groove',
-        subtitle: 'Retro Dance Club',
-        imageUrl: ImageAssets.club_even4,
-        location: 'West Hollywood',
-        date: 'May 10',
-        time: '9:00 PM - 3:00 AM',
-        rating: 4.8,
-        category: 'club_event',
-        phoneNumber: '(608) 555-1246',
-        email: 'heygroove@example.com',
-        happyHour: '80s and 90s themed nights!',
-        happyHourTime: '9:00 PM - 3:00 AM',
-        safeEntryInfo: 'Themed dress encouraged',
-        healthDeptCertified: 'Entertainment Venue Licensed',
-        cateringInfo: 'N/A',
-        totalRatings: 1300,
-        totalReviews: 1250,
-        reviews: [
-          ReviewModel(
-            reviewerName: 'Retro Fan',
-            rating: 4.9,
-            reviewText: 'Awesome music, felt like I was back in time!',
-            reviewDate: 'June 2024',
-          ),
-        ],
-      ),
-    ];
+      // Parse response
+      final venueResponse = AllVenueResponseModel.fromJson(response);
+
+      // FIXED: Filter venues by slug
+      final filteredVenues = venueResponse.results.where((venue) {
+        // Check if venue has the target slug in its hospitality_venue_type list
+        return venue.hospitalityVenueType.any((type) => type.slug == targetSlug);
+      }).toList();
+
+      if (kDebugMode) {
+        print('✅ Found ${filteredVenues.length} venues with slug "$targetSlug" for $category');
+        print('   (Total venues in response: ${venueResponse.results.length})');
+      }
+
+      // Convert to ExploreItemModel
+      List<ExploreItemModel> items = [];
+      for (var venue in filteredVenues) {
+        // Fetch reviews for this venue
+        List<ReviewModel> reviews = [];
+        double averageRating = 0.0;
+
+        try {
+          reviews = await fetchVenueReviews(venue.id);
+          if (reviews.isNotEmpty) {
+            final totalRating = reviews.fold<double>(
+                0.0,
+                    (sum, review) => sum + review.rating
+            );
+            averageRating = totalRating / reviews.length;
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('⚠️ Could not fetch reviews for venue ${venue.id}: $e');
+          }
+        }
+
+        final item = ExploreItemModel.fromApiResponse(
+          venueData: {
+            'id': venue.id,
+            'venue_name': venue.venueName,
+            'profile_picture': venue.profilePicture ?? '',
+            'location': venue.location,
+            'hours_of_operation': venue.hoursOfOperation,
+            'mobile_number': venue.mobileNumber,
+            'capacity': venue.capacity,
+            'user': {
+              'email': venue.user.email,
+            }
+          },
+          category: category,
+          reviews: reviews,
+          averageRating: averageRating,
+          totalReviews: reviews.length,
+        );
+
+        items.add(item);
+      }
+
+      return items;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error fetching venues for $category: $e');
+        print('Stack trace: ${StackTrace.current}');
+      }
+      return [];
+    }
+  }
+
+  // Fetch reviews for a specific venue
+  Future<List<ReviewModel>> fetchVenueReviews(int venueId) async {
+    try {
+      final url = AppUrl.getVenueReviewsApiUrl(venueId);
+
+      final response = await _apiService.getApi(url, requireAuth: true);
+
+      if (response == null) {
+        return [];
+      }
+
+      final reviewsResponse = VenueReviewsResponseModel.fromJson(response);
+
+      if (kDebugMode) {
+        print('✅ Found ${reviewsResponse.results.length} reviews for venue $venueId');
+      }
+
+      return reviewsResponse.results.map((review) {
+        return ReviewModel.fromApiResponse({
+          'user': {'email': review.user.email, 'name': review.user.name},
+          'rate': {'rate': review.rate.rate},
+          'text': review.text,
+          'created_at': review.createdAt.toIso8601String(),
+          'venue_reply': review.venueReply,
+        });
+      }).toList();
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ Error fetching reviews for venue $venueId: $e');
+      }
+      return [];
+    }
+  }
+
+  // Create a review for a venue
+  Future<bool> createReview({
+    required int venueId,
+    required String reviewText,
+    required int rating,
+  }) async {
+    try {
+      final url = AppUrl.createReviewApiUrl(venueId);
+
+      final data = {
+        'text': reviewText,
+        'rate_value': rating,
+      };
+
+      if (kDebugMode) {
+        print('📝 Creating review for venue $venueId');
+        print('Data: $data');
+      }
+
+      final response = await _apiService.postApi(data, url, requireAuth: true);
+
+      if (response != null && (response['success'] == true || response['status_code'] == 201)) {
+        if (kDebugMode) {
+          print('✅ Review created successfully');
+        }
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error creating review: $e');
+      }
+      return false;
+    }
+  }
+
+  // Follow/Unfollow a venue
+  Future<bool> toggleFollowVenue(int venueId) async {
+    try {
+      final url = AppUrl.followVenueApiUrl(venueId);
+
+      if (kDebugMode) {
+        print('👥 Toggling follow for venue $venueId');
+      }
+
+      final response = await _apiService.postApi({}, url, requireAuth: true);
+
+      if (response != null && (response['success'] == true || response['status_code'] == 200)) {
+        if (kDebugMode) {
+          print('✅ Follow toggled successfully');
+        }
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error toggling follow: $e');
+      }
+      return false;
+    }
+  }
+
+  // Favorite/Unfavorite a venue
+  Future<bool> toggleFavoriteVenue(int venueId) async {
+    try {
+      final url = AppUrl.favoriteVenueApiUrl(venueId);
+
+      if (kDebugMode) {
+        print('⭐ Toggling favorite for venue $venueId');
+      }
+
+      final response = await _apiService.postApi({}, url, requireAuth: true);
+
+      if (response != null && (response['success'] == true || response['status_code'] == 200)) {
+        if (kDebugMode) {
+          print('✅ Favorite toggled successfully');
+        }
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error toggling favorite: $e');
+      }
+      return false;
+    }
   }
 }

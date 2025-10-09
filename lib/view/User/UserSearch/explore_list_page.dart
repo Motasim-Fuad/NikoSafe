@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
-import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/UserSearch/Promotions.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/carosaleWidgets.dart';
 import 'package:nikosafe/view/User/UserSearch/widgets/explore_card_list.dart';
-
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
 import 'widgets/search_bar.dart';
 
@@ -116,7 +114,4 @@ class ExploreListPage extends StatelessWidget {
       ),
     );
   }
-
-
-
 }

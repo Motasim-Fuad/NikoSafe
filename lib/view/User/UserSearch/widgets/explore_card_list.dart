@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
@@ -33,7 +34,6 @@ class ExploreCard extends StatelessWidget {
     return Row(children: stars);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -47,56 +47,77 @@ class ExploreCard extends StatelessWidget {
             // Image with overlay
             Stack(
               children: [
-                Container(
-                  height: height,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(16),topRight: Radius.circular(16)),
-                    image: DecorationImage(
-                      image: AssetImage(item.imageUrl),
-                      fit: BoxFit.cover,
+                // ✅ CachedNetworkImage replaces NetworkImage
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: item.imageUrl,
+                    height: height,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: height,
+                      width: double.infinity,
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: height,
+                      width: double.infinity,
+                      color: Colors.grey.shade300,
+                      child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
                     ),
                   ),
                 ),
-                // Rating badge (top-left) - Using numerical rating as per original design
+
+                // Rating badge (bottom-left)
                 Positioned(
                   bottom: 8,
                   left: 8,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.star, size: 14, color: Colors.yellow),
-                        SizedBox(width: 4),
+                        const Icon(Icons.star, size: 14, color: Colors.yellow),
+                        const SizedBox(width: 4),
                         Text(
-                          item.rating.toStringAsFixed(1), // Format double to 1 decimal place
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          item.rating.toStringAsFixed(1),
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ],
                     ),
                   ),
                 ),
-                // Time badge (top-right)
+
+                // Time badge (bottom-right)
                 Positioned(
                   bottom: 8,
                   right: 8,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black87,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.access_time, size: 14, color: Colors.white),
-                        SizedBox(width: 4),
+                        const Icon(Icons.access_time, size: 14, color: Colors.white),
+                        const SizedBox(width: 4),
                         Text(
                           item.time,
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ],
                     ),
@@ -111,7 +132,7 @@ class ExploreCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               decoration: BoxDecoration(
                 color: AppColor.iconColor,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(16),
                   bottomRight: Radius.circular(16),
                 ),
@@ -121,28 +142,31 @@ class ExploreCard extends StatelessWidget {
                 children: [
                   Text(
                     item.title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColor.primaryTextColor),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColor.primaryTextColor,
+                    ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Icon(Icons.location_on, size: 14, color: AppColor.secondaryTextColor),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           item.location,
-                          style: TextStyle( color: AppColor.secondaryTextColor, fontSize: 13),
+                          style: TextStyle(color: AppColor.secondaryTextColor, fontSize: 13),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 4), // Add spacing for the star rating
-                  // New: Display visual star rating here
+                  const SizedBox(height: 4),
                   _buildStarRating(item.rating),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

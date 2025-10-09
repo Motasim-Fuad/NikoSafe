@@ -1,9 +1,9 @@
 // Path: data/app_url.dart
-// Copy this ENTIRE file
+// COMPLETE FILE - Replace entire file
 
 class AppUrl {
-  static const String base_url = 'https://measurements-cricket-cup-thin.trycloudflare.com';
-  static const String ws_base_url = 'wss://measurements-cricket-cup-thin.trycloudflare.com';
+  static const String base_url = 'https://donation-furthermore-shame-quiz.trycloudflare.com';
+  static const String ws_base_url = 'wss://donation-furthermore-shame-quiz.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS (3 Different) ======
   static const String userRegisterUrl = "$base_url/api/basicuser/register/";
@@ -12,7 +12,6 @@ class AppUrl {
 
   // ====== LOGIN ENDPOINTS ======
   static const String LoginUrl = "$base_url/api/basicuser/login/";
-
 
   // ====== GET ENDPOINTS ======
   static const String getDesignationsUrl = "$base_url/api/provider/designations/";
@@ -28,12 +27,6 @@ class AppUrl {
   static const String verifyPasswordResetOtpUrl = "$base_url/api/basicuser/verify-password-reset-otp/";
   static const String resendPasswordResetOtpUrl = "$base_url/api/basicuser/resend-password-reset-otp/";
   static const String confirmPasswordResetUrl = "$base_url/api/basicuser/confirm-password-reset/";
-
-
-
-
-
-
 
   // Social/Post URLs
   static const String socialPostTypes = '$base_url/api/social/post-types/';
@@ -61,6 +54,14 @@ class AppUrl {
   static const String socialAcceptFriendRequest = '$base_url/api/social/friends/';
   static const String socialDeclineFriendRequest = '$base_url/api/social/friends/';
 
+  // ====== VENUE/EXPLORE ENDPOINTS (FIXED) ======
+  static const String getAllVenuesUrl = "$base_url/api/hospitality/venues/";
+  static const String getVenueReviewsUrl = "$base_url/api/hospitality/venues/";
+  static const String createVenueReviewUrl = "$base_url/api/hospitality/venues/";
+  static const String followVenueUrl = "$base_url/api/hospitality/venues/";
+  static const String favoriteVenueUrl = "$base_url/api/hospitality/venues/";
+
+  // Helper methods for dynamic URLs
   static String getUserProfileUrl(int userId) {
     return '${socialGetUserProfile}$userId/profile/';
   }
@@ -71,5 +72,22 @@ class AppUrl {
 
   static String getDeclineFriendRequestUrl(int requestId) {
     return '${socialDeclineFriendRequest}$requestId/decline/';
+  }
+
+  // Venue helper methods (FIXED)
+  static String getVenueReviewsApiUrl(int venueId) {
+    return '${getVenueReviewsUrl}$venueId/reviews/';
+  }
+
+  static String createReviewApiUrl(int venueId) {
+    return '${createVenueReviewUrl}$venueId/reviews/create/';
+  }
+
+  static String followVenueApiUrl(int venueId) {
+    return '${followVenueUrl}$venueId/follow/';
+  }
+
+  static String favoriteVenueApiUrl(int venueId) {
+    return '${favoriteVenueUrl}$venueId/favorite/';
   }
 }
