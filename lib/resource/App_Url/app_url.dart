@@ -2,31 +2,31 @@
 // COMPLETE FILE - Replace entire file
 
 class AppUrl {
-  static const String base_url = 'https://donation-furthermore-shame-quiz.trycloudflare.com';
-  static const String ws_base_url = 'wss://donation-furthermore-shame-quiz.trycloudflare.com';
+  static const String base_url = 'https://twist-steps-ideal-antonio.trycloudflare.com';
+  static const String ws_base_url = 'wss://twist-steps-ideal-antonio.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS (3 Different) ======
-  static const String userRegisterUrl = "$base_url/api/basicuser/register/";
+  static const String userRegisterUrl = "$base_url/api/accounts/register/";
   static const String providerRegisterUrl = "$base_url/api/provider/register/";
   static const String vendorRegisterUrl = "$base_url/api/hospitality/register/";
 
   // ====== LOGIN ENDPOINTS ======
-  static const String LoginUrl = "$base_url/api/basicuser/login/";
+  static const String LoginUrl = "$base_url/api/accounts/login/";
 
   // ====== GET ENDPOINTS ======
   static const String getDesignationsUrl = "$base_url/api/provider/designations/";
   static const String getVenueTypesUrl = "$base_url/api/hospitality/types/";
 
   // ====== EMAIL VERIFICATION (Same for all) ======
-  static const String verifyEmailUrl = "$base_url/api/basicuser/verify-otp/";
-  static const String resendOtpUrl = "$base_url/api/basicuser/resend-otp/";
-  static const String setPasswordUrl = "$base_url/api/basicuser/set-password/";
+  static const String verifyEmailUrl = "$base_url/api/accounts/verify-otp/";
+  static const String resendOtpUrl = "$base_url/api/accounts/resend-otp/";
+  static const String setPasswordUrl = "$base_url/api/accounts/set-password/";
 
   // ====== FORGOT PASSWORD (Same for all) ======
-  static const String forgotPasswordUrl = "$base_url/api/basicuser/forgot-password/";
-  static const String verifyPasswordResetOtpUrl = "$base_url/api/basicuser/verify-password-reset-otp/";
-  static const String resendPasswordResetOtpUrl = "$base_url/api/basicuser/resend-password-reset-otp/";
-  static const String confirmPasswordResetUrl = "$base_url/api/basicuser/confirm-password-reset/";
+  static const String forgotPasswordUrl = "$base_url/api/accounts/forgot-password/";
+  static const String verifyPasswordResetOtpUrl = "$base_url/api/accounts/verify-password-reset-otp/";
+  static const String resendPasswordResetOtpUrl = "$base_url/api/accounts/resend-password-reset-otp/";
+  static const String confirmPasswordResetUrl = "$base_url/api/accounts/confirm-password-reset/";
 
   // Social/Post URLs
   static const String socialPostTypes = '$base_url/api/social/post-types/';
@@ -90,4 +90,7 @@ class AppUrl {
   static String favoriteVenueApiUrl(int venueId) {
     return '${favoriteVenueUrl}$venueId/favorite/';
   }
+
+  // ====== BANNER ENDPOINTS ======
+  static const String getAllBannersUrl = "$base_url/api/dashboard/admin/banners/all/";
 }
