@@ -1,3 +1,5 @@
+// view/User/UserSearch/userServiceProvider/service_provider_detail_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userSearch/userServiceProviderController/user_service_provider_controller.dart';
@@ -5,28 +7,25 @@ import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_se
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServicesProviderDetailsReviewView.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/userServiseProviderDetailsAboutView.dart';
-import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
-import '../../../../../View_Model/Controller/user/userSearch/userServiceProviderController/booking_controller.dart';
 import '../../../../../View_Model/toggle_tab_controller.dart';
 import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/compunents/toggle_tab_button.dart';
 
-
 class UserServiceProviderDetailView extends StatelessWidget {
-  final UserServiceProvider provider = Get.arguments;
+  final controller = Get.find<ServiceProviderController>();
   final toggleController = Get.put(ToggleTabController());
-  final providerController = Get.put(UserServiceProviderController());
 
   UserServiceProviderDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ServiceProviderModel provider = Get.arguments;
+
+    // Load provider details
+    controller.loadProviderDetails(provider.id);
+
     return Container(
-      decoration: BoxDecoration(
-          gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -39,112 +38,464 @@ class UserServiceProviderDetailView extends StatelessWidget {
           actions: [
             Obx(() => IconButton(
               onPressed: () {
-                providerController.toggleFavorite(provider);
+                controller.toggleSaveProvider(provider);
               },
               icon: Icon(
-                providerController.isFavorite(provider.id)
+                controller.isSaved(provider.id)
                     ? Icons.favorite
                     : Icons.favorite_border,
-                color: providerController.isFavorite(provider.id)
+                color: controller.isSaved(provider.id)
                     ? Colors.red
                     : Colors.white,
               ),
             )),
           ],
         ),
-        body: Column(
-          children: [
-            // Top section
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(provider.imageUrl),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    provider.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  Text(
-                    provider.service,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                  ),
-                  Text(
-                    'Experience: ${provider.experience}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    'Rate: ${provider.rate}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
+        body: Obx(() {
+          if (controller.isDetailLoading.value) {
+            return Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
+          }
 
-                  SizedBox(height: 10,),
-
-                  RoundButton(width: 200,height:40,title: "Massage", onPress: (){
-                      Get.toNamed(RouteName.chatListView);
-                  }),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: RoundedToggleTab(
-                      tabs: ['About', 'Review'],
-                      controller: toggleController,
-                    ),
-                  ),
-                ],
+          final detail = controller.providerDetail.value;
+          if (detail == null) {
+            return Center(
+              child: Text(
+                'Failed to load provider details',
+                style: TextStyle(color: Colors.white),
               ),
-            ),
-            // Bottom scrollable section
-            Expanded(
-              child: ClipPath(
-                clipper: TopRoundedClipper(),
-                child: Container(
-                  color: Color(0xff264953),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
-                    child: Obx(() {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20),
-                          toggleController.selectedIndex.value == 0
-                              ? Userserviseproviderdetailsaboutview()
-                              : Userservicesproviderdetailsreviewview(item: provider),
-                        ],
-                      );
-                    }),
+            );
+          }
+
+          return Column(
+            children: [
+              // Top section
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: detail.profilePicture != null
+                          ? NetworkImage(detail.profilePicture!)
+                          : null,
+                      backgroundColor: Colors.grey[300],
+                      child: detail.profilePicture == null
+                          ? Icon(Icons.person, size: 50, color: Colors.grey)
+                          : null,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      detail.fullName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      detail.designation,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      'Experience: ${detail.yearsOfExperience} Years',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.star, color: Colors.amber, size: 20),
+                        SizedBox(width: 4),
+                        Text(
+                          '${detail.averageRating} (${detail.totalReviews} reviews)',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'Rate: \$${detail.desiredPayRate}/hour',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    RoundButton(
+                      width: 200,
+                      height: 40,
+                      title: "Message",
+                      onPress: () {
+                        Get.toNamed(RouteName.chatListView);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: RoundedToggleTab(
+                        tabs: ['About', 'Review'],
+                        controller: toggleController,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Bottom scrollable section
+              Expanded(
+                child: ClipPath(
+                  clipper: TopRoundedClipper(),
+                  child: Container(
+                    color: Color(0xff264953),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Obx(() {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20),
+                            toggleController.selectedIndex.value == 0
+                                ? _buildAboutSection(detail)
+                                : _buildReviewSection(detail),
+                          ],
+                        );
+                      }),
+                    ),
                   ),
                 ),
+              ),
+            ],
+          );
+        }),
+        bottomNavigationBar: Obx(() {
+          final detail = controller.providerDetail.value;
+          if (detail == null) return SizedBox.shrink();
+
+          return detail.designation.toLowerCase() == "trainer" ||
+              detail.designation.toLowerCase() == "therapy"
+              ? RoundButton(
+            width: double.infinity,
+            title: "Booking Request",
+            onPress: () {
+              Get.toNamed(RouteName.bookingPageView);
+            },
+          )
+              : RoundButton(
+            title: "Task Request",
+            onPress: () {
+              // Show bottom sheet for task request
+              Get.bottomSheet(
+                Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColor.topLinear,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Send Task Request',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Describe your task...',
+                          hintStyle: TextStyle(color: Colors.white70),
+                          filled: true,
+                          fillColor: AppColor.iconColor,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        style: TextStyle(color: Colors.white),
+                        maxLines: 4,
+                      ),
+                      SizedBox(height: 20),
+                      RoundButton(
+                        title: 'Send Request',
+                        onPress: () {
+                          Get.back();
+                          Get.snackbar(
+                            'Success',
+                            'Task request sent successfully',
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildAboutSection(ServiceProviderDetailModel detail) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "About",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          detail.aboutMe.isNotEmpty
+              ? detail.aboutMe
+              : "No information available",
+          style: TextStyle(color: Colors.white),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Job Title",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Text(
+          detail.jobTitle.isNotEmpty ? detail.jobTitle : "Not specified",
+          style: TextStyle(color: Colors.white),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Skills",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        detail.skills.isNotEmpty
+            ? Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: detail.skills
+              .map((skill) => Chip(
+            label: Text(skill),
+            backgroundColor: AppColor.blackTextColor,
+            labelStyle: TextStyle(color: AppColor.limeColor),
+          ))
+              .toList(),
+        )
+            : Text(
+          "No skills listed",
+          style: TextStyle(color: Colors.white70),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Certificates",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        detail.certificates.isNotEmpty
+            ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: detail.certificates
+              .map((cert) => Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Row(
+              children: [
+                Icon(Icons.verified,
+                    color: Colors.green, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    cert,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ))
+              .toList(),
+        )
+            : Text(
+          "No certificates listed",
+          style: TextStyle(color: Colors.white70),
+        ),
+        SizedBox(height: 20),
+        Text(
+          "Location",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10),
+        Row(
+          children: [
+            Icon(Icons.location_on, color: Colors.red, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                detail.location,
+                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
         ),
-        bottomNavigationBar: provider.service == "Trainer" || provider.service == "Therapy"
-            ? RoundButton(
-          width: double.infinity,
-          title: "Booking Request",
-          onPress: () {
-            Get.toNamed(RouteName.bookingPageView);
+        SizedBox(height: 8),
+        Text(
+          "Service Radius: ${detail.serviceRadius} km",
+          style: TextStyle(color: Colors.white70),
+        ),
+        if (detail.phoneNumber.isNotEmpty) ...[
+          SizedBox(height: 20),
+          Text(
+            "Contact",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(Icons.phone, color: Colors.green, size: 20),
+              SizedBox(width: 8),
+              Text(
+                detail.phoneNumber,
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildReviewSection(ServiceProviderDetailModel detail) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Reviews (${detail.totalReviews})",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              children: [
+                Icon(Icons.star, color: Colors.amber, size: 24),
+                SizedBox(width: 4),
+                Text(
+                  detail.averageRating,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        SizedBox(height: 20),
+        detail.recentReviews.isNotEmpty
+            ? ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: detail.recentReviews.length,
+          itemBuilder: (context, index) {
+            final review = detail.recentReviews[index];
+            return Card(
+              color: AppColor.iconColor,
+              margin: EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          review.reviewerName,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.star,
+                                color: Colors.amber, size: 16),
+                            SizedBox(width: 4),
+                            Text(
+                              review.rating.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      review.reviewText,
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      review.reviewDate,
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           },
         )
-            : RoundButton(
-          title: "Booking Request",
-          onPress: () {
-            Get.bottomSheet( TaskRequestBottomSheet());
-          },
+            : Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              "No reviews yet",
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

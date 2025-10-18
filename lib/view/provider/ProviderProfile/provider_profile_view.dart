@@ -6,7 +6,6 @@ import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/Screen/ProviderEditProfile/edit_profile.dart';
-import '../../../View_Model/Controller/authentication/authentication_view_model.dart';
 
 
 class ProviderProfileView extends StatelessWidget {
@@ -36,11 +35,6 @@ class ProviderProfileView extends StatelessWidget {
             ),
           ],
         ),
-        // body: Obx(() {
-        // //  final user = controller.profile.value;
-        //   return
-        //    ;
-        // }),
 
         body:  SingleChildScrollView(
           child: Column(

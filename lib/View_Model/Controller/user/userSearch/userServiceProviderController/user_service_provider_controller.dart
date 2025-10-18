@@ -1,138 +1,192 @@
+// View_Model/Controller/user/userSearch/userServiceProviderController/service_provider_controller.dart
+
 import 'package:get/get.dart';
 import 'package:nikosafe/Repositry/user_repo/userSearch/UserServiceProviderRepo/user_services_provider_repo.dart';
 import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:nikosafe/utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-class UserServiceProviderController extends GetxController {
-  final UserServiceProviderRepository repository = UserServiceProviderRepository();
 
-  var providers = <UserServiceProvider>[].obs;
-  var filteredProviders = <UserServiceProvider>[].obs;
-  var favoriteProviders = <UserServiceProvider>[].obs;
+class ServiceProviderController extends GetxController {
+  final ServiceProviderRepository _repository = ServiceProviderRepository();
 
-  // Use a reactive map to track favorites
-  var favoriteStatus = <String, bool>{}.obs;
+  // Observable lists
+  var designations = <DesignationModel>[].obs;
+  var allProviders = <ServiceProviderModel>[].obs;
+  var filteredProviders = <ServiceProviderModel>[].obs;
+  var savedProviders = <ServiceProviderModel>[].obs;
 
+  // Loading states
   var isLoading = false.obs;
+  var isDesignationsLoading = false.obs;
+
+  // Search and filter
   var searchQuery = ''.obs;
-  var selectedService = ''.obs;
+  var selectedDesignation = ''.obs; // Empty string = "All"
+
+  // Provider detail
+  var providerDetail = Rxn<ServiceProviderDetailModel>();
+  var isDetailLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchProviders();
-
+    loadDesignations();
+    loadAllProviders();
+    loadSavedProviders();
   }
 
-  Future<void> fetchProviders() async {
-    isLoading.value = true;
+  // Load all designations (categories)
+  Future<void> loadDesignations() async {
     try {
-      final data = await repository.fetchProviders();
-      providers.assignAll(data);
-      filteredProviders.assignAll(data);
-
-      // Initialize favorite status
-      for (var provider in data) {
-        favoriteStatus[provider.id] = provider.isFavorite;
-      }
-
-      // ✅ Now load favorites AFTER data is available
-      await loadFavorites();
+      isDesignationsLoading.value = true;
+      final result = await _repository.getDesignations();
+      designations.assignAll(result);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch providers');
+      Utils.errorSnackBar('Error', e.toString());
+    } finally {
+      isDesignationsLoading.value = false;
+    }
+  }
+
+  // Load all providers
+  Future<void> loadAllProviders() async {
+    try {
+      isLoading.value = true;
+      final result = await _repository.getAllProviders();
+      allProviders.assignAll(result);
+      filteredProviders.assignAll(result);
+
+      if (result.isEmpty) {
+        Utils.errorSnackBar('Info', 'No service providers found');
+      }
+    } catch (e) {
+      print('Error loading providers: $e');
+      Utils.errorSnackBar('Error', 'Failed to load providers. Please try again.');
     } finally {
       isLoading.value = false;
     }
   }
 
+  // Load provider details
+  Future<void> loadProviderDetails(int providerId) async {
+    try {
+      isDetailLoading.value = true;
+      final result = await _repository.getProviderDetails(providerId);
+      providerDetail.value = result;
+    } catch (e) {
+      Utils.errorSnackBar('Error', e.toString());
+    } finally {
+      isDetailLoading.value = false;
+    }
+  }
 
+  // Load saved providers
+  Future<void> loadSavedProviders() async {
+    try {
+      final result = await _repository.getSavedProviders();
+      savedProviders.assignAll(result);
+    } catch (e) {
+      Utils.errorSnackBar('Error', e.toString());
+    }
+  }
+
+  // Toggle save/unsave provider
+  Future<void> toggleSaveProvider(ServiceProviderModel provider) async {
+    try {
+      final isSaved = await _repository.toggleSaveProvider(provider.id);
+
+      // Update provider in all lists
+      final index = allProviders.indexWhere((p) => p.id == provider.id);
+      if (index != -1) {
+        allProviders[index].isSaved = isSaved;
+      }
+
+      // Update filtered list
+      final filteredIndex = filteredProviders.indexWhere((p) => p.id == provider.id);
+      if (filteredIndex != -1) {
+        filteredProviders[filteredIndex].isSaved = isSaved;
+      }
+
+      // Update saved providers list
+      if (isSaved) {
+        if (!savedProviders.any((p) => p.id == provider.id)) {
+          savedProviders.add(provider);
+        }
+        Utils.successSnackBar(
+          'Added to Favorites',
+          '${provider.fullName} has been added to your favorites',
+        );
+      } else {
+        savedProviders.removeWhere((p) => p.id == provider.id);
+        Utils.successSnackBar(
+          'Removed from Favorites',
+          '${provider.fullName} has been removed from your favorites',
+        );
+      }
+
+      // Update detail if loaded
+      if (providerDetail.value != null && providerDetail.value!.id == provider.id) {
+        providerDetail.value!.isSaved = isSaved;
+        providerDetail.refresh();
+      }
+
+    } catch (e) {
+      Utils.errorSnackBar('Error', e.toString());
+    }
+  }
+
+  // Check if provider is saved
+  bool isSaved(int providerId) {
+    return savedProviders.any((p) => p.id == providerId) ||
+        allProviders.firstWhereOrNull((p) => p.id == providerId)?.isSaved == true;
+  }
+
+  // Update search query
   void updateSearch(String query) {
     searchQuery.value = query;
     filterProviders();
   }
 
-  void updateService(String service) {
-    selectedService.value = service;
+  // Update selected designation (category)
+  void updateDesignation(String designation) {
+    selectedDesignation.value = designation;
     filterProviders();
   }
 
+  // Filter providers based on search and designation
   void filterProviders() {
-    final query = searchQuery.value.toLowerCase();
-    final service = selectedService.value.toLowerCase();
+    final query = searchQuery.value.toLowerCase().trim();
+    final designation = selectedDesignation.value.toLowerCase().trim();
 
-    filteredProviders.value = providers.where((provider) {
-      final matchesName = provider.name.toLowerCase().contains(query);
-      final matchesService = service.isEmpty || provider.service.toLowerCase() == service;
-      return matchesName && matchesService;
+    filteredProviders.value = allProviders.where((provider) {
+      // Search filter (name, email, designation)
+      final matchesSearch = query.isEmpty ||
+          provider.fullName.toLowerCase().contains(query) ||
+          provider.designation.toLowerCase().contains(query);
+
+      // Designation filter
+      final matchesDesignation = designation.isEmpty ||
+          designation == 'all' ||
+          provider.designation.toLowerCase() == designation;
+
+      return matchesSearch && matchesDesignation;
     }).toList();
   }
 
-  // Fixed favorite functionality using reactive map
-  void toggleFavorite(UserServiceProvider provider) {
-    final currentStatus = favoriteStatus[provider.id] ?? false;
-    favoriteStatus[provider.id] = !currentStatus;
+  // Refresh all data
+  Future<void> refreshData() async {
+    await Future.wait([
+      loadAllProviders(),
+      loadSavedProviders(),
+    ]);
+  }
 
-    // Also update the provider's isFavorite property
-    final index = providers.indexWhere((p) => p.id == provider.id);
-    if (index != -1) {
-      providers[index].isFavorite = !currentStatus;
+  // Get providers by designation
+  List<ServiceProviderModel> getProvidersByDesignation(String designation) {
+    if (designation.toLowerCase() == 'all' || designation.isEmpty) {
+      return allProviders;
     }
-
-    if (!currentStatus) {
-      // Adding to favorites
-      if (!favoriteProviders.any((p) => p.id == provider.id)) {
-        favoriteProviders.add(provider);
-      }
-      Utils.successSnackBar(
-        'Added to Favorites',
-        '${provider.name} has been added to your favorites',
-
-      );
-    } else {
-      // Removing from favorites
-      favoriteProviders.value = getFavoriteProviders();
-      Utils.successSnackBar('Removed from Favorites',
-          '${provider.name} has been removed from your favorites');
-    }
-
-    // Update filtered list
-    filterProviders();
-    saveFavorites();
-  }
-
-  bool isFavorite(String providerId) {
-    return favoriteStatus[providerId] ?? false;
-  }
-
-  void saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoriteIds = favoriteProviders.map((e) => e.id).toList();
-    prefs.setString('favorite_providers', jsonEncode(favoriteIds));
-  }
-
-  Future<void> loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('favorite_providers');
-
-    if (jsonString != null) {
-      final List<String> favoriteIds = List<String>.from(jsonDecode(jsonString));
-      favoriteStatus.clear();
-      favoriteProviders.clear();
-
-      for (var provider in providers) {
-        final isFav = favoriteIds.contains(provider.id);
-        favoriteStatus[provider.id] = isFav;
-        if (isFav) {
-          favoriteProviders.add(provider);
-        }
-      }
-    }
-  }
-
-
-
-  List<UserServiceProvider> getFavoriteProviders() {
-    return providers.where((p) => favoriteStatus[p.id] == true).toList();
+    return allProviders
+        .where((p) => p.designation.toLowerCase() == designation.toLowerCase())
+        .toList();
   }
 }

@@ -1,338 +1,119 @@
+// Repository/user_repo/userSearch/UserServiceProviderRepo/service_provider_repository.dart
+
+import 'package:nikosafe/data/network/network_api_services.dart';
 import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
+import 'package:nikosafe/resource/App_Url/app_url.dart';
 
+class ServiceProviderRepository {
+  final NetworkApiServices _apiServices = NetworkApiServices();
 
-class UserServiceProviderRepository {
-  Future<List<UserServiceProvider>> fetchProviders() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+  // Get all designations (categories)
+  Future<List<DesignationModel>> getDesignations() async {
+    try {
+      final response = await _apiServices.getApi(
+        AppUrl.getDesignationsUrl,
+        requireAuth: false,
+      );
 
-    // Hardcoded list of multiple service providers
-    return [
-      UserServiceProvider(
-        id: '1',
-        name: 'Lukas Wagner',
-        service: 'Plumber',
-        experience: '10+ Years',
-        rate: '\$50/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=10',
-        skills: ['Pipe repair', 'Leak detection', 'Water heater installation'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+      if (response['success'] == true) {
+        List<DesignationModel> designations = [];
+        for (var item in response['data']) {
+          designations.add(DesignationModel.fromJson(item));
+        }
+        return designations;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load designations');
+      }
+    } catch (e) {
+      throw Exception('Error fetching designations: $e');
+    }
+  }
 
-      ),
-      UserServiceProvider(
-        id: '2',
-        name: 'Sophia Lee',
-        service: 'Electrician',
-        experience: '8 Years',
-        rate: '\$45/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=11',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+  // Get all service providers
+  Future<List<ServiceProviderModel>> getAllProviders() async {
+    try {
+      final response = await _apiServices.getApi(
+        "${AppUrl.base_url}/api/basicuser/providers/",
+        requireAuth: true,
+      );
 
-      ),
-      UserServiceProvider(
-        id: '3',
-        name: 'Daniel Smith',
-        service: 'Painter',
-        experience: '12 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=20',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+      if (response['success'] == true && response['data'] != null) {
+        List<ServiceProviderModel> providers = [];
 
-      ),
-      UserServiceProvider(
-        id: '4',
-        name: 'Emma Brown',
-        service: 'Carpenter',
-        experience: '7 Years',
-        rate: '\$55/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=14',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+        // Check if data has 'providers' key (paginated) or is direct array
+        var providersList = response['data']['providers'] ?? response['data'];
 
-      ),
-      UserServiceProvider(
-        id: '5',
-        name: 'Olivia Wilson',
-        service: 'Electrician',
-        experience: '6 Years',
-        rate: '\$40/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=19',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+        if (providersList is List) {
+          for (var item in providersList) {
+            providers.add(ServiceProviderModel.fromJson(item));
+          }
+        }
 
-      ),
-      UserServiceProvider(
-        id: '6',
-        name: 'James Johnson',
-        service: 'Plumber',
-        experience: '15 Years',
-        rate: '\$65/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=16',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+        return providers;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load providers');
+      }
+    } catch (e) {
+      throw Exception('Error fetching providers: $e');
+    }
+  }
 
-      ),
-      UserServiceProvider(
-        id: '7',
-        name: 'Ava Garcia',
-        service: 'Painter',
-        experience: '9 Years',
-        rate: '\$50/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=17',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+  // Get provider details by ID
+  Future<ServiceProviderDetailModel> getProviderDetails(int providerId) async {
+    try {
+      final response = await _apiServices.getApi(
+        "${AppUrl.base_url}/api/basicuser/providers/$providerId/",
+        requireAuth: true,
+      );
 
-      ),
-      UserServiceProvider(
-        id: '8',
-        name: 'William Martinez',
-        service: 'Carpenter',
-        experience: '11 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=18',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+      if (response['success'] == true) {
+        return ServiceProviderDetailModel.fromJson(response['data']);
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load provider details');
+      }
+    } catch (e) {
+      throw Exception('Error fetching provider details: $e');
+    }
+  }
 
-      ),   UserServiceProvider(
-        id: '9',
-        name: 'Niko Williams',
-        service: 'Trainer',
-        experience: '11 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=49',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+  // Save/Unsave provider
+  Future<bool> toggleSaveProvider(int providerId) async {
+    try {
+      final response = await _apiServices.postApi(
+        {},
+        "${AppUrl.base_url}/api/basicuser/providers/$providerId/save/",
+        requireAuth: true,
+      );
 
-      ),
+      if (response['success'] == true) {
+        return response['data']['is_saved'] ?? false;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to save provider');
+      }
+    } catch (e) {
+      throw Exception('Error saving provider: $e');
+    }
+  }
 
-      UserServiceProvider(
-        id: '10',
-        name: 'Kan Devilry',
-        service: 'Therapy',
-        experience: '11 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=30',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
+  // Get all saved providers
+  Future<List<ServiceProviderModel>> getSavedProviders() async {
+    try {
+      final response = await _apiServices.getApi(
+        "${AppUrl.base_url}/api/basicuser/saved-providers/",
+        requireAuth: true,
+      );
 
-      ),
-
-      UserServiceProvider(
-        id: '11',
-        name: 'Vini',
-        service: 'Trainer',
-        experience: '11 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=32',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
-
-      ),
-
-      UserServiceProvider(
-        id: '12',
-        name: 'Messi',
-        service: 'Therapy',
-        experience: '11 Years',
-        rate: '\$60/hour',
-        imageUrl: 'https://i.pravatar.cc/150?img=33',
-        skills: ['Wiring', 'Lighting', 'Panel upgrade'],
-        reviews: [
-          ReviewModel(
-            reviewerName: "Alice",
-            rating: 4.5,
-            reviewText: "Very professional and quick response.",
-            reviewDate: "2025-06-21",
-          ),
-          ReviewModel(
-            reviewerName: "Bob",
-            rating: 5.0,
-            reviewText: "Excellent service, highly recommend!",
-            reviewDate: "2025-06-18",
-          ),
-        ],
-        rating: 4.8,
-        totalRatings: 20,
-        totalReviews: 15,
-
-      ),
-    ];
+      if (response['success'] == true) {
+        List<ServiceProviderModel> savedProviders = [];
+        for (var item in response['data']) {
+          savedProviders.add(ServiceProviderModel.fromJson(item));
+        }
+        return savedProviders;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to load saved providers');
+      }
+    } catch (e) {
+      throw Exception('Error fetching saved providers: $e');
+    }
   }
 }
