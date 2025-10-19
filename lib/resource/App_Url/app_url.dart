@@ -1,8 +1,8 @@
 // data/app_url.dart - UPDATED WITH SERVICE PROVIDER ENDPOINTS
 
 class AppUrl {
-  static const String base_url = 'https://stevens-maximum-rides-executed.trycloudflare.com';
-  static const String ws_base_url = 'wss://stevens-maximum-rides-executed.trycloudflare.com';
+  static const String base_url = 'https://luke-stat-forming-kinase.trycloudflare.com';
+  static const String ws_base_url = 'wss://luke-stat-forming-kinase.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS ======
   static const String userRegisterUrl = "$base_url/api/accounts/register/";
@@ -68,6 +68,7 @@ class AppUrl {
   static const String getAllBannersUrl = "$base_url/api/dashboard/admin/banners/all/";
 
   // ====== SERVICE PROVIDER HELPER METHODS ======
+  static const String createBookingUrl = "$base_url/api/basicuser/bookings/create/";
 
   // Get provider details by ID
   static String getProviderDetailsUrl(int providerId) {
@@ -108,4 +109,25 @@ class AppUrl {
   static String favoriteVenueApiUrl(int venueId) {
     return '${favoriteVenueUrl}$venueId/favorite/';
   }
+
+// FAQ Endpoints
+  static const String faqEndpoint = '$base_url/api/core/faqs/';
+
+  // Support Ticket Endpoints
+  static const String createTicketEndpoint = '$base_url/api/core/tickets/create/';
+  //user my profile ///
+  static const String myProfile = '$base_url/api/basicuser/profile/';
+
+// ====== SETTINGS/PRIVACY ENDPOINTS ======
+  static const String privacyPolicyUrl = "$base_url/api/core/privacy-policy/";
+  static const String termsConditionsUrl = "$base_url/api/core/terms-and-conditions/";
+  static const String aboutUsUrl = "$base_url/api/core/about-us/";
+
+
+
+
+
+
+     ///------------provider section ----------///
+  static const String providerProfileUrl = "$base_url/api/provider/profile/";
 }

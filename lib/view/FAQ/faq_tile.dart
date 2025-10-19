@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nikosafe/models/FAQ&Suport/faq_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
-
-import '../../models/FAQ/faq_model.dart';
 
 class FaqTile extends StatelessWidget {
   final FaqModel faq;
@@ -16,8 +15,9 @@ class FaqTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
@@ -26,15 +26,35 @@ class FaqTile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: Text(faq.question, style: TextStyle(fontWeight: FontWeight.bold,color: AppColor.primaryTextColor))),
-                  Icon(faq.isExpanded ? Icons.remove : Icons.add, color: AppColor.limeColor),
+                  Expanded(
+                    child: Text(
+                      faq.question,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppColor.primaryTextColor,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    faq.isExpanded ? Icons.remove : Icons.add,
+                    color: AppColor.limeColor,
+                  ),
                 ],
               ),
-              if (faq.isExpanded)
-                Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Text(faq.answer,style: TextStyle(color: AppColor.secondaryTextColor),),
+              if (faq.isExpanded) ...[
+                SizedBox(height: 12),
+                Divider(color: AppColor.limeColor.withOpacity(0.3)),
+                SizedBox(height: 8),
+                Text(
+                  faq.answer,
+                  style: TextStyle(
+                    color: AppColor.secondaryTextColor,
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
                 ),
+              ],
             ],
           ),
         ),

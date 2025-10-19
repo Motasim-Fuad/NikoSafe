@@ -1,14 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/authentication/login_authentication_controller.dart';
+import 'package:nikosafe/View_Model/Controller/user/MyProfile/my_profile_details_controller/my_profile_detailsController.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/view/User/UserProfile/ViewProfileDetails/my_profile_details_view.dart';
 import '../../../View_Model/Controller/user/MyProfile/my_profileController.dart';
 
-class UserProfileView extends StatelessWidget {
-  final controller = Get.put(ProfileController());
+class MyProfileView extends StatelessWidget {
+  final controller = Get.put(MyProfileDetailsController());
   final controller_logout = Get.put(LoginAuthController());
 
   @override
@@ -42,29 +44,45 @@ class UserProfileView extends StatelessWidget {
               children: [
                 const SizedBox(height: 16),
                 CircleAvatar(
-                  radius: 45,
-                  backgroundImage: AssetImage(user.profileImage),
+                  radius: 40,
+                  backgroundColor: Colors.grey[800],
+                  child: user!.profilePicture != null
+                      ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: user.displayImage,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  )
+                      : Icon(Icons.person, size: 40, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "${user.points} Points",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
+                // Container(
+                //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                //   decoration: BoxDecoration(
+                //     color: Colors.green,
+                //     borderRadius: BorderRadius.circular(20),
+                //   ),
+                //   child: Text(
+                //     "${user.} Points",
+                //     style: const TextStyle(color: Colors.white),
+                //   ),
+                // ),
                 const SizedBox(height: 8),
                 Text(
-                  user.name,
+                  user!.fullName,
                   style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 TextButton(
                   onPressed: () {
-                    Get.to(ProfileDetailsView());
+                    Get.to(MyProfileDetailsView());
                   },
                   child: const Text("View Profile", style: TextStyle(color: Colors.cyan)),
                 ),

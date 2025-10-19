@@ -17,7 +17,8 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final FocusNode? focusNode;
   final ValueChanged<String>? onSubmitted;
-  final String? Function(String?)? validator; // ✅ Add validator
+  final ValueChanged<String>? onChanged; // ✅ Add onChanged callback
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
@@ -36,7 +37,8 @@ class CustomTextField extends StatelessWidget {
     this.maxLines,
     this.focusNode,
     this.onSubmitted,
-    this.validator, // ✅ Add validator to constructor
+    this.onChanged, // ✅ Add to constructor
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -61,13 +63,14 @@ class CustomTextField extends StatelessWidget {
           focusNode: focusNode,
           keyboardType: keyboardType,
           onFieldSubmitted: onSubmitted,
+          onChanged: onChanged, // ✅ Hook in onChanged
           obscureText: isPassword,
           readOnly: readOnly,
           onTap: onTap,
           minLines: minLines,
           maxLines: maxLines ?? 1,
           style: const TextStyle(color: Colors.white),
-          validator: validator, // ✅ Hook in validator
+          validator: validator,
           decoration: InputDecoration(
             filled: true,
             fillColor: fillColor ?? AppColor.iconColor,

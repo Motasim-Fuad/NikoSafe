@@ -7,6 +7,7 @@ import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_se
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/view/User/UserSearch/userServiceProvider/userServiseProviderDetailsView/widgets/taskRequestbottomSheed.dart';
 import '../../../../../View_Model/toggle_tab_controller.dart';
 import '../../../../../resource/App_routes/routes_name.dart';
 import '../../../../../resource/compunents/toggle_tab_button.dart';
@@ -169,80 +170,44 @@ class UserServiceProviderDetailView extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
-          );
-        }),
-        bottomNavigationBar: Obx(() {
-          final detail = controller.providerDetail.value;
-          if (detail == null) return SizedBox.shrink();
 
-          return detail.designation.toLowerCase() == "trainer" ||
-              detail.designation.toLowerCase() == "therapy"
-              ? RoundButton(
-            width: double.infinity,
-            title: "Booking Request",
-            onPress: () {
-              Get.toNamed(RouteName.bookingPageView);
-            },
-          )
-              : RoundButton(
-            title: "Task Request",
-            onPress: () {
-              // Show bottom sheet for task request
-              Get.bottomSheet(
-                Container(
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColor.topLinear,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Send Task Request',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Describe your task...',
-                          hintStyle: TextStyle(color: Colors.white70),
-                          filled: true,
-                          fillColor: AppColor.iconColor,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        style: TextStyle(color: Colors.white),
-                        maxLines: 4,
-                      ),
-                      SizedBox(height: 20),
-                      RoundButton(
-                        title: 'Send Request',
-                        onPress: () {
-                          Get.back();
-                          Get.snackbar(
-                            'Success',
-                            'Task request sent successfully',
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                          );
+              // ✅ FIXED: Booking/Task Request Button
+              Obx(() {
+                final detail = controller.providerDetail.value;
+                if (detail == null) return SizedBox.shrink();
+
+                return detail.designation == "Trainer" || detail.designation == "Therapist"
+                    ? Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RoundButton(
+                    width: double.infinity,
+                    title: "Booking Request",
+                    onPress: () {
+                      // ✅ FIXED: Correct navigation with arguments
+                      Get.toNamed(
+                        RouteName.bookingPageView,
+                        arguments: {
+                          'providerId': detail.id,
                         },
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                ),
-              );
-            },
+                )
+                    : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RoundButton(
+                    title: "Task Request",
+                    onPress: () {
+                      Get.bottomSheet(
+                        TaskRequestBottomSheet(providerId: detail.id),
+                      );
+                    },
+                    width: double.infinity,
+                  ),
+                );
+              }),
+              SizedBox(height: 20),
+            ],
           );
         }),
       ),

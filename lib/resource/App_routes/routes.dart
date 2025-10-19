@@ -293,7 +293,7 @@ class AppRouts {
     ),
     GetPage(
       name: RouteName.porviderSupportView,
-      page: () => PorviderSupportView(),
+      page: () => ProviderSupportView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

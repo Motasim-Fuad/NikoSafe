@@ -23,11 +23,9 @@ class UserBtnNavView extends StatelessWidget {
   final List<Widget> _pages = [
     UserHomeView(),
     ExploreMainPage(),
-    // UserScannerView(),
     QrScannerView(),
-    // UserDataView(),
     BacChartView(),
-    UserProfileView(),
+    MyProfileView(),
 
   ];
 

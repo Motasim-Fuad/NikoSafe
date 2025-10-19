@@ -1,3 +1,5 @@
+// models/User/myProfileModel/my_profile_model.dart
+
 class MyProfileModel {
   final String name;
   final int points;

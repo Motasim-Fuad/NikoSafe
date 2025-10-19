@@ -4,12 +4,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nikosafe/View_Model/Controller/provider/providerProfileController/provider_edit_profile_controller.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
-
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/coustomTextField.dart';
 
 class ProviderEditProfileForm extends StatelessWidget {
-  final controller = Get.put(ProviderEditProfileController());
+  final controller = Get.find<ProviderEditProfileController>();
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -30,14 +29,13 @@ class ProviderEditProfileForm extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Profile Image
             Stack(
               alignment: Alignment.bottomRight,
               children: [
                 CircleAvatar(
                   radius: 45,
-                  backgroundImage: controller.profileImage.value != null
-                      ? FileImage(controller.profileImage.value!)
-                      : const AssetImage(ImageAssets.userHome_peopleProfile4) as ImageProvider,
+                  backgroundImage: _getProfileImage(),
                 ),
                 InkWell(
                   onTap: _pickImage,
@@ -54,7 +52,7 @@ class ProviderEditProfileForm extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Availability Section
+            // ✅ Availability Section - Shows API Data
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -67,11 +65,13 @@ class ProviderEditProfileForm extends StatelessWidget {
                 children: [
                   SwitchListTile(
                     title: const Text("Availability", style: TextStyle(color: Colors.white)),
-                    value: controller.profile.value.isAvailable,
+                    value: controller.isAvailable.value,
                     onChanged: controller.toggleAvailability,
                     activeColor: Colors.green,
                   ),
                   const SizedBox(height: 10),
+
+                  // Date Pickers - Shows API Data
                   Row(
                     children: [
                       Expanded(
@@ -94,6 +94,8 @@ class ProviderEditProfileForm extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
+
+                  // Time Pickers - Shows API Data
                   Row(
                     children: [
                       Expanded(
@@ -120,11 +122,9 @@ class ProviderEditProfileForm extends StatelessWidget {
             ),
 
             const SizedBox(height: 16),
-            CustomTextField(
-              label: "Full Name",
-              controller: controller.fullNameController,
-              focusNode: controller.fullNameFocus,
-            ),
+
+            // Other Fields
+            CustomTextField(label: "Full Name", controller: controller.fullNameController, focusNode: controller.fullNameFocus),
             const SizedBox(height: 10),
             CustomTextField(label: "Job Title", controller: controller.jobTitleController, focusNode: controller.jobTitleFocus),
             const SizedBox(height: 10),
@@ -144,12 +144,27 @@ class ProviderEditProfileForm extends StatelessWidget {
             const SizedBox(height: 10),
             CustomTextField(label: "Years of Experience", controller: controller.expriencesController, focusNode: controller.experienceFocus),
 
-
             const SizedBox(height: 20),
-            RoundButton(title: "Save", width: double.infinity, onPress: controller.saveProfile),
+            RoundButton(
+              title: "Save",
+              width: double.infinity,
+              onPress: controller.saveProfile,
+              loading: controller.loading.value,
+            ),
           ],
         ),
       );
     });
+  }
+
+  // ✅ Helper to get correct image
+  ImageProvider _getProfileImage() {
+    if (controller.profileImage.value != null) {
+      return FileImage(controller.profileImage.value!);
+    } else if (controller.profileImageUrl.value.isNotEmpty) {
+      return NetworkImage(controller.profileImageUrl.value);
+    } else {
+      return AssetImage(ImageAssets.userHome_peopleProfile4);
+    }
   }
 }

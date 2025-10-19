@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/authentication/login_authentication_controller.dart';
+import 'package:nikosafe/View_Model/Controller/provider/providerProfileController/provider_edit_profile_controller.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/asseets/image_assets.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/Screen/ProviderEditProfile/edit_profile.dart';
 
-
 class ProviderProfileView extends StatelessWidget {
   final controller_logout = Get.put(LoginAuthController());
+  final profileController = Get.put(ProviderEditProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          gradient: AppColor.backGroundColor
-      ),
+      decoration: BoxDecoration(gradient: AppColor.backGroundColor),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -25,99 +24,104 @@ class ProviderProfileView extends StatelessWidget {
           title: const Text("Profile", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           automaticallyImplyLeading: false,
-
-          actions:  [
+          actions: [
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: IconButton(onPressed: (){
-                Get.toNamed(RouteName.userSettingsView);
-              }, icon:Icon(Icons.settings,color: Colors.white,) ),
+              child: IconButton(
+                onPressed: () {
+                  Get.toNamed(RouteName.userSettingsView);
+                },
+                icon: Icon(Icons.settings, color: Colors.white),
+              ),
             ),
           ],
         ),
+        body: Obx(() {
+          if (profileController.loading.value) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-        body:  SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              CircleAvatar(
-                radius: 45,
-                backgroundImage: AssetImage(ImageAssets.userHome_peopleProfile4),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(20),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                CircleAvatar(
+                  radius: 45,
+                  backgroundImage: _getProfileImage(),
                 ),
-                child: Text(
-                  "${"99"} Points",
-                  style: const TextStyle(color: Colors.white),
+                const SizedBox(height: 12),
+                Text(
+                  profileController.fullNameController.text.isNotEmpty
+                      ? profileController.fullNameController.text
+                      : "User",
+                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "lucky",
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              TextButton(
-                onPressed: () {
-
-                },
-                child: const Text("Plumber", style: TextStyle(color: Colors.cyan)),
-              ),
-              const SizedBox(height: 20),
-
-
-
-              _buildTile(Icons.edit, "Edit Profile Details", () {
-
-                Get.to(ProviderEditProfileView());
-              }),
-              _buildTile(ImageAssets.profile_withdrow, "Withdraws History", () {
-                Get.toNamed(RouteName.providerWithDrawCompleteView);
-              }),
-
-              _buildTile(ImageAssets.profile_bank, "Bank Details", () {
-                Get.toNamed(RouteName.providerBankDetailsView);
-              }),
-              _buildTile(Icons.support_agent, "Support", () {
-                Get.toNamed(RouteName.porviderSupportView);
-              }),
-              _buildTile(Icons.question_mark, "FAQ", () {
-                Get.toNamed(RouteName.faqView);
-              }),
-              _buildTile(Icons.privacy_tip, "Privacy Policy", () {
-                Get.toNamed(RouteName.userPrivacyPolicy);
-              }),
-              _buildTile(Icons.description, "Terms & Conditions", () {
-                Get.toNamed(RouteName.userTearmsConditions);
-              }),
-              _buildTile(Icons.info_outline, "About Us", () {
-                Get.toNamed(RouteName.userAboutUs);
-              }),
-
-
-
-              const SizedBox(height: 16),
-              TextButton.icon(
-                onPressed: () {
-                  controller_logout.logout();
-                },
-                style: TextButton.styleFrom(
-                  side: const BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    profileController.jobTitleController.text.isNotEmpty
+                        ? profileController.jobTitleController.text
+                        : "Service Provider",
+                    style: TextStyle(color: Colors.cyan),
+                  ),
                 ),
-                icon: const Icon(Icons.logout, color: Colors.red),
-                label: const Text("Log Out", style: TextStyle(color: Colors.red)),
-              ),
-              const SizedBox(height: 30),
-            ],
-          ),
-        ),
+                const SizedBox(height: 20),
+
+                _buildTile(Icons.edit, "Edit Profile Details", () {
+                  Get.to(() => ProviderEditProfileView());
+                }),
+                _buildTile(ImageAssets.profile_withdrow, "Withdraws History", () {
+                  Get.toNamed(RouteName.providerWithDrawCompleteView);
+                }),
+                _buildTile(ImageAssets.profile_bank, "Bank Details", () {
+                  Get.toNamed(RouteName.providerBankDetailsView);
+                }),
+                _buildTile(Icons.support_agent, "Support", () {
+                  Get.toNamed(RouteName.porviderSupportView);
+                }),
+                _buildTile(Icons.question_mark, "FAQ", () {
+                  Get.toNamed(RouteName.faqView);
+                }),
+                _buildTile(Icons.privacy_tip, "Privacy Policy", () {
+                  Get.toNamed(RouteName.userPrivacyPolicy);
+                }),
+                _buildTile(Icons.description, "Terms & Conditions", () {
+                  Get.toNamed(RouteName.userTearmsConditions);
+                }),
+                _buildTile(Icons.info_outline, "About Us", () {
+                  Get.toNamed(RouteName.userAboutUs);
+                }),
+
+                const SizedBox(height: 16),
+                TextButton.icon(
+                  onPressed: () {
+                    controller_logout.logout();
+                  },
+                  style: TextButton.styleFrom(
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                  icon: const Icon(Icons.logout, color: Colors.red),
+                  label: const Text("Log Out", style: TextStyle(color: Colors.red)),
+                ),
+                const SizedBox(height: 30),
+              ],
+            ),
+          );
+        }),
       ),
     );
+  }
+
+  // ✅ Helper to get correct image
+  ImageProvider _getProfileImage() {
+    if (profileController.profileImage.value != null) {
+      return FileImage(profileController.profileImage.value!);
+    } else if (profileController.profileImageUrl.value.isNotEmpty) {
+      return NetworkImage(profileController.profileImageUrl.value);
+    } else {
+      return AssetImage(ImageAssets.userHome_peopleProfile4);
+    }
   }
 
   Widget _buildTile(dynamic icon, String title, VoidCallback onTap) {
@@ -144,5 +148,4 @@ class ProviderProfileView extends StatelessWidget {
       ),
     );
   }
-
 }

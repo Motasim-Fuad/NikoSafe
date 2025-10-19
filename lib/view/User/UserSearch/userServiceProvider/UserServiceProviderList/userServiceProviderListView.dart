@@ -191,13 +191,6 @@ class Userserviceproviderlistview extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                // Text(
-                                //   '\${provider.desiredPayRate}/hour',
-                                //   style: const TextStyle(
-                                //     color: Colors.white,
-                                //     fontWeight: FontWeight.bold,
-                                //   ),
-                                // ),
                                 const Spacer(),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,

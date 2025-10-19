@@ -143,6 +143,130 @@ class NetworkApiServices extends BaseApiServices {
     return responseJson;
   }
 
+  Future<dynamic> putMultipartApi({
+    required String url,
+    required Map<String, dynamic> data,
+    File? imageFile,
+    String imageFieldName = "image",
+    bool requireAuth = false,
+  }) async {
+    if (kDebugMode) {
+      print('PUT MULTIPART to: $url');
+      print('Data: $data');
+    }
+
+    try {
+      var request = http.MultipartRequest('PUT', Uri.parse(url));
+
+      final headers = await _getHeaders(requireAuth: requireAuth);
+      request.headers.addAll(headers);
+
+      // ✅ FIX: Properly handle arrays and objects
+      data.forEach((key, value) {
+        if (value != null) {
+          if (value is List || value is Map) {
+            // Convert arrays/objects to JSON string
+            request.fields[key] = jsonEncode(value);
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+      });
+
+      if (imageFile != null && imageFile.existsSync()) {
+        var fileStream = await http.MultipartFile.fromPath(
+          imageFieldName,
+          imageFile.path,
+        );
+        request.files.add(fileStream);
+      }
+
+      if (kDebugMode) {
+        print('Final request fields: ${request.fields}');
+        print('Request files: ${request.files.map((f) => '${f.field}: ${f.filename}')}');
+      }
+
+      var streamedResponse = await request.send().timeout(const Duration(seconds: 45));
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (kDebugMode) {
+        print('Response Status: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+
+      return returnResponce(response);
+    } catch (e) {
+      if (kDebugMode) {
+        print('PUT Multipart request error: $e');
+      }
+      rethrow;
+    }
+  }
+
+
+  // ✅ POST with multiple images
+  Future<dynamic> postMultipartApiWithMultipleImages({
+    required String url,
+    required Map<String, dynamic> data,
+    required List<File> images,
+    String imageFieldName = "images",
+    bool requireAuth = false,
+  }) async {
+    if (kDebugMode) {
+      print('POST MULTIPART (Multiple Images) to: $url');
+      print('Data: $data');
+    }
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+
+      final headers = await _getHeaders(requireAuth: requireAuth);
+      request.headers.addAll(headers);
+
+      // Add text fields
+      data.forEach((key, value) {
+        if (value != null) {
+          if (value is List || value is Map) {
+            request.fields[key] = jsonEncode(value);
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+      });
+
+      // ✅ Add multiple images
+      for (var imageFile in images) {
+        if (imageFile.existsSync()) {
+          var fileStream = await http.MultipartFile.fromPath(
+            imageFieldName,
+            imageFile.path,
+          );
+          request.files.add(fileStream);
+        }
+      }
+
+      if (kDebugMode) {
+        print('Final request fields: ${request.fields}');
+        print('Request files: ${request.files.length} images');
+      }
+
+      var streamedResponse = await request.send().timeout(const Duration(seconds: 45));
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (kDebugMode) {
+        print('Response Status: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+      }
+
+      return returnResponce(response);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Multipart (Multiple Images) request error: $e');
+      }
+      rethrow;
+    }
+  }
+
   // Update postMultipartApi method with optional auth
   Future<dynamic> postMultipartApi({
     required String url,
