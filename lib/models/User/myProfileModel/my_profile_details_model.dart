@@ -1,5 +1,7 @@
 // models/User/myProfileModel/my_profile_details_model.dart
 
+import 'package:nikosafe/resource/App_Url/app_url.dart';
+
 class MyProfileDetailsModel {
   final int id;
   final String email;
@@ -7,6 +9,9 @@ class MyProfileDetailsModel {
   final String lastName;
   final String mobileNumber;
   final String? profilePicture;
+  final int? age;
+  final String? sex;
+  final int? weight;
   final int friendsCount;
   final int postsCount;
   final List<PostModel> posts;
@@ -18,12 +23,24 @@ class MyProfileDetailsModel {
     required this.lastName,
     required this.mobileNumber,
     this.profilePicture,
+    this.age,
+    this.sex,
+    this.weight,
     required this.friendsCount,
     required this.postsCount,
     required this.posts,
   });
 
   factory MyProfileDetailsModel.fromJson(Map<String, dynamic> json) {
+    print('📦 Parsing MyProfileDetailsModel from JSON');
+    print('Profile Picture from API: ${json['profile_picture']}');
+
+    final postsList = (json['posts'] as List?)
+        ?.map((post) => PostModel.fromJson(post))
+        .toList() ?? [];
+
+    print('Posts count: ${postsList.length}');
+
     return MyProfileDetailsModel(
       id: json['id'] ?? 0,
       email: json['email'] ?? '',
@@ -31,15 +48,15 @@ class MyProfileDetailsModel {
       lastName: json['last_name'] ?? '',
       mobileNumber: json['mobile_number'] ?? '',
       profilePicture: json['profile_picture'],
+      age: json['age'],
+      sex: json['sex'],
+      weight: json['weight'],
       friendsCount: json['friends_count'] ?? 0,
       postsCount: json['posts_count'] ?? 0,
-      posts: (json['posts'] as List?)
-          ?.map((post) => PostModel.fromJson(post))
-          .toList() ?? [],
+      posts: postsList,
     );
   }
 
-  // Get full name or email username if name is empty
   String get fullName {
     if (firstName.isEmpty && lastName.isEmpty) {
       return email.split('@')[0];
@@ -47,22 +64,32 @@ class MyProfileDetailsModel {
     return '$firstName $lastName'.trim();
   }
 
-  // Get profile image URL with base URL
-  String get displayImage {
+  // ✅ FIX: Backend ইতিমধ্যে full URL পাঠায়, তাই directly return করুন
+  String? get displayImage {
     if (profilePicture != null && profilePicture!.isNotEmpty) {
-      return 'https://luke-stat-forming-kinase.trycloudflare.com$profilePicture';
+      print('🖼️ Profile Picture URL: $profilePicture');
+      return profilePicture;
     }
-    return 'assets/images/default_profile.png'; // Your default image path
+    print('⚠️ No profile picture');
+    return null;
   }
 
-  // Get all gallery images from posts
+  // ✅ FIX: Gallery images - backend থেকে path আসে, তাই base URL add করতে হবে
   List<String> get galleryImages {
+    print('📸 Building gallery from ${posts.length} posts');
     List<String> images = [];
+
     for (var post in posts) {
-      for (var image in post.images) {
-        images.add('https://luke-stat-forming-kinase.trycloudflare.com${image.image}');
+      if (post.images.isNotEmpty) {
+        print('Post ${post.id}: ${post.images.length} images');
+        for (var image in post.images) {
+          images.add(image.fullImageUrl);
+          print('  ✅ Added: ${image.fullImageUrl}');
+        }
       }
     }
+
+    print('Total gallery images: ${images.length}');
     return images;
   }
 }
@@ -101,6 +128,10 @@ class PostModel {
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
+    final imagesList = (json['images'] as List?)
+        ?.map((img) => PostImageModel.fromJson(img))
+        .toList() ?? [];
+
     return PostModel(
       id: json['id'] ?? 0,
       postType: json['post_type'] ?? '',
@@ -111,9 +142,7 @@ class PostModel {
       updatedAt: json['updated_at'] ?? '',
       totalReactions: json['total_reactions'] ?? 0,
       totalComments: json['total_comments'] ?? 0,
-      images: (json['images'] as List?)
-          ?.map((img) => PostImageModel.fromJson(img))
-          .toList() ?? [],
+      images: imagesList,
       checkIn: json['check_in'] != null
           ? CheckInModel.fromJson(json['check_in'])
           : null,
@@ -136,14 +165,27 @@ class PostImageModel {
   });
 
   factory PostImageModel.fromJson(Map<String, dynamic> json) {
+    print('  📷 Image path from API: ${json['image']}');
     return PostImageModel(
       id: json['id'] ?? 0,
       image: json['image'] ?? '',
     );
   }
 
+  // ✅ FIX: Post images এর জন্য base URL add করুন
   String get fullImageUrl {
-    return 'https://luke-stat-forming-kinase.trycloudflare.com$image';
+    if (image.isEmpty) return '';
+
+    // যদি already full URL হয়, return as is
+    if (image.startsWith('http')) {
+      print('  ✅ Already full URL: $image');
+      return image;
+    }
+
+    // নাহলে base URL add করুন
+    final fullUrl = '${AppUrl.base_url}$image';
+    print('  ✅ Constructed URL: $fullUrl');
+    return fullUrl;
   }
 }
 

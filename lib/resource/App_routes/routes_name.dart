@@ -53,6 +53,7 @@ class RouteName{
   static const String providerSendQuoteView="/ProviderSend_QuoteView";
   static const String userBookReservationView="/UserBook_Reservation_View";
   static const String faqView="/Faq_View";
+  static const String menu = '/menu_view';
 
 
 

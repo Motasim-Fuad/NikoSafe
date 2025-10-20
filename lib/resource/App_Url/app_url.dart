@@ -1,8 +1,8 @@
 // data/app_url.dart - UPDATED WITH PAYMENT ENDPOINTS
 
 class AppUrl {
-  static const String base_url = 'https://luke-stat-forming-kinase.trycloudflare.com';
-  static const String ws_base_url = 'wss://luke-stat-forming-kinase.trycloudflare.com';
+  static const String base_url = 'https://brief-produces-filter-stockings.trycloudflare.com';
+  static const String ws_base_url = 'wss://brief-produces-filter-stockings.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS ======
   static const String userRegisterUrl = "$base_url/api/accounts/register/";
@@ -126,6 +126,12 @@ class AppUrl {
   static const String privacyPolicyUrl = "$base_url/api/core/privacy-policy/";
   static const String termsConditionsUrl = "$base_url/api/core/terms-and-conditions/";
   static const String aboutUsUrl = "$base_url/api/core/about-us/";
+
+
+  //========QrCodeScanner SECTION =====
+  static String getMenuItemsUrl(int venueId) {
+    return '$base_url/api/hospitality/venues/$venueId/menu-items/';
+  }
 
   // ====== PROVIDER SECTION ======
   static const String providerProfileUrl = "$base_url/api/provider/profile/";

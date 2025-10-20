@@ -82,19 +82,26 @@ class MyProfileDetailsView extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: Colors.grey[800],
-                  child: user.profilePicture != null
+                  child: user.displayImage != null
                       ? ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: user.displayImage,
+                      imageUrl: user.displayImage!,
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.grey[600],
+                      placeholder: (context, url) => const CircularProgressIndicator(
+                        color: Colors.tealAccent,
+                        strokeWidth: 2,
                       ),
+                      errorWidget: (context, url, error) {
+                        print('❌ Profile image load error: $error');
+                        print('   Failed URL: $url');
+                        return Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Colors.grey[600],
+                        );
+                      },
                     ),
                   )
                       : Icon(Icons.person, size: 40, color: Colors.grey[600]),
@@ -186,38 +193,75 @@ class MyProfileDetailsView extends StatelessWidget {
                     ],
                   ),
                 )
-                    : GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(12),
-                  itemCount: user.galleryImages.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 6,
-                    mainAxisSpacing: 6,
-                  ),
-                  itemBuilder: (context, index) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: user.galleryImages[index],
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[800],
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.tealAccent,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[800],
-                          child: Icon(Icons.error, color: Colors.grey[600]),
+                    : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Gallery (${user.galleryImages.length})',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    const SizedBox(height: 10),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(12),
+                      itemCount: user.galleryImages.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 6,
+                        mainAxisSpacing: 6,
+                      ),
+                      itemBuilder: (context, index) {
+                        final imageUrl = user.galleryImages[index];
+                        print('🖼️ Loading gallery image: $imageUrl');
+
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[800],
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.tealAccent,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) {
+                              print('❌ Gallery image load error: $error');
+                              print('   Failed URL: $url');
+                              return Container(
+                                color: Colors.grey[800],
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.error, color: Colors.grey[600], size: 20),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Failed',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 20),

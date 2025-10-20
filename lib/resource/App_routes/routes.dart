@@ -8,6 +8,7 @@ import 'package:nikosafe/view/Authentication/forgetpassword/forgetpassword_view.
 import 'package:nikosafe/view/Authentication/verification/email_view.dart';
 import 'package:nikosafe/view/Authentication/verification/otp_view.dart';
 import 'package:nikosafe/view/Authentication/verification/password_view.dart';
+import 'package:nikosafe/view/User/QrCodeScanner/menu_view.dart';
 import 'package:nikosafe/view/User/UserHome/ProfileDetails.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePoll/create_poll_view.dart';
 import 'package:nikosafe/view/User/UserHome/CreatePost/userCreatePostView.dart';
@@ -232,6 +233,10 @@ class AppRouts {
       page: () => UserParchaseReceiptDetailsPage(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.menu,
+      page: () => const MenuView(),
     ),
 
     GetPage(
