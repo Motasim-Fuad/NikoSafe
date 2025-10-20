@@ -198,9 +198,7 @@ class UserServiceProviderDetailView extends StatelessWidget {
                   child: RoundButton(
                     title: "Task Request",
                     onPress: () {
-                      Get.bottomSheet(
-                        TaskRequestBottomSheet(providerId: detail.id),
-                      );
+                      Get.to(TaskRequestBottomSheetView(providerId: detail.id,));
                     },
                     width: double.infinity,
                   ),

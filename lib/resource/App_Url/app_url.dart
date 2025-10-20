@@ -1,4 +1,4 @@
-// data/app_url.dart - UPDATED WITH SERVICE PROVIDER ENDPOINTS
+// data/app_url.dart - UPDATED WITH PAYMENT ENDPOINTS
 
 class AppUrl {
   static const String base_url = 'https://luke-stat-forming-kinase.trycloudflare.com';
@@ -67,15 +67,18 @@ class AppUrl {
   // ====== BANNER ENDPOINTS ======
   static const String getAllBannersUrl = "$base_url/api/dashboard/admin/banners/all/";
 
-  // ====== SERVICE PROVIDER HELPER METHODS ======
+  // ====== BOOKING ENDPOINTS ======
   static const String createBookingUrl = "$base_url/api/basicuser/bookings/create/";
 
-  // Get provider details by ID
+  // ====== PAYMENT ENDPOINTS ======
+  static const String createPaymentIntentUrl = "$base_url/api/payments/create-payment-intent/";
+  static const String confirmPaymentUrl = "$base_url/api/payments/confirm-payment/";
+
+  // ====== SERVICE PROVIDER HELPER METHODS ======
   static String getProviderDetailsUrl(int providerId) {
     return '$getAllServiceProvidersUrl$providerId/';
   }
 
-  // Save/Unsave provider
   static String saveProviderUrl(int providerId) {
     return '$getAllServiceProvidersUrl$providerId/save/';
   }
@@ -110,24 +113,20 @@ class AppUrl {
     return '${favoriteVenueUrl}$venueId/favorite/';
   }
 
-// FAQ Endpoints
+  // FAQ Endpoints
   static const String faqEndpoint = '$base_url/api/core/faqs/';
 
   // Support Ticket Endpoints
   static const String createTicketEndpoint = '$base_url/api/core/tickets/create/';
-  //user my profile ///
+
+  // User my profile
   static const String myProfile = '$base_url/api/basicuser/profile/';
 
-// ====== SETTINGS/PRIVACY ENDPOINTS ======
+  // ====== SETTINGS/PRIVACY ENDPOINTS ======
   static const String privacyPolicyUrl = "$base_url/api/core/privacy-policy/";
   static const String termsConditionsUrl = "$base_url/api/core/terms-and-conditions/";
   static const String aboutUsUrl = "$base_url/api/core/about-us/";
 
-
-
-
-
-
-     ///------------provider section ----------///
+  // ====== PROVIDER SECTION ======
   static const String providerProfileUrl = "$base_url/api/provider/profile/";
 }

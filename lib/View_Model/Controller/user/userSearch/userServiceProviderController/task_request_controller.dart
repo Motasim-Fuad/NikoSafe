@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nikosafe/Repositry/user_repo/userSearch/UserServiceProviderRepo/booking_repo.dart';
+import 'package:nikosafe/View_Model/Services/stripe_payment_service.dart';
 import 'package:nikosafe/utils/utils.dart';
 
 class TaskRequestController extends GetxController {
   final _repo = BookingRepository();
+  final _paymentService = PaymentService();
 
   final taskTitle = TextEditingController();
   final taskDescription = TextEditingController();
@@ -17,11 +19,11 @@ class TaskRequestController extends GetxController {
 
   final RxList<File> pickedImages = <File>[].obs;
   final RxBool loading = false.obs;
-  final RxDouble totalAmount = 0.0.obs; // ✅ Observable total amount
+  final RxDouble totalAmount = 0.0.obs;
 
   int? providerId;
 
-  // ✅ Auto-calculate total amount
+  /// Auto-calculate total amount
   void calculateTotalAmount() {
     final hourlyRate = double.tryParse(hourlyRateController.text.trim()) ?? 0.0;
     final estimatedHours = double.tryParse(estimateTime.text.trim()) ?? 0.0;
@@ -66,6 +68,7 @@ class TaskRequestController extends GetxController {
     pickedImages.removeAt(index);
   }
 
+  /// Submit task with payment
   Future<void> submitTask() async {
     if (providerId == null) {
       Utils.errorSnackBar("Error", "Provider not selected");
@@ -90,9 +93,15 @@ class TaskRequestController extends GetxController {
     loading.value = true;
 
     try {
+      print("📤 Task Request - Creating Booking:");
+      print("  Provider ID: $providerId");
+      print("  Task Title: ${taskTitle.text}");
+      print("  Total Amount: $totalAmount");
+
+      // Step 1: Create booking (using your original repo method)
       final response = await _repo.createBooking(
         providerId: providerId!,
-        totalAmount: totalAmount.value.toString(), // ✅ Pass calculated total
+        totalAmount: totalAmount.value.toString(),
         bookingTime: preferredTime.text.isNotEmpty ? preferredTime.text : "09:00:00",
         taskTitle: taskTitle.text.trim(),
         taskDescription: taskDescription.text.trim(),
@@ -102,20 +111,42 @@ class TaskRequestController extends GetxController {
         images: pickedImages.isNotEmpty ? pickedImages : null,
       );
 
-      print("📥 Response: $response");
+      print("📥 Booking Response: $response");
 
-      if (response != null && response['success'] == true) {
-        Utils.successSnackBar("Success", response['message'] ?? "Task request sent successfully");
+      if (response == null || response['success'] != true) {
+        Utils.errorSnackBar("Error", response?['message'] ?? "Booking failed");
+        loading.value = false;
+        return;
+      }
+
+      // Step 2: Get booking ID from response
+      final bookingId = response['data']['id'] as int;
+      print("✅ Booking created with ID: $bookingId");
+
+      Utils.successSnackBar("Success", "Booking created! Processing payment...");
+
+      // Step 3: Process payment (create intent + present sheet + confirm)
+      print("🔄 Starting payment process...");
+      final paymentSuccess = await _paymentService.processPayment(
+        bookingId: bookingId,
+        amount: totalAmount.value,
+      );
+
+      loading.value = false;
+
+      if (paymentSuccess) {
+        print("✅ Payment successful!");
+        Utils.successSnackBar("Success", "Payment successful! Booking confirmed.");
         clearForm();
         Get.back();
       } else {
-        Utils.errorSnackBar("Error", response?['message'] ?? "Request failed");
+        print("❌ Payment failed or cancelled");
+        Utils.errorSnackBar("Error", "Payment failed or cancelled");
       }
 
     } catch (e) {
       print("❌ Submit error: $e");
-      Utils.errorSnackBar("Error", "Failed to send request");
-    } finally {
+      Utils.errorSnackBar("Error", "Failed to process request: ${e.toString()}");
       loading.value = false;
     }
   }

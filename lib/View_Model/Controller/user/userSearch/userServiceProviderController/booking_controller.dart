@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/Repositry/user_repo/userSearch/UserServiceProviderRepo/booking_repo.dart';
+import 'package:nikosafe/View_Model/Services/stripe_payment_service.dart';
 import 'package:nikosafe/utils/utils.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingController extends GetxController {
   final BookingRepository _repo = BookingRepository();
+  final _paymentService = PaymentService();
 
-  // ✅ Controllers for user input
+  // Controllers for user input
   final hourlyRateController = TextEditingController();
   final estimatedHoursController = TextEditingController();
 
@@ -15,7 +17,7 @@ class BookingController extends GetxController {
   RxList<String> selectedTimeSlots = <String>[].obs;
   Rx<DateTime> focusedDay = DateTime.now().obs;
   RxBool loading = false.obs;
-  RxDouble totalAmount = 0.0.obs; // ✅ Observable total amount
+  RxDouble totalAmount = 0.0.obs;
 
   int? providerId;
 
@@ -31,7 +33,7 @@ class BookingController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // ✅ Get only provider ID from navigation
+    // Get provider ID from navigation
     final args = Get.arguments;
     if (args is Map<String, dynamic>) {
       providerId = args['providerId'] as int?;
@@ -44,13 +46,13 @@ class BookingController extends GetxController {
     final today = DateTime.now();
     selectedDates.add(DateTime(today.year, today.month, today.day));
 
-    // ✅ Set default values
+    // Set default values
     hourlyRateController.text = "100";
     estimatedHoursController.text = "1";
     calculateTotalAmount();
   }
 
-  // ✅ Auto-calculate total amount when user types
+  /// Auto-calculate total amount when user types
   void calculateTotalAmount() {
     final hourlyRate = double.tryParse(hourlyRateController.text.trim()) ?? 0.0;
     final estimatedHours = double.tryParse(estimatedHoursController.text.trim()) ?? 0.0;
@@ -75,6 +77,7 @@ class BookingController extends GetxController {
     }
   }
 
+  /// Book now with payment
   Future<void> bookNow() async {
     if (providerId == null) {
       Utils.errorSnackBar("Error", "Provider not selected");
@@ -107,26 +110,44 @@ class BookingController extends GetxController {
       print("  Date: ${selectedDates.first.toIso8601String().split('T')[0]}");
       print("  Time: ${selectedTimeSlots.first}");
 
+      // Step 1: Create booking (original logic)
       final response = await _repo.createBooking(
         providerId: providerId!,
         totalAmount: totalAmount.value.toString(),
-        hourlyRate: hourlyRateController.text.trim(), // ✅ Required by backend
-        estimatedHours: estimatedHoursController.text.trim(), // ✅ Required by backend
+        hourlyRate: hourlyRateController.text.trim(),
+        estimatedHours: estimatedHoursController.text.trim(),
         bookingDate: selectedDates.first.toIso8601String().split('T')[0],
         bookingTime: selectedTimeSlots.first,
       );
 
-      if (response != null && response['success'] == true) {
-        Utils.successSnackBar("Success", response['message'] ?? "Booking created successfully");
+      if (response == null || response['success'] != true) {
+        Utils.errorSnackBar("Error", response?['message'] ?? "Booking failed");
+        loading.value = false;
+        return;
+      }
+
+      // Step 2: Get booking ID
+      final bookingId = response['data']['id'] as int;
+      Utils.successSnackBar("Success", "Booking created! Processing payment...");
+
+      // Step 3: Process payment
+      final paymentSuccess = await _paymentService.processPayment(
+        bookingId: bookingId,
+        amount: totalAmount.value,
+      );
+
+      loading.value = false;
+
+      if (paymentSuccess) {
+        Utils.successSnackBar("Success", "Payment successful! Booking confirmed.");
         Get.back();
       } else {
-        Utils.errorSnackBar("Error", response?['message'] ?? "Booking failed");
+        Utils.errorSnackBar("Error", "Payment failed or cancelled");
       }
 
     } catch (e) {
       print("❌ Booking error: $e");
       Utils.errorSnackBar("Error", "Failed to create booking");
-    } finally {
       loading.value = false;
     }
   }
