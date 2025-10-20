@@ -135,4 +135,17 @@ class AppUrl {
 
   // ====== PROVIDER SECTION ======
   static const String providerProfileUrl = "$base_url/api/provider/profile/";
+  static const String providerBookingsUrl = "$base_url/api/provider/bookings/";
+  static String getBookingDetailsUrl(int bookingId) {
+    return '$providerBookingsUrl$bookingId/';
+  }
+  static String acceptRejectBookingUrl(int bookingId) {
+    return '$base_url/api/provider/bookings/$bookingId/accept-reject/';
+  }
+
+  static const String sendQuoteUrl = "$base_url/api/provider/bookings/send-quote/";
+
+
+
+
 }
