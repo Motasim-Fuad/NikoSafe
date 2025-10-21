@@ -54,6 +54,8 @@ class RouteName{
   static const String userBookReservationView="/UserBook_Reservation_View";
   static const String faqView="/Faq_View";
   static const String menu = '/menu_view';
+  static const String providerEarningDataDetailsView = '/Provider_EarningData_DetailsView';
+  static const String providerWithdrawalsView = '/Provider_WithdrawalsView';
 
 
 

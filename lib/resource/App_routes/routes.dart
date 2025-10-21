@@ -20,6 +20,8 @@ import 'package:nikosafe/view/User/chat/chat_list_view.dart';
 import 'package:nikosafe/view/User/userNotification/user_notification_view.dart';
 import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view.dart';
 import 'package:nikosafe/view/User/user_btn_nav.dart';
+import 'package:nikosafe/view/provider/ProviderEarning/ProviderEarningDetails/provider_erning_details_view.dart';
+import 'package:nikosafe/view/provider/ProviderEarning/provider_withdrawals_view.dart';
 
 import '../../view/AllPayment/User/user_verification_view.dart';
 import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
@@ -352,6 +354,18 @@ class AppRouts {
     GetPage(
       name: RouteName.providerSendQuoteView,
       page: () => ProviderSendQuoteView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+ GetPage(
+      name: RouteName.providerEarningDataDetailsView,
+      page: () => ProviderEarningDataDetailsView(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.providerWithdrawalsView,
+      page: () => ProviderWithdrawalsView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
     ),

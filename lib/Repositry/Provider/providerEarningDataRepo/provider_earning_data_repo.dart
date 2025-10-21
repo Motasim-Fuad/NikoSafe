@@ -1,85 +1,71 @@
-import 'package:nikosafe/resource/asseets/image_assets.dart';
 
-import '../../../models/Provider/providerEarningData/providerEarningData.dart';
-
+import 'package:nikosafe/models/Provider/providerEarningData/providerEarningData.dart';
+import 'package:nikosafe/resource/App_Url/app_url.dart';
+import '../../../data/Network/network_api_services.dart' show NetworkApiServices;
 
 class ProviderEarningDataRepo {
-  // Simulate fetching data from an API
-  Future<List<ProviderEarningDataModel>> getEarnings() async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
-    return [
-      ProviderEarningDataModel(
-        serial: '01',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl:ImageAssets.restaurant4, // Placeholder
-      ),
-      ProviderEarningDataModel(
-        serial: '02',
-        name: 'Michal ',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '03',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '04',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '05',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '06',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '07',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '08',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-      ProviderEarningDataModel(
-        serial: '09',
-        name: 'Robert Fox',
-        accNumber: '(516) 831-1111',
-        date: '02-24-2024',
-        amount: '\$200',
-        avatarUrl: ImageAssets.restaurant4,
-      ),
-    ];
+  final _apiService = NetworkApiServices();
+
+  // Get Earnings
+  Future<EarningsData> getEarnings() async {
+    try {
+      dynamic response = await _apiService.getApi(
+        AppUrl.providerEarningsUrl,
+        requireAuth: true,
+      );
+
+      if (response['success'] == true) {
+        final earningsResponse = EarningsResponseModel.fromJson(response);
+        return earningsResponse.data;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to fetch earnings');
+      }
+    } catch (e) {
+      throw Exception('Error fetching earnings: $e');
+    }
+  }
+
+  // Get Withdrawals
+  Future<List<WithdrawalModel>> getWithdrawals() async {
+    try {
+      dynamic response = await _apiService.getApi(
+        AppUrl.providerWithdrawalsUrl,
+        requireAuth: true,
+      );
+
+      if (response['success'] == true) {
+        final withdrawalsResponse = WithdrawalsResponseModel.fromJson(response);
+        return withdrawalsResponse.data;
+      } else {
+        throw Exception(response['message'] ?? 'Failed to fetch withdrawals');
+      }
+    } catch (e) {
+      throw Exception('Error fetching withdrawals: $e');
+    }
+  }
+
+  // Create Withdrawal Request
+  Future<void> createWithdrawalRequest({
+    required double amount,
+    required String region,
+  }) async {
+    try {
+      final data = {
+        'amount': amount,
+        'region': region,
+      };
+
+      dynamic response = await _apiService.postApi(
+        data,
+        AppUrl.createWithdrawalRequestUrl,
+        requireAuth: true,
+      );
+
+      if (response['success'] != true) {
+        throw Exception(response['message'] ?? 'Failed to create withdrawal request');
+      }
+    } catch (e) {
+      throw Exception('Error creating withdrawal request: $e');
+    }
   }
 }

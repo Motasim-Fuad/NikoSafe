@@ -16,26 +16,11 @@ class ProviderEarningDataView extends StatefulWidget {
 class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
   final ProviderEarningDataController controller = Get.put(ProviderEarningDataController());
 
-  final ScrollController _headerScrollController = ScrollController();
   final ScrollController _bodyHorizontalScrollController = ScrollController();
   final ScrollController _bodyVerticalScrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-
-    // Sync header scroll with body scroll
-    _bodyHorizontalScrollController.addListener(() {
-      if (_headerScrollController.hasClients &&
-          _headerScrollController.offset != _bodyHorizontalScrollController.offset) {
-        _headerScrollController.jumpTo(_bodyHorizontalScrollController.offset);
-      }
-    });
-  }
-
-  @override
   void dispose() {
-    _headerScrollController.dispose();
     _bodyHorizontalScrollController.dispose();
     _bodyVerticalScrollController.dispose();
     super.dispose();
@@ -53,6 +38,13 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
           automaticallyImplyLeading: false,
           leading: CustomBackButton(),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.history, color: AppColor.primaryTextColor),
+              onPressed: controller.navigateToWithdrawals,
+              tooltip: 'Withdrawal History',
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -62,21 +54,19 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                 _buildBalanceCard(),
                 const SizedBox(height: 16),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.6, // 60% screen height
+                  height: MediaQuery.of(context).size.height * 0.6,
                   child: _buildEarningsTable(),
                 ),
               ],
             ),
           ),
         ),
-
-
       ),
     );
   }
 
   Widget _buildBalanceCard() {
-    return ClipRRect(
+    return Obx(() => ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(color: Colors.white),
@@ -94,10 +84,19 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                 children: [
                   Text("Your Balance", style: TextStyle(color: AppColor.primaryTextColor)),
                   Text(
-                    controller.currentBalance.value,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    '\$${controller.balance.value.toStringAsFixed(2)}',
+                    style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 10),
+                  Text(
+                    'Total Earnings: \$${controller.totalEarnings.value.toStringAsFixed(2)}',
+                    style: TextStyle(color: AppColor.primaryTextColor, fontSize: 12),
+                  ),
+                  Text(
+                    'Total Withdrawals: \$${controller.totalWithdrawals.value.toStringAsFixed(2)}',
+                    style: TextStyle(color: AppColor.primaryTextColor, fontSize: 12),
+                  ),
+                  SizedBox(height: 20),
                   CustomElevatedButton(
                     text: "Withdraw",
                     onPressed: controller.withdraw,
@@ -108,7 +107,7 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildEarningsTable() {
@@ -129,13 +128,13 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // HEADER ROW
+              // HEADER
               Table(
                 border: TableBorder.all(color: Colors.white),
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 columnWidths: const {
                   0: FixedColumnWidth(60),
-                  1: FixedColumnWidth(120),
+                  1: FixedColumnWidth(150),
                   2: FixedColumnWidth(120),
                   3: FixedColumnWidth(120),
                   4: FixedColumnWidth(100),
@@ -144,9 +143,9 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                   TableRow(
                     decoration: const BoxDecoration(color: Color(0xff2f4c3b)),
                     children: [
-                      _buildHeaderCell("Avatar"),
-                      _buildHeaderCell("Name"),
-                      _buildHeaderCell("Account"),
+                      _buildHeaderCell("ID"),
+                      _buildHeaderCell("Customer"),
+                      _buildHeaderCell("Task"),
                       _buildHeaderCell("Date"),
                       _buildHeaderCell("Amount"),
                     ],
@@ -154,9 +153,9 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                 ],
               ),
 
-              // BODY ROWS
+              // BODY
               SizedBox(
-                height: 400, // or MediaQuery-based height
+                height: 400,
                 child: SingleChildScrollView(
                   controller: _bodyVerticalScrollController,
                   scrollDirection: Axis.vertical,
@@ -165,7 +164,7 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     columnWidths: const {
                       0: FixedColumnWidth(60),
-                      1: FixedColumnWidth(120),
+                      1: FixedColumnWidth(150),
                       2: FixedColumnWidth(120),
                       3: FixedColumnWidth(120),
                       4: FixedColumnWidth(100),
@@ -173,23 +172,11 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
                     children: controller.earnings.map((earning) {
                       return TableRow(
                         children: [
-                          _wrapRowCell(
-                            earning,
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundImage: earning.avatarUrl != null && earning.avatarUrl!.isNotEmpty
-                                    ? AssetImage(earning.avatarUrl!) as ImageProvider
-                                    : const AssetImage('assets/images/default_avatar.png'),
-                                backgroundColor: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          _wrapRowCell(earning, _buildBodyCell(earning.name)),
-                          _wrapRowCell(earning, _buildBodyCell(earning.accNumber)),
-                          _wrapRowCell(earning, _buildBodyCell(earning.date)),
-                          _wrapRowCell(earning, _buildBodyCell(earning.amount, isBold: true)),
+                          _wrapRowCell(earning, _buildBodyCell(earning.id.toString())),
+                          _wrapRowCell(earning, _buildBodyCell(earning.customerName)),
+                          _wrapRowCell(earning, _buildBodyCell(earning.taskTitle)),
+                          _wrapRowCell(earning, _buildBodyCell(earning.formattedDate)),
+                          _wrapRowCell(earning, _buildBodyCell(earning.formattedAmount, isBold: true)),
                         ],
                       );
                     }).toList(),
@@ -202,6 +189,7 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
       );
     });
   }
+
   Widget _wrapRowCell(ProviderEarningDataModel earning, Widget child) {
     return InkWell(
       onTap: () => controller.showEarningDetails(earning),
@@ -232,3 +220,4 @@ class _ProviderEarningDataViewState extends State<ProviderEarningDataView> {
     );
   }
 }
+

@@ -146,6 +146,8 @@ class AppUrl {
   static const String sendQuoteUrl = "$base_url/api/provider/bookings/send-quote/";
 
 
-
+  static const String providerEarningsUrl = "$base_url/api/provider/earnings/";
+  static const String providerWithdrawalsUrl = "$base_url/api/provider/withdrawals/";
+  static const String createWithdrawalRequestUrl = "$base_url/api/provider/withdrawals/";
 
 }

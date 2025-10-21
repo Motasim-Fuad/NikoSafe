@@ -1,17 +1,17 @@
 import 'package:get/get.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/utils/utils.dart';
-
 import '../../../../Repositry/Provider/providerEarningDataRepo/provider_earning_data_repo.dart';
 import '../../../../models/Provider/providerEarningData/providerEarningData.dart';
-import '../../../../view/provider/ProviderEarning/ProviderEarningDetails/provider_erning_details_view.dart';
 
 class ProviderEarningDataController extends GetxController {
   final ProviderEarningDataRepo _repo = ProviderEarningDataRepo();
 
   var earnings = <ProviderEarningDataModel>[].obs;
   var isLoading = true.obs;
-  var currentBalance = '\$1000'.obs;
+  var balance = 0.0.obs;
+  var totalEarnings = 0.0.obs;
+  var totalWithdrawals = 0.0.obs;
 
   @override
   void onInit() {
@@ -23,17 +23,31 @@ class ProviderEarningDataController extends GetxController {
     try {
       isLoading(true);
       var data = await _repo.getEarnings();
-      earnings.assignAll(data);
+
+      balance.value = data.balance;
+      totalEarnings.value = data.totalEarnings;
+      totalWithdrawals.value = data.totalWithdrawals;
+      earnings.assignAll(data.earnings);
+    } catch (e) {
+      Utils.errorSnackBar('Error', e.toString());
     } finally {
       isLoading(false);
     }
   }
 
   void withdraw() {
-Get.toNamed(RouteName.providerWithdrawRequestView);
+    Get.toNamed(RouteName.providerWithdrawRequestView);
   }
 
   void showEarningDetails(ProviderEarningDataModel earning) {
-    Get.to(ProviderEarningDataDetailsView(),arguments: earning);
+    Get.toNamed(
+      RouteName.providerEarningDataDetailsView,
+      arguments: earning,
+    );
+  }
+
+  void navigateToWithdrawals() {
+    Get.toNamed(RouteName.providerWithdrawalsView);
   }
 }
+

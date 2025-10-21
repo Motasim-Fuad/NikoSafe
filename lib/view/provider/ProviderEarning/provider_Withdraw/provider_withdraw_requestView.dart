@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:nikosafe/View_Model/Controller/provider/providerEarningDataController/provider_withdrow_controller.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/resource/compunents/coustomTextField.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
-import 'package:nikosafe/utils/utils.dart';
 
 class ProviderWithdrawRequestView extends StatelessWidget {
   ProviderWithdrawRequestView({super.key});
 
-  final TextEditingController amountText = TextEditingController();
-  final TextEditingController regionText = TextEditingController();
-  final  amountFocus = FocusNode();
-  final  regionFocus = FocusNode();
+  final ProviderWithdrawalController controller = Get.put(ProviderWithdrawalController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +34,30 @@ class ProviderWithdrawRequestView extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              CustomTextField(controller: amountText,keyboardType: TextInputType.number,label: "Amount",focusNode: amountFocus,onSubmitted: (value) {
-                FocusScope.of(context).requestFocus(regionFocus);
-              },),
-              const SizedBox(height: 10),
-              CustomTextField(controller: regionText ,label: "Region",maxLines: 5,minLines: 3,focusNode: regionFocus,),
-              const SizedBox(height: 20),
-              RoundButton(
-                width: double.infinity,
-                title: "Withdraw Request",
-                onPress: () {
-                  Utils.successSnackBar("Withdraw Request", "Your withdraw request sent successfully");
-
-                  amountText.clear();
-                  regionText.clear();
-                  FocusScope.of(context).unfocus();
-
+              CustomTextField(
+                controller: controller.amountController,
+                keyboardType: TextInputType.number,
+                label: "Amount",
+                focusNode: controller.amountFocus,
+                onSubmitted: (value) {
+                  FocusScope.of(context).requestFocus(controller.regionFocus);
                 },
-              )
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                controller: controller.regionController,
+                label: "Region",
+                maxLines: 5,
+                minLines: 3,
+                focusNode: controller.regionFocus,
+              ),
+              const SizedBox(height: 20),
+              Obx(() => RoundButton(
+                width: double.infinity,
+                title: "Submit Request",
+                loading: controller.isSubmitting.value,
+                onPress: controller.submitWithdrawalRequest,
+              )),
             ],
           ),
         ),
