@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/Repositry/user_repo/userHome_repo/connect_user_repo.dart';
 import 'package:nikosafe/models/User/userHome/connect_user_model.dart';
+import 'package:nikosafe/utils/token_manager.dart'; // ✅ Import this
 import 'package:nikosafe/utils/utils.dart';
 
 
@@ -18,11 +19,28 @@ class ConnectsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadAcceptedFriends();
+    _getCurrentUserId();
+  }
+
+  // ✅ Get current user ID first
+  Future<void> _getCurrentUserId() async {
+    currentUserId = await TokenManager.getUserId();
+    if (kDebugMode) print('Current user ID: $currentUserId');
+    await loadAcceptedFriends();
   }
 
   // Load only accepted friends
   Future<void> loadAcceptedFriends() async {
+    // ✅ Wait for user ID if not loaded yet
+    if (currentUserId == null) {
+      currentUserId = await TokenManager.getUserId();
+    }
+
+    if (currentUserId == null) {
+      if (kDebugMode) print('❌ Cannot load friends: No user ID');
+      return;
+    }
+
     try {
       isLoading.value = true;
 
@@ -37,30 +55,34 @@ class ConnectsController extends GetxController {
           // Only process accepted friendships
           if (friendship['status'] != 'accepted') continue;
 
-          // Get the friend user (not the current user)
-          Map<String, dynamic> friendData;
-
-          // You need to determine which user is the friend
-          // Assuming current user is the one making the request
-          // You might need to get current user ID from storage/auth
           final requester = friendship['requester'];
           final receiver = friendship['receiver'];
 
-          // For now, we'll include both users (you can filter by current user ID later)
-          // Convert to ConnectUser format
-          friendData = {
-            'id': receiver['id'],
-            'email': receiver['email'],
-            'name': '${receiver['first_name']} ${receiver['last_name']}'.trim().isEmpty
-                ? receiver['email'].split('@')[0]
-                : '${receiver['first_name']} ${receiver['last_name']}'.trim(),
-            'profile_picture': null,
+          // ✅ Determine which one is the friend (not current user)
+          Map<String, dynamic> friendUser;
+
+          if (requester['id'] == currentUserId) {
+            // Current user is requester, so friend is receiver
+            friendUser = receiver;
+          } else {
+            // Current user is receiver, so friend is requester
+            friendUser = requester;
+          }
+
+          // ✅ Convert to ConnectUser format
+          final friendData = {
+            'id': friendUser['id'],
+            'email': friendUser['email'],
+            'name': '${friendUser['first_name'] ?? ''} ${friendUser['last_name'] ?? ''}'.trim().isEmpty
+                ? friendUser['email'].split('@')[0]
+                : '${friendUser['first_name'] ?? ''} ${friendUser['last_name'] ?? ''}'.trim(),
+            'profile_picture': friendUser['profile_picture'],
             'friendship_status': 'accepted',
-            'total_friends': 0,
-            'total_posts': 0,
-            'post_ids': [],
-            'points': 0,
-            'connect_percentage': 0,
+            'total_friends': friendUser['total_friends'] ?? 0,
+            'total_posts': friendUser['total_posts'] ?? 0,
+            'post_ids': friendUser['post_ids'] ?? [],
+            'points': friendUser['points'] ?? 0,
+            'connect_percentage': friendUser['connect_percentage'] ?? 0,
           };
 
           acceptedFriends.add(ConnectUser.fromJson(friendData));
@@ -69,12 +91,15 @@ class ConnectsController extends GetxController {
         connects.value = acceptedFriends;
 
         if (kDebugMode) {
-          print("Accepted friends loaded: ${connects.length}");
+          print("✅ Accepted friends loaded: ${connects.length}");
+          for (var friend in acceptedFriends) {
+            print("  - ${friend.name} (ID: ${friend.id})");
+          }
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading accepted friends: $e');
+        print('❌ Error loading accepted friends: $e');
       }
       Utils.errorSnackBar('Error', 'Failed to load friends');
     } finally {

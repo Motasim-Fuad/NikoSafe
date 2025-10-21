@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/MyProfile/my_profile_details_controller/connectController.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 
 class AllConnectsView extends StatelessWidget {
   final controller = Get.put(ConnectsController());
@@ -90,7 +91,16 @@ class AllConnectsView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Icon(Icons.chat_bubble_outline, color: Colors.tealAccent),
+                        // ✅ Fixed: Pass the ConnectUser object, not currentUserId
+                        IconButton(
+                          onPressed: () {
+                            Get.toNamed(
+                              RouteName.chatDetailView,
+                              arguments: user, // ✅ Pass entire user object
+                            );
+                          },
+                          icon: Icon(Icons.chat_bubble_outline, color: Colors.tealAccent),
+                        ),
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: Colors.red),
