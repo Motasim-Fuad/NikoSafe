@@ -113,9 +113,28 @@ class ProviderHomeView extends StatelessWidget {
 
                   if (taskController.tasks.isEmpty) {
                     return Center(
-                      child: Text(
-                        'No tasks available',
-                        style: TextStyle(color: Colors.white70, fontSize: 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.inbox_outlined, color: Colors.white54, size: 80),
+                          SizedBox(height: 16),
+                          Text(
+                            'No pending tasks',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'New booking requests will appear here',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }

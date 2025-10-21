@@ -9,8 +9,35 @@ class TaskCard extends StatelessWidget {
 
   const TaskCard({Key? key, required this.task}) : super(key: key);
 
+  // Status এর জন্য color এবং text return করে
+  Map<String, dynamic> getStatusInfo() {
+    final status = task.status.toLowerCase();
+
+    if (status == 'pending') {
+      return {
+        'color': Colors.orange,
+        'text': 'Pending',
+        'icon': Icons.pending
+      };
+    } else if (status == 'awaiting_confirmation') {
+      return {
+        'color': Colors.blue,
+        'text': 'New Request',
+        'icon': Icons.notifications_active
+      };
+    }
+
+    return {
+      'color': Colors.grey,
+      'text': 'Unknown',
+      'icon': Icons.help_outline
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
+    final statusInfo = getStatusInfo();
+
     return GestureDetector(
       onTap: () {
         // Navigate to task details page with booking ID
@@ -58,15 +85,68 @@ class TaskCard extends StatelessWidget {
                     ],
                   ),
                 ),
+                // Status Badge
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: task.isPaid ? Colors.green : Colors.orange,
+                    color: statusInfo['color'],
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
-                    task.isPaid ? 'Paid' : 'Unpaid',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        statusInfo['icon'],
+                        color: Colors.white,
+                        size: 14,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        statusInfo['text'],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 12),
+
+            // Payment Status Row
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: task.isPaid ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: task.isPaid ? Colors.green : Colors.red,
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        task.isPaid ? Icons.check_circle : Icons.cancel,
+                        color: task.isPaid ? Colors.green : Colors.red,
+                        size: 14,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        task.isPaid ? 'Paid' : 'Unpaid',
+                        style: TextStyle(
+                          color: task.isPaid ? Colors.green : Colors.red,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -96,7 +176,9 @@ class TaskCard extends StatelessWidget {
                   ],
                 ],
               ),
-            SizedBox(height: 8),
+
+            if (task.bookingDate != null || task.bookingTime != null)
+              SizedBox(height: 8),
 
             // Location
             if (task.location != null)
@@ -112,35 +194,76 @@ class TaskCard extends StatelessWidget {
                   ),
                 ],
               ),
-            SizedBox(height: 12),
+
+            if (task.location != null)
+              SizedBox(height: 12),
 
             // Description
-            if (task.taskDescription != null)
+            if (task.taskDescription != null) ...[
               Text(
                 task.taskDescription!,
                 style: TextStyle(color: Colors.white60, fontSize: 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-            SizedBox(height: 12),
+              SizedBox(height: 12),
+            ],
 
             // Amount Info
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '\$${task.hourlyRate}/hr × ${task.estimatedHours}h',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
-                ),
-                Text(
-                  'Total: \$${task.totalAmount}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hourly Rate',
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '\$${task.hourlyRate}/hr × ${task.estimatedHours}h',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Total Amount',
+                        style: TextStyle(
+                          color: Colors.white54,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        '\$${task.totalAmount}',
+                        style: TextStyle(
+                          color: Colors.greenAccent,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

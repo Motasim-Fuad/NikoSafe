@@ -33,11 +33,17 @@ class TaskController extends GetxController {
     loadTasks();
   }
 
-  void loadTasks() async {
+  Future<void> loadTasks() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
-      tasks.value = await _repo.fetchTasks();
+      final allTasks = await _repo.fetchTasks();
+
+      // শুধুমাত্র "pending" status এর tasks filter করা
+      tasks.value = allTasks.where((task) {
+        return task.status.toLowerCase() == 'pending';
+      }).toList();
+
     } catch (e) {
       errorMessage.value = e.toString();
       print('Error loading tasks: $e');
@@ -46,8 +52,8 @@ class TaskController extends GetxController {
     }
   }
 
-  void refreshTasks() {
-    loadTasks();
+  void refreshTasks() async {
+    await loadTasks();
   }
 
   Future<void> fetchBookingDetails(int bookingId) async {
@@ -68,16 +74,31 @@ class TaskController extends GetxController {
     try {
       isAccepting.value = true;
       actionMessage.value = '';
-      final response = await _repo.acceptBooking(bookingId);
-      actionMessage.value = response['message'] ?? 'Booking accepted successfully';
 
-      // Refresh the task list and details
-      await fetchBookingDetails(bookingId);
-      loadTasks();
-        Utils.successSnackBar("Booking", "Booking Accepted successfully");
-      Get.back(); // Close any dialog if open
+      final response = await _repo.acceptBooking(bookingId);
+
+      // Dialog close করা
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
+      // Success snackbar দেখানো
+      Utils.successSnackBar("Success", response['message'] ?? "Booking accepted successfully");
+
+      // Task list refresh করা
+      await loadTasks();
+
+      // Details page থেকে back করা
+      Get.back();
+
     } catch (e) {
+      // Dialog close করা যদি open থাকে
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
       actionMessage.value = e.toString();
+      Utils.errorSnackBar("Error", "Failed to accept booking");
       print('Error accepting booking: $e');
     } finally {
       isAccepting.value = false;
@@ -89,16 +110,31 @@ class TaskController extends GetxController {
     try {
       isRejecting.value = true;
       actionMessage.value = '';
+
       final response = await _repo.rejectBooking(bookingId);
-      actionMessage.value = response['message'] ?? 'Booking rejected successfully';
 
-      // Refresh the task list and details
-      await fetchBookingDetails(bookingId);
-      loadTasks();
+      // Dialog close করা
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
 
-      Get.back(); // Close any dialog if open
+      // Success snackbar দেখানো
+      Utils.successSnackBar("Success", response['message'] ?? "Booking rejected successfully");
+
+      // Task list refresh করা
+      await loadTasks();
+
+      // Details page থেকে back করা
+      Get.back();
+
     } catch (e) {
+      // Dialog close করা যদি open থাকে
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
       actionMessage.value = e.toString();
+      Utils.errorSnackBar("Error", "Failed to reject booking");
       print('Error rejecting booking: $e');
     } finally {
       isRejecting.value = false;
