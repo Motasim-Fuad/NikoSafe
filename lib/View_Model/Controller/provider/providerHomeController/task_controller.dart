@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/utils/utils.dart';
 import '../../../../Repositry/Provider/providerHomeRepo/task_repo.dart';
 import '../../../../models/Provider/providerHomeModel/task_model.dart';
 
@@ -73,7 +74,7 @@ class TaskController extends GetxController {
       // Refresh the task list and details
       await fetchBookingDetails(bookingId);
       loadTasks();
-
+        Utils.successSnackBar("Booking", "Booking Accepted successfully");
       Get.back(); // Close any dialog if open
     } catch (e) {
       actionMessage.value = e.toString();

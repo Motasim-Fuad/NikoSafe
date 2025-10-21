@@ -8,7 +8,7 @@ import 'package:nikosafe/view/provider/ProviderHome/provider_home_view.dart';
 import 'package:nikosafe/view/provider/ProviderProfile/provider_profile_view.dart';
 import '../../View_Model/Controller/provider/providerBtmNavController.dart';
 import 'ProviderEarning/provider_earning.dart';
-import 'ProviderTaskManagement/providerTaskManagement.dart';
+import 'ProviderTaskManagement/provider_services_view.dart';
 
 class ProviderBtmNavView extends StatelessWidget {
   ProviderBtmNavView({super.key});
@@ -18,7 +18,7 @@ class ProviderBtmNavView extends StatelessWidget {
   final List<Widget> _pages = [
     ProviderHomeView(),
 
-    ProviderTaskManagementView(),
+    ProviderServicesView(),
     ProviderEarningDataView(),
     ProviderProfileView(),
   ];

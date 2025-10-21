@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:nikosafe/models/Provider/providerTaskModel/provider_task_model.dart';
 
-
 class TaskCard extends StatelessWidget {
-  final ProviderTaskModel task;
+  final ProviderServicesModel task;
   final VoidCallback onView;
 
   const TaskCard({super.key, required this.task, required this.onView});
 
   Color getStatusColor(String status) {
-    if (status == "In Progress") return Colors.amber;
-    if (status == "Completed") return Colors.green;
-    return Colors.grey;
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return Colors.green;
+      case 'cancelled':
+      case 'rejected':
+        return Colors.red;
+      case 'accepted':
+        return Colors.blue;
+      case 'awaiting_confirmation':
+        return Colors.amber;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override
@@ -23,14 +32,14 @@ class TaskCard extends StatelessWidget {
         children: [
           TableRow(children: [
             tableCell(task.customerName),
-            tableCell(task.task),
-            tableCell(task.date),
-            tableCell(task.time),
+            tableCell(task.displayTask),
+            tableCell(task.displayDate),
+            tableCell(task.displayTime),
             tableCell(
               task.status,
               textColor: getStatusColor(task.status),
             ),
-            tableCell(task.amount),
+            tableCell('\$${task.totalAmount}'),
           ]),
         ],
       ),

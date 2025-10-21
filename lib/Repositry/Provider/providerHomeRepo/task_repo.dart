@@ -1,4 +1,5 @@
 import 'package:nikosafe/resource/App_Url/app_url.dart';
+import 'package:nikosafe/utils/utils.dart';
 import '../../../data/network/network_api_services.dart';
 import '../../../models/Provider/providerHomeModel/task_model.dart';
 
@@ -31,6 +32,7 @@ class TaskRepository {
       );
 
       if (response['success'] == true && response['data'] != null) {
+
         return TaskModel.fromJson(response['data']);
       } else {
         throw Exception(response['message'] ?? 'Failed to fetch booking details');
@@ -54,6 +56,8 @@ class TaskRepository {
       );
 
       if (response['success'] == true) {
+
+        Utils.successSnackBar("Booking", "Booking Accepted successfully");
         return response;
       } else {
         throw Exception(response['message'] ?? 'Failed to accept booking');
@@ -77,6 +81,7 @@ class TaskRepository {
       );
 
       if (response['success'] == true) {
+        Utils.successSnackBar("Booking", "Booking Rejected successfully");
         return response;
       } else {
         throw Exception(response['message'] ?? 'Failed to reject booking');
