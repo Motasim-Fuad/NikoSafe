@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userData/drink_controller.dart';
-import 'package:nikosafe/resource/compunents/RoundButton.dart';
-import 'package:nikosafe/view/User/UserData/widgets/create_drink_type_dialog.dart';
 
-class AddDrinkDialog extends StatefulWidget {
-  const AddDrinkDialog({super.key});
+class CreateDrinkTypeDialog extends StatefulWidget {
+  const CreateDrinkTypeDialog({super.key});
 
   @override
-  State<AddDrinkDialog> createState() => _AddDrinkDialogState();
+  State<CreateDrinkTypeDialog> createState() => _CreateDrinkTypeDialogState();
 }
 
-class _AddDrinkDialogState extends State<AddDrinkDialog> {
+class _CreateDrinkTypeDialogState extends State<CreateDrinkTypeDialog> {
   final DrinkController controller = Get.find<DrinkController>();
 
-  int? selectedDrinkType;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController volumeController = TextEditingController();
   final TextEditingController alcoholController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    if (controller.drinkTypes.isEmpty) {
-      controller.fetchDrinkTypes();
-    }
+  void dispose() {
+    nameController.dispose();
+    volumeController.dispose();
+    alcoholController.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,8 +40,8 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Log a Drink',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                    'Create Custom Drink Type',
+                    style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     onPressed: () => Get.back(),
@@ -52,125 +49,93 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
+              const Text(
+                'Add your own drink type to the list',
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
               const SizedBox(height: 20),
 
-              // Drink Type Dropdown
-               Row(
-                 children: [
-                   Text('DRINK TYPE', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                   IconButton(onPressed: (){
-                    Get.to(CreateDrinkTypeDialog());
-
-                   }, icon: Icon(Icons.add, color: Colors.grey,) ),
-                 ],
-               ),
-              const SizedBox(height: 8),
-              Obx(() {
-                if (controller.drinkTypes.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white30),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                return DropdownButtonFormField<int>(
-                  value: selectedDrinkType,
-                  dropdownColor: const Color(0xFF2E3B4E),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                  hint: const Text('Select drink type', style: TextStyle(color: Colors.white70)),
-                  items: controller.drinkTypes.map((drinkType) {
-                    return DropdownMenuItem<int>(
-                      value: drinkType.id,
-                      child: Text(drinkType.name),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedDrinkType = value;
-                      // Auto-fill default values
-                      final selectedType = controller.drinkTypes.firstWhere((dt) => dt.id == value);
-                      volumeController.text = selectedType.defaultVolumeMl.toString();
-                      alcoholController.text = selectedType.defaultAlcoholPercentage.toString();
-                    });
-                  },
-                );
-              }),
-              const SizedBox(height: 16),
-
-              // Drink Name
+              // Drink Type Name
               TextField(
                 controller: nameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
-                  labelText: 'DRINK NAME',
+                  labelText: 'DRINK TYPE NAME',
                   labelStyle: TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(),
-                  hintText: 'e.g., Heineken, Red Wine',
+                  hintText: 'e.g., Whiskey, Vodka, Rum',
                   hintStyle: TextStyle(color: Colors.white30),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Volume
+              // Default Volume
               TextField(
                 controller: volumeController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
-                  labelText: 'VOLUME (ml)',
+                  labelText: 'DEFAULT VOLUME (ml)',
                   labelStyle: TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(),
                   suffixText: 'ml',
+                  hintText: 'e.g., 44, 330, 150',
+                  hintStyle: TextStyle(color: Colors.white30),
                 ),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
 
-              // Alcohol Percentage
+              // Default Alcohol Percentage
               TextField(
                 controller: alcoholController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
-                  labelText: 'ALCOHOL % (ABV)',
+                  labelText: 'DEFAULT ALCOHOL % (ABV)',
                   labelStyle: TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(),
                   suffixText: '%',
+                  hintText: 'e.g., 40.0, 5.0, 12.0',
+                  hintStyle: TextStyle(color: Colors.white30),
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
               const SizedBox(height: 24),
 
-              // Save Button
+              // Info Box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.withOpacity(0.5)),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'This will be added to your drink types list for future logs',
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Create Button
               Center(
                 child: Obx(() {
                   return ElevatedButton(
                     onPressed: controller.isLoading.value
                         ? null
                         : () {
-                      if (selectedDrinkType == null) {
-                        Get.snackbar(
-                          'Error',
-                          'Please select a drink type',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                        return;
-                      }
-
                       if (nameController.text.isEmpty) {
                         Get.snackbar(
                           'Error',
-                          'Please enter a drink name',
+                          'Please enter a drink type name',
                           snackPosition: SnackPosition.BOTTOM,
                           backgroundColor: Colors.red,
                           colorText: Colors.white,
@@ -184,7 +149,7 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                       if (volume == null || volume <= 0) {
                         Get.snackbar(
                           'Error',
-                          'Please enter a valid volume',
+                          'Please enter a valid default volume',
                           snackPosition: SnackPosition.BOTTOM,
                           backgroundColor: Colors.red,
                           colorText: Colors.white,
@@ -203,12 +168,13 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                         return;
                       }
 
-                      controller.logDrink(
-                        drinkType: selectedDrinkType!,
-                        drinkName: nameController.text,
-                        volumeMl: volume,
-                        alcoholPercentage: alcohol,
+                      controller.createCustomDrinkType(
+                        name: nameController.text,
+                        defaultVolumeMl: volume,
+                        defaultAlcoholPercentage: alcohol,
                       );
+
+                      Get.back(); // Close this dialog
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00C4B4),
@@ -221,7 +187,7 @@ class _AddDrinkDialogState extends State<AddDrinkDialog> {
                       height: 20,
                       child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
                     )
-                        : const Text('Save', style: TextStyle(color: Colors.black, fontSize: 16)),
+                        : const Text('Create Drink Type', style: TextStyle(color: Colors.black, fontSize: 16)),
                   );
                 }),
               ),

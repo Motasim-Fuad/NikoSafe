@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/binding/provider/provider_chat_list_binding.dart';
 import 'package:nikosafe/binding/provider/service_chat_binding.dart';
 import 'package:nikosafe/binding/userLocation/user_location_binding.dart';
 import 'package:nikosafe/binding/user_chat_binding/user_chat_binding.dart';
@@ -24,6 +25,7 @@ import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view
 import 'package:nikosafe/view/User/user_btn_nav.dart';
 import 'package:nikosafe/view/provider/ProviderEarning/ProviderEarningDetails/provider_erning_details_view.dart';
 import 'package:nikosafe/view/provider/ProviderEarning/provider_withdrawals_view.dart';
+import 'package:nikosafe/view/provider/chat/provider_chat_list_view.dart';
 import 'package:nikosafe/view/provider/chat/services_provider_chat_view.dart';
 import 'package:nikosafe/view/vendor/Chat/vendor_chat_details_view.dart';
 
@@ -395,6 +397,14 @@ class AppRouts {
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(milliseconds: 250),
     ),
+    GetPage(
+      name: RouteName.providerChatListView,
+      page: () => ProviderChatListView(),
+      binding: ProviderChatListBinding(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(milliseconds: 250),
+    ),
+
 
     GetPage(
       name: RouteName.faqView,

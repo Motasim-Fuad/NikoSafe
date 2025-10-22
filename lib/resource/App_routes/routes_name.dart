@@ -58,6 +58,8 @@ class RouteName{
   static const String providerWithdrawalsView = '/Provider_WithdrawalsView';
   static const String vendorChatDetailView = '/vendor_chat_detail_view';
   static const String serviceChatDetailView = '/service_chat_detail_view';
+  static const String providerChatListView = '/provider_chat_list_view';
+
 
 
 

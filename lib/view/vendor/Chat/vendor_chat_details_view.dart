@@ -7,20 +7,21 @@ import 'package:nikosafe/models/vendor/chat/vendor_chat_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
 import 'package:nikosafe/View/user/chat/widgets/chat_bubble.dart';
+import 'package:nikosafe/view/vendor/Chat/vendor_chat_bubble.dart';
 
 class VendorChatDetailView extends StatelessWidget {
   VendorChatDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // শুধু find করুন, put না - কারণ binding এ already put করা আছে
     final VendorChatController controller = Get.find<VendorChatController>();
+
     final TextEditingController messageController = TextEditingController();
     final ScrollController scrollController = ScrollController();
 
-    // Get vendor from arguments
     final VendorChatModel vendor = Get.arguments as VendorChatModel;
 
-    // Open chat when view loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.openChat(vendor);
     });
@@ -213,7 +214,7 @@ class VendorChatDetailView extends StatelessWidget {
                     itemCount: controller.messages.length,
                     itemBuilder: (_, index) {
                       final message = controller.messages[index];
-                      return ChatBubble(
+                      return VendorChatBubble(
                         message: message,
                         onRetry: () => controller.retryMessage(message),
                       );

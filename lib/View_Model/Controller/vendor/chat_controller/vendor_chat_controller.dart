@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/Repositry/vendor_repo/chat_repo/vendor_chat_repo.dart';
 import 'package:nikosafe/View_Model/Services/vendor/vendor_websocket_service.dart';
-import 'package:nikosafe/models/User/ChatModel/message_model.dart';
 import 'package:nikosafe/models/vendor/chat/vendor_chat_model.dart';
+import 'package:nikosafe/models/vendor/chat/vendor_message_model.dart';
 import 'package:nikosafe/resource/App_Url/app_url.dart';
 import 'package:nikosafe/utils/token_manager.dart';
 import 'package:nikosafe/utils/utils.dart';
@@ -15,7 +15,7 @@ class VendorChatController extends GetxController {
   final VendorChatRepo _chatRepo = VendorChatRepo();
   final VendorWebSocketService _wsService = VendorWebSocketService();
 
-  var messages = <ChatMessage>[].obs;
+  var messages = <VendorChatMessage>[].obs;
   var isLoading = false.obs;
   var isConnecting = false.obs;
   var isUploading = false.obs;
@@ -23,6 +23,9 @@ class VendorChatController extends GetxController {
   int? currentUserId;
 
   StreamSubscription? _wsSubscription;
+
+  // Cache to store chat histories for each vendor
+  final Map<int, List<VendorChatMessage>> _chatCache = {};
 
   @override
   void onInit() {
@@ -60,11 +63,11 @@ class VendorChatController extends GetxController {
           break;
 
         case 'message_delivered':
-          _updateMessageStatus(data['message_id'], MessageStatus.delivered);
+          _updateMessageStatus(data['message_id'], VendorMessageStatus.delivered);
           break;
 
         case 'message_read':
-          _updateMessageStatus(data['message_id'], MessageStatus.read);
+          _updateMessageStatus(data['message_id'], VendorMessageStatus.read);
           break;
 
         case 'error':
@@ -89,23 +92,29 @@ class VendorChatController extends GetxController {
     try {
       final messageData = data['message'] ?? data;
 
-      final message = ChatMessage.fromJson(
+      final message = VendorChatMessage.fromVendorJson(
         messageData,
         currentUserId!,
         baseUrl: AppUrl.base_url,
       );
 
       // Check if message belongs to current vendor chat
-      final isFromCurrentChat = (message.senderId == selectedVendor.value?.id &&
-          message.receiverId == currentUserId) ||
-          (message.senderId == currentUserId &&
-              message.receiverId == selectedVendor.value?.id);
+      final isFromCurrentChat = message.vendorId == selectedVendor.value?.id;
 
       if (isFromCurrentChat) {
-        messages.add(message);
+        // Avoid duplicates
+        final exists = messages.any((m) => m.id == message.id);
+        if (!exists) {
+          messages.add(message);
 
-        if (kDebugMode) {
-          print('✅ Vendor message added: ${message.displayText}');
+          // Update cache
+          if (selectedVendor.value != null) {
+            _chatCache[selectedVendor.value!.id] = List.from(messages);
+          }
+
+          if (kDebugMode) {
+            print('✅ Vendor message added: ${message.displayText}');
+          }
         }
       }
     } catch (e) {
@@ -114,37 +123,76 @@ class VendorChatController extends GetxController {
   }
 
   void _handleMessageSent(Map<String, dynamic> data) {
-    final tempId = data['temp_id'];
-    final serverId = data['id'];
+    final messageData = data['message'];
+    if (messageData == null) return;
 
-    final index = messages.indexWhere((m) => m.id == tempId);
-    if (index != -1) {
-      messages[index] = messages[index].copyWith(
-        id: serverId,
-        status: MessageStatus.sent,
+    try {
+      final serverMessage = VendorChatMessage.fromVendorJson(
+        messageData,
+        currentUserId!,
+        baseUrl: AppUrl.base_url,
       );
+
+      // Find and update the sending message
+      final index = messages.indexWhere((m) =>
+      m.text == serverMessage.text &&
+          m.status == VendorMessageStatus.sending
+      );
+
+      if (index != -1) {
+        messages[index] = serverMessage.copyWith(status: VendorMessageStatus.sent);
+
+        // Update cache
+        if (selectedVendor.value != null) {
+          _chatCache[selectedVendor.value!.id] = List.from(messages);
+        }
+
+        if (kDebugMode) print('✅ Message sent confirmed: ID ${serverMessage.id}');
+      }
+    } catch (e) {
+      if (kDebugMode) print('❌ Error handling message_sent: $e');
     }
   }
 
-  void _updateMessageStatus(int? messageId, MessageStatus status) {
+  void _updateMessageStatus(int? messageId, VendorMessageStatus status) {
     if (messageId == null) return;
 
     final index = messages.indexWhere((m) => m.id == messageId);
     if (index != -1) {
-      messages[index] = messages[index].copyWith(status: status);
+      messages[index] = messages[index].copyWith(
+        status: status,
+        isRead: status == VendorMessageStatus.read,
+      );
+
+      // Update cache
+      if (selectedVendor.value != null) {
+        _chatCache[selectedVendor.value!.id] = List.from(messages);
+      }
     }
   }
 
   Future<void> openChat(VendorChatModel vendor) async {
     selectedVendor.value = vendor;
-    messages.clear();
 
     if (kDebugMode) print('Opening vendor chat: ${vendor.name} (ID: ${vendor.id})');
 
+    // Check cache first for instant loading
+    if (_chatCache.containsKey(vendor.id) && _chatCache[vendor.id]!.isNotEmpty) {
+      if (kDebugMode) print('📦 Loading ${_chatCache[vendor.id]!.length} messages from cache');
+      messages.value = List.from(_chatCache[vendor.id]!);
+    } else {
+      messages.clear();
+    }
+
     try {
       isConnecting.value = true;
+
+      // Connect to WebSocket
       await _wsService.connect(vendor.id);
+
+      // Load chat history from server
       await _loadChatHistory(vendor.id);
+
       isConnecting.value = false;
     } catch (e) {
       isConnecting.value = false;
@@ -159,21 +207,62 @@ class VendorChatController extends GetxController {
 
       final response = await _chatRepo.getVendorChatHistory(vendorId: vendorId);
 
-      if (response['success'] == true && response['data'] != null) {
-        List<dynamic> messagesJson = response['data'] as List;
-
-        messages.value = messagesJson
-            .map((json) => ChatMessage.fromJson(
-          json,
-          currentUserId!,
-          baseUrl: AppUrl.base_url,
-        ))
-            .toList();
-
-        if (kDebugMode) print('✅ Loaded ${messages.length} vendor messages');
+      if (kDebugMode) {
+        print('🔍 Loading chat history for vendor: $vendorId');
       }
-    } catch (e) {
-      if (kDebugMode) print('⚠️ Could not load vendor chat history: $e');
+
+      // Handle nested response structure
+      List<dynamic>? messagesJson;
+
+      if (response['results'] != null) {
+        final results = response['results'];
+        if (results is Map && results['messages'] != null) {
+          messagesJson = results['messages'] as List?;
+        }
+      } else if (response['data'] != null) {
+        messagesJson = response['data'] as List?;
+      } else if (response['messages'] != null) {
+        messagesJson = response['messages'] as List?;
+      }
+
+      if (messagesJson != null && messagesJson.isNotEmpty) {
+        // Parse all messages safely
+        final loadedMessages = <VendorChatMessage>[];
+
+        for (var json in messagesJson) {
+          try {
+            final message = VendorChatMessage.fromVendorJson(
+              json,
+              currentUserId!,
+              baseUrl: AppUrl.base_url,
+            );
+            loadedMessages.add(message);
+          } catch (e) {
+            if (kDebugMode) {
+              print('⚠️ Skipping message due to parse error: $e');
+            }
+          }
+        }
+
+        if (loadedMessages.isNotEmpty) {
+          messages.value = loadedMessages;
+
+          // Update cache
+          _chatCache[vendorId] = List.from(loadedMessages);
+
+          if (kDebugMode) {
+            print('✅ Loaded ${messages.length} vendor messages from server');
+            print('💾 Cache updated with ${loadedMessages.length} messages');
+          }
+        }
+      } else {
+        if (kDebugMode) print('ℹ️ No messages found for vendor $vendorId');
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('⚠️ Could not load vendor chat history: $e');
+        print('Stack trace: $stackTrace');
+      }
     } finally {
       isLoading.value = false;
     }
@@ -184,35 +273,53 @@ class VendorChatController extends GetxController {
 
     final tempId = DateTime.now().millisecondsSinceEpoch;
 
-    final message = ChatMessage(
+    final message = VendorChatMessage(
       id: tempId,
+      userId: currentUserId!,
+      vendorId: selectedVendor.value!.id,
       senderId: currentUserId!,
-      receiverId: selectedVendor.value!.id,
+      senderEmail: '',
+      senderName: '',
       text: text.trim(),
-      type: MessageType.text,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
+      messageType: VendorMessageType.text,
+      status: VendorMessageStatus.sending,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       isSentByMe: true,
+      isRead: false,
     );
 
     messages.add(message);
 
-    try {
-      _wsService.sendMessage(message.toJson());
+    // Update cache immediately
+    if (selectedVendor.value != null) {
+      _chatCache[selectedVendor.value!.id] = List.from(messages);
+    }
 
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(status: MessageStatus.sent);
-      }
+    try {
+      final payload = {
+        'type': 'send_message',
+        'receiver_id': selectedVendor.value!.id,
+        'message': text.trim(),
+      };
+
+      _wsService.sendMessage(payload);
+
+      if (kDebugMode) print('📤 Text message sent');
     } catch (e) {
       if (kDebugMode) print('❌ Error sending vendor message: $e');
 
       final index = messages.indexWhere((m) => m.id == tempId);
       if (index != -1) {
         messages[index] = message.copyWith(
-          status: MessageStatus.failed,
+          status: VendorMessageStatus.failed,
           errorMessage: 'Failed to send',
         );
+
+        // Update cache
+        if (selectedVendor.value != null) {
+          _chatCache[selectedVendor.value!.id] = List.from(messages);
+        }
       }
 
       Utils.errorSnackBar('Error', 'Message not sent');
@@ -228,31 +335,41 @@ class VendorChatController extends GetxController {
 
     final tempId = DateTime.now().millisecondsSinceEpoch;
 
-    MessageType messageType = MessageType.text;
+    VendorMessageType messageType = VendorMessageType.text;
     if (file != null) {
       final extension = file.path.split('.').last.toLowerCase();
       if (['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(extension)) {
-        messageType = MessageType.image;
+        messageType = VendorMessageType.image;
       } else if (['mp4', 'mov', 'avi', 'mkv'].contains(extension)) {
-        messageType = MessageType.video;
+        messageType = VendorMessageType.video;
       } else {
-        messageType = MessageType.file;
+        messageType = VendorMessageType.file;
       }
     }
 
-    final message = ChatMessage(
+    final message = VendorChatMessage(
       id: tempId,
+      userId: currentUserId!,
+      vendorId: selectedVendor.value!.id,
       senderId: currentUserId!,
-      receiverId: selectedVendor.value!.id,
+      senderEmail: '',
+      senderName: '',
       text: text?.trim(),
-      type: messageType,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
+      messageType: messageType,
+      status: VendorMessageStatus.sending,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       isSentByMe: true,
+      isRead: false,
       localFile: file,
     );
 
     messages.add(message);
+
+    // Update cache
+    if (selectedVendor.value != null) {
+      _chatCache[selectedVendor.value!.id] = List.from(messages);
+    }
 
     try {
       if (file != null) {
@@ -271,13 +388,20 @@ class VendorChatController extends GetxController {
 
           if (kDebugMode) print('✅ Vendor file uploaded');
 
+          final serverMessage = VendorChatMessage.fromVendorJson(
+            fileData,
+            currentUserId!,
+            baseUrl: AppUrl.base_url,
+          );
+
           final index = messages.indexWhere((m) => m.id == tempId);
           if (index != -1) {
-            messages[index] = ChatMessage.fromJson(
-              fileData,
-              currentUserId!,
-              baseUrl: AppUrl.base_url,
-            );
+            messages[index] = serverMessage;
+
+            // Update cache
+            if (selectedVendor.value != null) {
+              _chatCache[selectedVendor.value!.id] = List.from(messages);
+            }
           }
 
           _wsService.sendMessage({
@@ -288,13 +412,6 @@ class VendorChatController extends GetxController {
         } else {
           throw Exception('File upload failed');
         }
-      } else {
-        _wsService.sendMessage(message.toJson());
-
-        final index = messages.indexWhere((m) => m.id == tempId);
-        if (index != -1) {
-          messages[index] = message.copyWith(status: MessageStatus.sent);
-        }
       }
     } catch (e) {
       isUploading.value = false;
@@ -303,94 +420,49 @@ class VendorChatController extends GetxController {
       final index = messages.indexWhere((m) => m.id == tempId);
       if (index != -1) {
         messages[index] = message.copyWith(
-          status: MessageStatus.failed,
+          status: VendorMessageStatus.failed,
           errorMessage: 'Failed to send',
         );
+
+        // Update cache
+        if (selectedVendor.value != null) {
+          _chatCache[selectedVendor.value!.id] = List.from(messages);
+        }
       }
 
       Utils.errorSnackBar('Error', 'Failed to send file');
     }
   }
 
-  Future<void> sendLocation({
-    required double latitude,
-    required double longitude,
-    String? locationName,
-  }) async {
-    if (selectedVendor.value == null) return;
-
-    final tempId = DateTime.now().millisecondsSinceEpoch;
-    final locationUrl = 'https://maps.google.com/?q=$latitude,$longitude';
-    final messageText = '${locationName ?? 'Shared Location'}\n$locationUrl';
-
-    final message = ChatMessage(
-      id: tempId,
-      senderId: currentUserId!,
-      receiverId: selectedVendor.value!.id,
-      text: messageText,
-      type: MessageType.location,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
-      isSentByMe: true,
-      latitude: latitude,
-      longitude: longitude,
-      locationName: locationName ?? 'Shared Location',
-    );
-
-    messages.add(message);
-
-    try {
-      final wsPayload = {
-        'type': 'send_message',
-        'receiver_id': selectedVendor.value!.id,
-        'message': messageText,
-        'latitude': latitude.toString(),
-        'longitude': longitude.toString(),
-        'location_name': locationName ?? 'Shared Location',
-      };
-
-      _wsService.sendMessage(wsPayload);
-
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(status: MessageStatus.sent);
-      }
-    } catch (e) {
-      if (kDebugMode) print('❌ Error sending vendor location: $e');
-
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(
-          status: MessageStatus.failed,
-          errorMessage: 'Failed to send',
-        );
-      }
-
-      Utils.errorSnackBar('Error', 'Failed to send location');
-    }
-  }
-
-  void retryMessage(ChatMessage message) {
-    if (message.status != MessageStatus.failed) return;
+  void retryMessage(VendorChatMessage message) {
+    if (message.status != VendorMessageStatus.failed) return;
 
     messages.removeWhere((m) => m.id == message.id);
 
-    if (message.type == MessageType.text) {
+    // Update cache
+    if (selectedVendor.value != null) {
+      _chatCache[selectedVendor.value!.id] = List.from(messages);
+    }
+
+    if (message.messageType == VendorMessageType.text) {
       sendTextMessage(message.text ?? '');
     } else if (message.localFile != null) {
       sendFileMessage(file: message.localFile, text: message.text);
-    } else if (message.type == MessageType.location) {
-      sendLocation(
-        latitude: message.latitude!,
-        longitude: message.longitude!,
-        locationName: message.locationName,
-      );
     }
   }
 
   void closeChat() {
+    // Don't clear messages and cache, just set selectedVendor to null
+    selectedVendor.value = null;
+    if (kDebugMode) print('🔒 Chat closed, cache preserved');
+  }
+
+  // Method to clear all cached data (for logout)
+  void clearAllCache() {
+    _chatCache.clear();
     messages.clear();
     selectedVendor.value = null;
+    if (kDebugMode) print('🗑️ All cache cleared');
   }
 
   @override

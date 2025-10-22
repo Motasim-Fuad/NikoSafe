@@ -24,7 +24,7 @@ class UserBtnNavView extends StatelessWidget {
     UserHomeView(),
     ExploreMainPage(),
     QrScannerView(),
-    BacChartView(),
+    UserDataView(),
     MyProfileView(),
 
   ];

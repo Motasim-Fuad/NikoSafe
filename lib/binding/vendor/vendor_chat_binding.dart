@@ -5,5 +5,10 @@ class VendorChatBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<VendorChatController>(() => VendorChatController());
+    Get.put<VendorChatController>(
+      VendorChatController(),
+      permanent: true,
+    );
   }
+
 }

@@ -5,5 +5,9 @@ class ServiceChatBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<ServiceChatController>(() => ServiceChatController());
+    Get.put<ServiceChatController>(
+      ServiceChatController(),
+      permanent: true,
+    );
   }
 }

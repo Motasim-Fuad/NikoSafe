@@ -1,8 +1,8 @@
 // data/app_url.dart - UPDATED WITH PAYMENT ENDPOINTS
 
 class AppUrl {
-  static const String base_url = 'https://weekly-ontario-picked-qualified.trycloudflare.com';
-  static const String ws_base_url = 'wss://weekly-ontario-picked-qualified.trycloudflare.com';
+  static const String base_url = 'https://heaven-produce-hanging-mainland.trycloudflare.com';
+  static const String ws_base_url = 'wss://heaven-produce-hanging-mainland.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS ======
   static const String userRegisterUrl = "$base_url/api/accounts/register/";
@@ -83,6 +83,33 @@ class AppUrl {
     return '$getAllServiceProvidersUrl$providerId/save/';
   }
 
+
+  // ====== DRINKING BAR CHART ENDPOINTS ======
+
+  // Drink Types
+  static const String getDrinkTypesUrl = "$base_url/api/basicuser/drink-types/";
+  static const String createCustomDrinkTypeUrl = "$base_url/api/basicuser/drink-types/";
+
+  // Drink Logging
+  static const String logDrinkUrl = "$base_url/api/basicuser/drinks/log/";
+  static const String getTodayDrinksUrl = "$base_url/api/basicuser/drinks/today/";
+  static const String getDrinkHistoryUrl = "$base_url/api/basicuser/drinks/history/";
+
+  // Drink Plan
+  static const String getWeeklyDrinkPlanUrl = "$base_url/api/basicuser/drink-plan/";
+  static const String updateWeeklyDrinkPlanUrl = "$base_url/api/basicuser/drink-plan/";
+
+  // BAC Calculator
+  static const String calculateBACUrl = "$base_url/api/basicuser/bac/calculate/";
+
+  // Stats
+  static const String getWeeklyStatsUrl = "$base_url/api/basicuser/drinks/week-stats/";
+  static const String getDailyStatusUrl = "$base_url/api/basicuser/stats/daily-status/";
+
+  // Helper method for deleting a drink
+  static String deleteDrinkUrl(int drinkId) {
+    return '$base_url/api/basicuser/drinks/$drinkId/delete/';
+  }
   // ====== USER PROFILE HELPER METHODS ======
   static String getUserProfileUrl(int userId) {
     return '${socialGetUserProfile}$userId/profile/';

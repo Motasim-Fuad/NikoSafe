@@ -56,16 +56,16 @@ class ExploreItemModel {
     int? totalReviews,
   }) {
     // ✅ user object থেকে id নেওয়া এবং int-এ convert
-    int userId = 0;
-    if (venueData['user'] != null && venueData['user'] is Map) {
-      userId = venueData['user']['id'] ?? 0;
-    }
+    // int userId = 0;
+    // if (venueData['user'] != null && venueData['user'] is Map) {
+    //   userId = venueData['user']['id'] ?? 0;
+    // }
 
     String imageUrl = venueData['profile_picture'] ?? '';
 
     return ExploreItemModel(
       id: venueData['id'].toString(),
-      userId: userId, // ✅ int হিসেবে assign
+      userId:  venueData['user']?['id'] ?? 0,
       title: venueData['venue_name'] ?? 'Unknown Venue',
       subtitle: _getSubtitleFromCategory(category),
       imageUrl: imageUrl,

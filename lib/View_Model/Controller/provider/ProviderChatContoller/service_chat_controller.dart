@@ -1,4 +1,3 @@
-// Path: View_Model/Controller/service/service_chat_controller.dart
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -6,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:nikosafe/Repositry/Provider/chat_repo/service_chat_repo.dart';
 import 'package:nikosafe/View_Model/Services/provider/service_websocket_service.dart';
 import 'package:nikosafe/models/Provider/chat/provider_chat_model.dart';
-import 'package:nikosafe/models/User/ChatModel/message_model.dart';
+import 'package:nikosafe/models/Provider/chat/provider_message_model.dart';
 import 'package:nikosafe/resource/App_Url/app_url.dart';
 import 'package:nikosafe/utils/token_manager.dart';
 import 'package:nikosafe/utils/utils.dart';
@@ -15,250 +14,323 @@ class ServiceChatController extends GetxController {
   final ServiceChatRepo _chatRepo = ServiceChatRepo();
   final ServiceWebSocketService _wsService = ServiceWebSocketService();
 
-  var messages = <ChatMessage>[].obs;
+  var messages = <ServiceProviderChatMessage>[].obs;
   var isLoading = false.obs;
   var isConnecting = false.obs;
   var isUploading = false.obs;
+
   Rxn<ServiceChatModel> selectedProvider = Rxn<ServiceChatModel>();
   int? currentUserId;
 
   StreamSubscription? _wsSubscription;
 
+  final Map<int, List<ServiceProviderChatMessage>> _chatCache = {};
+
   @override
   void onInit() {
     super.onInit();
-    _getCurrentUserId();
-    _listenToWebSocket();
+    _initUser();
+    _listenWebSocket();
   }
 
-  void _getCurrentUserId() async {
+  Future<void> _initUser() async {
     currentUserId = await TokenManager.getUserId();
     if (kDebugMode) print('Current user ID: $currentUserId');
   }
 
-  void _listenToWebSocket() {
+  void _listenWebSocket() {
     _wsSubscription?.cancel();
 
     _wsSubscription = _wsService.messageStream.listen((data) {
-      if (kDebugMode) print('📩 Service Controller received: $data');
+      final type = data['type']?.toString();
+      if (kDebugMode) print('📩 Service WS Message: $data');
 
-      final messageType = data['type']?.toString();
-
-      switch (messageType) {
+      switch (type) {
         case 'connection_established':
-          Utils.successSnackBar('Connected', 'Service chat connected');
           isConnecting.value = false;
+          Utils.successSnackBar('Connected', 'Chat connected');
           break;
-
-        case 'message':
         case 'new_message':
-          _handleIncomingMessage(data);
+        case 'message':
+          _onIncomingMessage(data);
           break;
-
         case 'message_sent':
-          _handleMessageSent(data);
+          _onMessageSent(data);
           break;
-
         case 'message_delivered':
-          _updateMessageStatus(data['message_id'], MessageStatus.delivered);
+          _updateStatus(data['message_id'], ServiceProviderMessageStatus.delivered);
           break;
-
         case 'message_read':
-          _updateMessageStatus(data['message_id'], MessageStatus.read);
+          _updateStatus(data['message_id'], ServiceProviderMessageStatus.read);
           break;
-
+        case 'connection_lost':
+          Utils.toastMessage('Disconnected, reconnecting...');
+          break;
+        case 'connection_failed':
+          isConnecting.value = false;
+          Utils.errorSnackBar('Connection Failed', 'Check your internet');
+          break;
         case 'error':
           Utils.errorSnackBar('Error', data['message'] ?? 'Unknown error');
-          break;
-
-        case 'connection_lost':
-          Utils.toastMessage('Disconnected \nReconnecting...');
-          break;
-
-        case 'connection_failed':
-          Utils.errorSnackBar('Connection Failed', 'Please check internet');
-          isConnecting.value = false;
           break;
       }
     });
   }
 
-  void _handleIncomingMessage(Map<String, dynamic> data) {
+  void _onIncomingMessage(Map<String, dynamic> data) {
     if (currentUserId == null) return;
 
     try {
-      final messageData = data['message'] ?? data;
+      final msgData = data['message'] ?? data;
+      final msg = ServiceProviderChatMessage.fromJson(
+        msgData,
+        currentUserId!,
+        baseUrl: AppUrl.base_url,
+      );
 
-      final message = ChatMessage.fromJson(
+      final selected = selectedProvider.value;
+      if (selected == null) return;
+
+      final isFromCurrentChat =
+          msg.providerId == selected.id || msg.userId == currentUserId;
+
+      if (isFromCurrentChat) {
+        final exists = messages.any((m) => m.id == msg.id);
+        if (!exists) {
+          messages.add(msg);
+          _chatCache[selected.id] = List.from(messages);
+          if (kDebugMode) print('✅ Added new message: ${msg.displayText}');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print('❌ Error parsing WS message: $e');
+    }
+  }
+
+  void _onMessageSent(Map<String, dynamic> data) {
+    final messageData = data['message'];
+    if (messageData == null || currentUserId == null) return;
+
+    try {
+      final msg = ServiceProviderChatMessage.fromJson(
         messageData,
         currentUserId!,
         baseUrl: AppUrl.base_url,
       );
 
-      // Check if message belongs to current service chat
-      final isFromCurrentChat = (message.senderId == selectedProvider.value?.id &&
-          message.receiverId == currentUserId) ||
-          (message.senderId == currentUserId &&
-              message.receiverId == selectedProvider.value?.id);
+      final idx = messages.indexWhere(
+            (m) => m.text == msg.text && m.status == ServiceProviderMessageStatus.sending,
+      );
 
-      if (isFromCurrentChat) {
-        messages.add(message);
-
-        if (kDebugMode) {
-          print('✅ Service message added: ${message.displayText}');
+      if (idx != -1) {
+        messages[idx] = msg.copyWith(status: ServiceProviderMessageStatus.sent);
+        if (selectedProvider.value != null) {
+          _chatCache[selectedProvider.value!.id] = List.from(messages);
         }
+        if (kDebugMode) print('✅ Message confirmed: ${msg.id}');
       }
     } catch (e) {
-      if (kDebugMode) print('❌ Error handling service message: $e');
+      if (kDebugMode) print('❌ Error on message_sent: $e');
     }
   }
 
-  void _handleMessageSent(Map<String, dynamic> data) {
-    final tempId = data['temp_id'];
-    final serverId = data['id'];
-
-    final index = messages.indexWhere((m) => m.id == tempId);
+  void _updateStatus(int? id, ServiceProviderMessageStatus status) {
+    if (id == null) return;
+    final index = messages.indexWhere((m) => m.id == id);
     if (index != -1) {
       messages[index] = messages[index].copyWith(
-        id: serverId,
-        status: MessageStatus.sent,
+        status: status,
+        isRead: status == ServiceProviderMessageStatus.read,
       );
+      if (selectedProvider.value != null) {
+        _chatCache[selectedProvider.value!.id] = List.from(messages);
+      }
     }
   }
 
-  void _updateMessageStatus(int? messageId, MessageStatus status) {
-    if (messageId == null) return;
-
-    final index = messages.indexWhere((m) => m.id == messageId);
-    if (index != -1) {
-      messages[index] = messages[index].copyWith(status: status);
-    }
-  }
-
+  /// 🟢 Open provider chat
   Future<void> openChat(ServiceChatModel provider) async {
     selectedProvider.value = provider;
-    messages.clear();
+    if (kDebugMode) print('Opening chat: ${provider.name}');
 
-    if (kDebugMode) print('Opening service chat: ${provider.name} (ID: ${provider.id})');
+    // Load from cache first
+    if (_chatCache.containsKey(provider.id) && _chatCache[provider.id]!.isNotEmpty) {
+      if (kDebugMode) print('📦 Loading ${_chatCache[provider.id]!.length} messages from cache');
+      messages.value = List.from(_chatCache[provider.id]!);
+    } else {
+      messages.clear();
+    }
 
     try {
       isConnecting.value = true;
       await _wsService.connect(provider.id);
-      await _loadChatHistory(provider.id);
+      await _loadHistory(provider.id);
       isConnecting.value = false;
     } catch (e) {
       isConnecting.value = false;
       if (kDebugMode) print('❌ Error opening service chat: $e');
-      Utils.errorSnackBar('Error', 'Failed to connect to service chat');
+      Utils.errorSnackBar('Failed to open chat', e.toString());
     }
   }
 
-  Future<void> _loadChatHistory(int providerId) async {
+  /// 📜 Load chat history
+  Future<void> _loadHistory(int providerId) async {
+    if (currentUserId == null) return;
+
     try {
       isLoading.value = true;
 
-      final response = await _chatRepo.getServiceChatHistory(providerId: providerId);
+      final res = await _chatRepo.getServiceChatHistory(providerId: providerId);
 
-      if (response['success'] == true && response['data'] != null) {
-        List<dynamic> messagesJson = response['data'] as List;
+      if (kDebugMode) print('🔍 Loading chat history for provider: $providerId');
 
-        messages.value = messagesJson
-            .map((json) => ChatMessage.fromJson(
-          json,
-          currentUserId!,
-          baseUrl: AppUrl.base_url,
-        ))
-            .toList();
+      // Handle nested response structure
+      List<dynamic>? messagesJson;
 
-        if (kDebugMode) print('✅ Loaded ${messages.length} service messages');
+      if (res['results'] != null) {
+        final results = res['results'];
+        if (results is Map && results['messages'] != null) {
+          messagesJson = results['messages'] as List?;
+        }
+      } else if (res['data'] != null) {
+        messagesJson = res['data'] as List?;
+      } else if (res['messages'] != null) {
+        messagesJson = res['messages'] as List?;
       }
-    } catch (e) {
-      if (kDebugMode) print('⚠️ Could not load service chat history: $e');
+
+      if (messagesJson != null && messagesJson.isNotEmpty) {
+        final list = <ServiceProviderChatMessage>[];
+
+        for (var json in messagesJson) {
+          try {
+            list.add(ServiceProviderChatMessage.fromJson(
+              json,
+              currentUserId!,
+              baseUrl: AppUrl.base_url,
+            ));
+          } catch (e) {
+            if (kDebugMode) print('⚠️ Skip invalid message: $e');
+          }
+        }
+
+        if (list.isNotEmpty) {
+          messages.value = list;
+          _chatCache[providerId] = List.from(list);
+          if (kDebugMode) {
+            print('✅ Loaded ${list.length} messages from server');
+            print('💾 Cache updated with ${list.length} messages');
+          }
+        }
+      } else {
+        if (kDebugMode) print('ℹ️ No messages found for provider $providerId');
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('⚠️ Could not load service chat history: $e');
+        print('Stack trace: $stackTrace');
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
+  /// 💬 Send text message - RENAMED FROM sendText to sendTextMessage
   Future<void> sendTextMessage(String text) async {
-    if (text.trim().isEmpty || selectedProvider.value == null) return;
+    if (text.trim().isEmpty || selectedProvider.value == null || currentUserId == null) return;
 
     final tempId = DateTime.now().millisecondsSinceEpoch;
-
-    final message = ChatMessage(
+    final msg = ServiceProviderChatMessage(
       id: tempId,
+      userId: currentUserId!,
+      providerId: selectedProvider.value!.id,
       senderId: currentUserId!,
-      receiverId: selectedProvider.value!.id,
+      senderEmail: '',
+      senderName: 'You',
       text: text.trim(),
-      type: MessageType.text,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
+      messageType: ServiceProviderMessageType.text,
+      isRead: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       isSentByMe: true,
+      status: ServiceProviderMessageStatus.sending,
     );
 
-    messages.add(message);
+    messages.add(msg);
+    _chatCache[selectedProvider.value!.id] = List.from(messages);
 
     try {
-      _wsService.sendMessage(message.toJson());
+      final payload = {
+        'type': 'send_message',
+        'receiver_id': selectedProvider.value!.id,
+        'message': text.trim(),
+      };
 
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(status: MessageStatus.sent);
-      }
+      _wsService.sendMessage(payload);
+
+      if (kDebugMode) print('📤 Text message sent to provider');
     } catch (e) {
       if (kDebugMode) print('❌ Error sending service message: $e');
 
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(
-          status: MessageStatus.failed,
+      final idx = messages.indexWhere((m) => m.id == tempId);
+      if (idx != -1) {
+        messages[idx] = msg.copyWith(
+          status: ServiceProviderMessageStatus.failed,
           errorMessage: 'Failed to send',
         );
+        _chatCache[selectedProvider.value!.id] = List.from(messages);
       }
 
-      Utils.errorSnackBar('Error', 'Message not sent');
+      Utils.errorSnackBar('Send Error', 'Message not sent');
     }
   }
 
+  /// 📎 Send file message - RENAMED FROM sendFile to sendFileMessage
   Future<void> sendFileMessage({
     File? file,
     String? text,
   }) async {
-    if (selectedProvider.value == null) return;
+    if (selectedProvider.value == null || currentUserId == null) return;
     if (file == null && (text == null || text.trim().isEmpty)) return;
 
     final tempId = DateTime.now().millisecondsSinceEpoch;
 
-    MessageType messageType = MessageType.text;
+    ServiceProviderMessageType messageType = ServiceProviderMessageType.text;
     if (file != null) {
       final extension = file.path.split('.').last.toLowerCase();
       if (['jpg', 'jpeg', 'png', 'gif', 'webp'].contains(extension)) {
-        messageType = MessageType.image;
+        messageType = ServiceProviderMessageType.image;
       } else if (['mp4', 'mov', 'avi', 'mkv'].contains(extension)) {
-        messageType = MessageType.video;
+        messageType = ServiceProviderMessageType.video;
       } else {
-        messageType = MessageType.file;
+        messageType = ServiceProviderMessageType.file;
       }
     }
 
-    final message = ChatMessage(
+    final msg = ServiceProviderChatMessage(
       id: tempId,
+      userId: currentUserId!,
+      providerId: selectedProvider.value!.id,
       senderId: currentUserId!,
-      receiverId: selectedProvider.value!.id,
+      senderEmail: '',
+      senderName: 'You',
       text: text?.trim(),
-      type: messageType,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
+      messageType: messageType,
+      isRead: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
       isSentByMe: true,
+      status: ServiceProviderMessageStatus.sending,
       localFile: file,
     );
 
-    messages.add(message);
+    messages.add(msg);
+    _chatCache[selectedProvider.value!.id] = List.from(messages);
 
     try {
       if (file != null) {
         isUploading.value = true;
 
-        final uploadResponse = await _chatRepo.uploadServiceChatFile(
+        final res = await _chatRepo.uploadServiceChatFile(
           file: file,
           providerId: selectedProvider.value!.id,
           text: text,
@@ -266,18 +338,21 @@ class ServiceChatController extends GetxController {
 
         isUploading.value = false;
 
-        if (uploadResponse['success'] == true && uploadResponse['data'] != null) {
-          final fileData = uploadResponse['data'];
+        if (res['success'] == true && res['data'] != null) {
+          final fileData = res['data'];
 
           if (kDebugMode) print('✅ Service file uploaded');
 
-          final index = messages.indexWhere((m) => m.id == tempId);
-          if (index != -1) {
-            messages[index] = ChatMessage.fromJson(
-              fileData,
-              currentUserId!,
-              baseUrl: AppUrl.base_url,
-            );
+          final serverMsg = ServiceProviderChatMessage.fromJson(
+            fileData,
+            currentUserId!,
+            baseUrl: AppUrl.base_url,
+          );
+
+          final idx = messages.indexWhere((m) => m.id == tempId);
+          if (idx != -1) {
+            messages[idx] = serverMsg;
+            _chatCache[selectedProvider.value!.id] = List.from(messages);
           }
 
           _wsService.sendMessage({
@@ -286,111 +361,55 @@ class ServiceChatController extends GetxController {
             'message_id': fileData['id'],
           });
         } else {
-          throw Exception('File upload failed');
-        }
-      } else {
-        _wsService.sendMessage(message.toJson());
-
-        final index = messages.indexWhere((m) => m.id == tempId);
-        if (index != -1) {
-          messages[index] = message.copyWith(status: MessageStatus.sent);
+          throw Exception('Upload failed');
         }
       }
     } catch (e) {
       isUploading.value = false;
       if (kDebugMode) print('❌ Error sending service file: $e');
 
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(
-          status: MessageStatus.failed,
-          errorMessage: 'Failed to send',
+      final idx = messages.indexWhere((m) => m.id == tempId);
+      if (idx != -1) {
+        messages[idx] = msg.copyWith(
+          status: ServiceProviderMessageStatus.failed,
+          errorMessage: 'Upload failed',
         );
+        _chatCache[selectedProvider.value!.id] = List.from(messages);
       }
 
-      Utils.errorSnackBar('Error', 'Failed to send file');
+      Utils.errorSnackBar('Error', 'File not sent');
     }
   }
 
-  Future<void> sendLocation({
-    required double latitude,
-    required double longitude,
-    String? locationName,
-  }) async {
-    if (selectedProvider.value == null) return;
+  /// 🔁 Retry failed message - RENAMED FROM retry to retryMessage
+  void retryMessage(ServiceProviderChatMessage msg) {
+    if (msg.status != ServiceProviderMessageStatus.failed) return;
 
-    final tempId = DateTime.now().millisecondsSinceEpoch;
-    final locationUrl = 'https://maps.google.com/?q=$latitude,$longitude';
-    final messageText = '${locationName ?? 'Shared Location'}\n$locationUrl';
+    messages.removeWhere((m) => m.id == msg.id);
+    if (selectedProvider.value != null) {
+      _chatCache[selectedProvider.value!.id] = List.from(messages);
+    }
 
-    final message = ChatMessage(
-      id: tempId,
-      senderId: currentUserId!,
-      receiverId: selectedProvider.value!.id,
-      text: messageText,
-      type: MessageType.location,
-      status: MessageStatus.sending,
-      timestamp: DateTime.now(),
-      isSentByMe: true,
-      latitude: latitude,
-      longitude: longitude,
-      locationName: locationName ?? 'Shared Location',
-    );
-
-    messages.add(message);
-
-    try {
-      final wsPayload = {
-        'type': 'send_message',
-        'receiver_id': selectedProvider.value!.id,
-        'message': messageText,
-        'latitude': latitude.toString(),
-        'longitude': longitude.toString(),
-        'location_name': locationName ?? 'Shared Location',
-      };
-
-      _wsService.sendMessage(wsPayload);
-
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(status: MessageStatus.sent);
-      }
-    } catch (e) {
-      if (kDebugMode) print('❌ Error sending service location: $e');
-
-      final index = messages.indexWhere((m) => m.id == tempId);
-      if (index != -1) {
-        messages[index] = message.copyWith(
-          status: MessageStatus.failed,
-          errorMessage: 'Failed to send',
-        );
-      }
-
-      Utils.errorSnackBar('Error', 'Failed to send location');
+    if (msg.messageType == ServiceProviderMessageType.text) {
+      sendTextMessage(msg.text ?? '');
+    } else if (msg.localFile != null) {
+      sendFileMessage(file: msg.localFile, text: msg.text);
     }
   }
 
-  void retryMessage(ChatMessage message) {
-    if (message.status != MessageStatus.failed) return;
-
-    messages.removeWhere((m) => m.id == message.id);
-
-    if (message.type == MessageType.text) {
-      sendTextMessage(message.text ?? '');
-    } else if (message.localFile != null) {
-      sendFileMessage(file: message.localFile, text: message.text);
-    } else if (message.type == MessageType.location) {
-      sendLocation(
-        latitude: message.latitude!,
-        longitude: message.longitude!,
-        locationName: message.locationName,
-      );
-    }
-  }
-
+  /// 🔒 Close chat
   void closeChat() {
+    // Don't clear messages and cache, just set selectedProvider to null
+    selectedProvider.value = null;
+    if (kDebugMode) print('🔒 Chat closed, cache preserved');
+  }
+
+  /// 🗑️ Clear all cache (for logout)
+  void clearAllCache() {
+    _chatCache.clear();
     messages.clear();
     selectedProvider.value = null;
+    if (kDebugMode) print('🗑️ All cache cleared');
   }
 
   @override

@@ -11,7 +11,6 @@ import 'package:nikosafe/utils/utils.dart';
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
 import '../../../resource/Colors/app_colors.dart';
 import '../../../resource/compunents/customBackButton.dart';
-import 'package:nikosafe/resource/App_routes/routes_name.dart';
 
 class ExploreDetailPage extends StatefulWidget {
   final ExploreItemModel item;
@@ -196,6 +195,12 @@ class _ExploreDetailPageState extends State<ExploreDetailPage> {
                       ),
                       SizedBox(height: 8),
                       _buildInfoRow(
+                        Icons.tag,
+                        'User ID: ${currentItem.userId}',
+                        AppColor.primaryTextColor,
+                      ),
+                      SizedBox(height: 8),
+                      _buildInfoRow(
                         Icons.calendar_today,
                         'Mon-Sun',
                         AppColor.primaryTextColor,
@@ -295,7 +300,7 @@ class _ExploreDetailPageState extends State<ExploreDetailPage> {
                   title: "Chat",
                   icon: Icons.chat,
                   onPress: () {
-                    // ✅ NEW - Navigate to vendor chat
+                    // ✅ Navigate to vendor chat with userId
                     final vendorModel = VendorChatModel(
                       id: currentItem.userId,
                       name: currentItem.title,

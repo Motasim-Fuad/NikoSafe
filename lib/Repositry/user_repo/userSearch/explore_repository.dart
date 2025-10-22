@@ -117,6 +117,7 @@ class ExploreRepository {
             'capacity': venue.capacity,
             'user': {
               'email': venue.user.email,
+              'id': venue.user.id,
             }
           },
           category: category,

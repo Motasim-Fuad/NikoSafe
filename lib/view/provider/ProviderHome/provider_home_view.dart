@@ -36,7 +36,7 @@ class ProviderHomeView extends StatelessWidget {
                   Spacer(),
                   GestureDetector(
                     onTap: () {
-                      Get.toNamed(RouteName.chatListView);
+                      Get.toNamed(RouteName.providerChatListView);
                     },
                     child: CircleAvatar(
                       backgroundColor: AppColor.iconColor,
