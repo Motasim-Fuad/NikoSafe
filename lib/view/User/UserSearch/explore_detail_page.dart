@@ -4,12 +4,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/models/User/userSearch/explore_item_model.dart';
+import 'package:nikosafe/models/vendor/chat/vendor_chat_model.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
 import 'package:nikosafe/utils/utils.dart';
 import '../../../View_Model/Controller/user/userSearch/explore_controller.dart';
 import '../../../resource/Colors/app_colors.dart';
 import '../../../resource/compunents/customBackButton.dart';
+import 'package:nikosafe/resource/App_routes/routes_name.dart';
 
 class ExploreDetailPage extends StatefulWidget {
   final ExploreItemModel item;
@@ -265,10 +267,11 @@ class _ExploreDetailPageState extends State<ExploreDetailPage> {
             ),
           ),
         ),
+
+
         bottomNavigationBar: currentItem.category == "club_event"
             ? Padding(
-          padding:
-          const EdgeInsets.only(bottom: 16, left: 8, right: 8),
+          padding: const EdgeInsets.only(bottom: 16, left: 8, right: 8),
           child: RoundButton(
               title: "Book Reservation",
               onPress: () {
@@ -277,8 +280,7 @@ class _ExploreDetailPageState extends State<ExploreDetailPage> {
               }),
         )
             : Padding(
-          padding:
-          const EdgeInsets.only(bottom: 16, left: 8, right: 8),
+          padding: const EdgeInsets.only(bottom: 16, left: 8, right: 8),
           child: Row(
             children: [
               Expanded(
@@ -289,13 +291,32 @@ class _ExploreDetailPageState extends State<ExploreDetailPage> {
               ),
               SizedBox(width: 16),
               Expanded(
-                  child: RoundButton(
-                      title: "Chat",
-                      icon: Icons.chat,
-                      onPress: () {})),
+                child: RoundButton(
+                  title: "Chat",
+                  icon: Icons.chat,
+                  onPress: () {
+                    // ✅ NEW - Navigate to vendor chat
+                    final vendorModel = VendorChatModel(
+                      id: currentItem.userId,
+                      name: currentItem.title,
+                      email: currentItem.email,
+                      profilePicture: currentItem.imageUrl.isNotEmpty
+                          ? currentItem.imageUrl
+                          : null,
+                    );
+
+                    Get.toNamed(
+                      RouteName.vendorChatDetailView,
+                      arguments: vendorModel,
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
+
+
       ),
     );
   }

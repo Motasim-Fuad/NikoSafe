@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nikosafe/View_Model/Controller/user/userSearch/userServiceProviderController/user_service_provider_controller.dart';
+import 'package:nikosafe/models/Provider/chat/provider_chat_model.dart';
 import 'package:nikosafe/models/User/userSearch/userServiceProviderModel/user_services_provider.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/RoundButton.dart';
@@ -132,7 +133,19 @@ class UserServiceProviderDetailView extends StatelessWidget {
                       height: 40,
                       title: "Message",
                       onPress: () {
-                        Get.toNamed(RouteName.chatListView);
+                        // ✅ NEW - Open service provider chat
+                        final serviceChatModel = ServiceChatModel(
+                          id: detail.userId,
+                          name: detail.fullName,
+                          email: detail.email ?? '',
+                          profilePicture: detail.profilePicture,
+                          designation: detail.designation,
+                        );
+
+                        Get.toNamed(
+                          RouteName.serviceChatDetailView,
+                          arguments: serviceChatModel,
+                        );
                       },
                     ),
                     const SizedBox(height: 16),

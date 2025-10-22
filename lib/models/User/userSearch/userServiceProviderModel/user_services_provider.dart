@@ -2,6 +2,7 @@
 
 class ServiceProviderModel {
   final int id;
+  final int userId; // int হিসেবে
   final String fullName;
   final String designation;
   final String? profilePicture;
@@ -14,6 +15,7 @@ class ServiceProviderModel {
 
   ServiceProviderModel({
     required this.id,
+    required this.userId,
     required this.fullName,
     required this.designation,
     this.profilePicture,
@@ -28,6 +30,7 @@ class ServiceProviderModel {
   factory ServiceProviderModel.fromJson(Map<String, dynamic> json) {
     return ServiceProviderModel(
       id: json['id'] ?? 0,
+      userId: int.tryParse(json['user']?.toString() ?? '') ?? 0,
       fullName: json['full_name'] ?? '',
       designation: json['designation'] ?? '',
       profilePicture: json['profile_picture'],
@@ -43,6 +46,7 @@ class ServiceProviderModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'user': userId.toString(),
       'full_name': fullName,
       'designation': designation,
       'profile_picture': profilePicture,
@@ -58,6 +62,7 @@ class ServiceProviderModel {
 
 class ServiceProviderDetailModel {
   final int id;
+  final int userId; // int হিসেবে
   final String fullName;
   final String designation;
   final String? profilePicture;
@@ -79,6 +84,7 @@ class ServiceProviderDetailModel {
 
   ServiceProviderDetailModel({
     required this.id,
+    required this.userId,
     required this.fullName,
     required this.designation,
     this.profilePicture,
@@ -102,6 +108,7 @@ class ServiceProviderDetailModel {
   factory ServiceProviderDetailModel.fromJson(Map<String, dynamic> json) {
     return ServiceProviderDetailModel(
       id: json['id'] ?? 0,
+      userId: int.tryParse(json['user']?.toString() ?? '') ?? 0,
       fullName: json['full_name'] ?? '',
       designation: json['designation'] ?? '',
       profilePicture: json['profile_picture'],

@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
+import 'package:nikosafe/binding/provider/service_chat_binding.dart';
 import 'package:nikosafe/binding/userLocation/user_location_binding.dart';
 import 'package:nikosafe/binding/user_chat_binding/user_chat_binding.dart';
 import 'package:nikosafe/binding/user_createPost/user_create_post_binding.dart';
+import 'package:nikosafe/binding/vendor/vendor_chat_binding.dart';
 import 'package:nikosafe/resource/App_routes/routes_name.dart';
 import 'package:nikosafe/view/Authentication/authentication.dart';
 import 'package:nikosafe/view/Authentication/forgetpassword/forgetpassword_view.dart';
@@ -22,6 +24,8 @@ import 'package:nikosafe/view/User/user_add_location_view/user_add_location_view
 import 'package:nikosafe/view/User/user_btn_nav.dart';
 import 'package:nikosafe/view/provider/ProviderEarning/ProviderEarningDetails/provider_erning_details_view.dart';
 import 'package:nikosafe/view/provider/ProviderEarning/provider_withdrawals_view.dart';
+import 'package:nikosafe/view/provider/chat/services_provider_chat_view.dart';
+import 'package:nikosafe/view/vendor/Chat/vendor_chat_details_view.dart';
 
 import '../../view/AllPayment/User/user_verification_view.dart';
 import '../../view/Authentication/forgetpassword/ResetPasswordView.dart';
@@ -375,6 +379,21 @@ class AppRouts {
       page: () => UserBookReservationView(),
       transition: Transition.leftToRightWithFade,
       transitionDuration: Duration(microseconds: 250),
+    ),
+    GetPage(
+      name: RouteName.vendorChatDetailView,
+      page: () => VendorChatDetailView(),
+      binding: VendorChatBinding(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(milliseconds: 250),
+    ),
+
+    GetPage(
+      name: RouteName.serviceChatDetailView,
+      page: () => ServiceChatDetailView(),
+      binding: ServiceChatBinding(),
+      transition: Transition.leftToRightWithFade,
+      transitionDuration: Duration(milliseconds: 250),
     ),
 
     GetPage(

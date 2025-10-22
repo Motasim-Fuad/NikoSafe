@@ -1,8 +1,8 @@
 // data/app_url.dart - UPDATED WITH PAYMENT ENDPOINTS
 
 class AppUrl {
-  static const String base_url = 'https://dangerous-dispatched-numeric-flat.trycloudflare.com';
-  static const String ws_base_url = 'wss://dangerous-dispatched-numeric-flat.trycloudflare.com';
+  static const String base_url = 'https://weekly-ontario-picked-qualified.trycloudflare.com';
+  static const String ws_base_url = 'wss://weekly-ontario-picked-qualified.trycloudflare.com';
 
   // ====== REGISTRATION ENDPOINTS ======
   static const String userRegisterUrl = "$base_url/api/accounts/register/";

@@ -1,8 +1,11 @@
 // Path: models/User/userSearch/explore_item_model.dart
 // COMPLETE FILE - Replace entire file
 
+// models/User/userSearch/explore_item_model.dart
+
 class ExploreItemModel {
   final String id;
+  final int userId; // ✅ int হিসেবে পরিবর্তন
   final String title;
   final String subtitle;
   final String imageUrl;
@@ -24,6 +27,7 @@ class ExploreItemModel {
 
   ExploreItemModel({
     required this.id,
+    required this.userId, // ✅ int
     required this.title,
     required this.subtitle,
     required this.imageUrl,
@@ -44,7 +48,6 @@ class ExploreItemModel {
     required this.reviews,
   });
 
-  // FIXED: Proper image URL handling - API returns full URLs
   factory ExploreItemModel.fromApiResponse({
     required dynamic venueData,
     required String category,
@@ -52,16 +55,20 @@ class ExploreItemModel {
     double? averageRating,
     int? totalReviews,
   }) {
-    // Get image URL from API (already includes full URL like http://...)
-    String imageUrl = venueData['profile_picture'] ?? '';
+    // ✅ user object থেকে id নেওয়া এবং int-এ convert
+    int userId = 0;
+    if (venueData['user'] != null && venueData['user'] is Map) {
+      userId = venueData['user']['id'] ?? 0;
+    }
 
-    // No need to prepend base URL - API returns complete URLs
+    String imageUrl = venueData['profile_picture'] ?? '';
 
     return ExploreItemModel(
       id: venueData['id'].toString(),
+      userId: userId, // ✅ int হিসেবে assign
       title: venueData['venue_name'] ?? 'Unknown Venue',
       subtitle: _getSubtitleFromCategory(category),
-      imageUrl: imageUrl, // Use the corrected URL
+      imageUrl: imageUrl,
       location: venueData['location'] ?? 'Location not available',
       date: 'Open Daily',
       time: venueData['hours_of_operation'] ?? 'Hours not specified',
