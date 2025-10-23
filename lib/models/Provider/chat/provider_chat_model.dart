@@ -22,16 +22,33 @@ class ServiceChatModel {
   });
 
   factory ServiceChatModel.fromJson(Map<String, dynamic> json) {
+    // safely extract last_message
+    String? extractLastMessage(dynamic value) {
+      if (value == null) return null;
+      if (value is String) return value;
+      if (value is Map<String, dynamic>) return value['text'] ?? value['message'] ?? null;
+      return null;
+    }
+
+    // safely extract profile picture
+    String? extractProfilePicture(dynamic value) {
+      if (value == null) return null;
+      if (value is String) return value;
+      if (value is Map<String, dynamic>) return value['url'] ?? value['path'] ?? null;
+      return null;
+    }
+
     return ServiceChatModel(
       id: json['id'] ?? json['provider_id'] ?? 0,
       name: json['name'] ?? json['provider_name'] ?? 'Unknown Provider',
       email: json['email'] ?? json['provider_email'] ?? '',
-      profilePicture: json['profile_picture'] ?? json['provider_profile_picture'],
+      profilePicture:
+      extractProfilePicture(json['profile_picture'] ?? json['provider_profile_picture']),
       designation: json['designation'],
-      lastMessage: json['last_message'],
+      lastMessage: extractLastMessage(json['last_message']),
       lastMessageTime: json['last_message_time'] ?? json['last_message_at'],
       lastMessageByMe: json['last_message_by_me'],
-      unreadCount: json['unread_count'] ?? json['unread_count_user'] ?? 0,
+      unreadCount: json['unread_count'] ?? json['unread_count_user'] ?? json['unread_count_provider'] ?? 0,
     );
   }
 

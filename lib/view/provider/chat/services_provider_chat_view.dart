@@ -5,6 +5,7 @@ import 'package:nikosafe/View_Model/Controller/provider/ProviderChatContoller/se
 import 'package:nikosafe/models/Provider/chat/provider_chat_model.dart';
 import 'package:nikosafe/resource/Colors/app_colors.dart';
 import 'package:nikosafe/resource/compunents/customBackButton.dart';
+import 'package:nikosafe/View/user/chat/widgets/chat_bubble.dart';
 import 'package:nikosafe/View/user/chat/widgets/chat_input_field.dart';
 import 'package:nikosafe/view/provider/chat/provider_chat_buble.dart';
 
