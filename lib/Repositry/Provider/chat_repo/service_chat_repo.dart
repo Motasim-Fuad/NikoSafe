@@ -38,20 +38,22 @@ class ServiceChatRepo {
   }
 
   // Get service chat history
+// In ServiceChatRepo, update the getServiceChatHistory method
   Future<Map<String, dynamic>> getServiceChatHistory({
-    required int providerId,
+    required int userId, // ✅ Change parameter name to userId
   }) async {
     try {
-      final url = '${AppUrl.base_url}/api/providerchat/messages/$providerId/';
+      // ✅ Correct endpoint: Get messages between current provider and specific user
+      final url = '${AppUrl.base_url}/api/providerchat/provider/messages/$userId/';
 
-      if (kDebugMode) print('📥 Fetching service chat history: $url');
+      if (kDebugMode) print('📥 Fetching chat history with user: $url');
 
       final response = await _apiServices.getApi(url, requireAuth: true);
 
-      if (kDebugMode) print('✅ Service chat history: $response');
+      if (kDebugMode) print('✅ Chat history with user $userId: $response');
       return response;
     } catch (e) {
-      if (kDebugMode) print('❌ Error fetching service chat: $e');
+      if (kDebugMode) print('❌ Error fetching chat with user $userId: $e');
       rethrow;
     }
   }

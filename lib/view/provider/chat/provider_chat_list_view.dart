@@ -190,7 +190,7 @@ class ProviderChatListView extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    convo.name,
+                                    convo.id.toString(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,

@@ -134,4 +134,53 @@ class TokenManager {
     final refreshToken = await getRefreshToken();
     return accessToken != null && refreshToken != null;
   }
+
+  // ✅ NEW: Check if current user is a provider
+  static Future<bool> isProvider() async {
+    try {
+      final userData = await getUserData();
+
+      if (userData != null && userData['user_type'] != null) {
+        String type = userData['user_type'].toString().toLowerCase();
+
+        // ✅ Check if user type indicates provider
+        return type == 'provider' ||
+            type == 'service_provider' ||
+            type == 'hospitality';
+      }
+
+      return false; // Default: not a provider
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ✅ NEW: Get normalized user type (for API calls)
+  static Future<String> getUserType() async {
+    try {
+      final userData = await getUserData();
+
+      if (userData != null && userData['user_type'] != null) {
+        String type = userData['user_type'].toString().toLowerCase();
+
+        // 🔁 Map local user types to backend-accepted ones
+        if (type == 'basic') {
+          type = 'user';
+        } else if (type == 'service_provider') {
+          type = 'provider';
+        }
+
+        // ✅ Ensure it's one of the allowed backend values
+        if (!['user', 'provider', 'hospitality', 'admin'].contains(type)) {
+          type = 'user'; // fallback default
+        }
+
+        return type;
+      }
+
+      return 'user'; // fallback if no user data
+    } catch (e) {
+      return 'user';
+    }
+  }
 }

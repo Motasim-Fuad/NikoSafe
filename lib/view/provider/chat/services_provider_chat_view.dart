@@ -78,7 +78,7 @@ class ServiceChatDetailView extends StatelessWidget {
                             Obx(() {
                               final isConnecting = controller.isConnecting.value;
                               final isConnected =
-                                  controller.selectedProvider.value != null;
+                                  controller.selectedContact.value != null;
 
                               return Row(
                                 children: [
